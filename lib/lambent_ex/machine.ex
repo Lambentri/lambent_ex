@@ -45,53 +45,76 @@ defmodule LambentEx.Machine do
     specs =
       1..cnt
       |> Enum.map(fn id ->
-        Parent.child_spec({opts[:step], opts[:step_opts] |> Map.put(:id, id) |> Map.put(:name, opts[:name])})
+        Parent.child_spec(
+          {opts[:step], opts[:step_opts] |> Map.put(:id, id) |> Map.put(:name, opts[:name])},
+          id: id
+        )
       end)
 
-    pids = specs |> Enum.map(fn x -> Parent.start_child(x)  |> IO.inspect end) |> Enum.filter(fn {status, pid} -> status == :ok end)
-    pids = []
+    pids =
+      specs
+      |> Enum.map(fn x -> Parent.start_child(x) end)
+      |> Enum.filter(fn {status, pid} -> status == :ok end)
+      |> Enum.map(fn {:ok, v} -> v end)
 
     {:ok,
      %{
        steps: pids,
        name: opts[:name],
+       # todo configurable
        speed: 1000,
        bright_tgt: 255,
        bright_curr: 255,
        bright_delay: 0,
        bright_mvmul: 2,
-       cnt: 0
+       cnt: cnt
      }}
-    |> IO.inspect()
   end
 
   defp via_tuple(name), do: {:via, Registry, {@registry, name}}
 
   # public
 
-  def faster(_id) do
-    via_tuple("machine-opts-id") |> GenServer.cast(:faster)
+  def faster(id) do
+    via_tuple("machine-#{id}") |> GenServer.cast(:faster)
   end
 
-  def slower(_id) do
-    via_tuple("machine-opts-id") |> GenServer.cast(:slower)
+  def slower(id) do
+    via_tuple("machine-#{id}") |> GenServer.cast(:slower)
   end
 
-  def brighter(_id) do
-    via_tuple("machine-opts-id") |> GenServer.cast(:brighter)
+  def brighter(id) do
+    via_tuple("machine-#{id}") |> GenServer.cast(:brighter)
   end
 
-  def dimmer(_id) do
-    via_tuple("machine-opts-id") |> GenServer.cast(:dimmer)
+  def dimmer(id) do
+    via_tuple("machine-#{id}") |> GenServer.cast(:dimmer)
   end
 
   # impls
 
+  defp bmath(i, state) do
+    (i * state.bright_curr / 255.0) |> trunc
+  end
+
   @impl true
   def handle_info(:step, state) do
     Process.send_after(self(), :step, state.speed)
-    #    IO.puts(state.cnt)
-    {:noreply, bright_step(state) |> Map.put(:cnt, state.cnt + 1)}
+
+    state[:steps]
+    |> Enum.map(&GenServer.cast(&1, :step))
+
+    state[:steps]
+    |> Enum.map(&GenServer.call(&1, :read))
+    |> Enum.map(fn x -> x |> Enum.map(fn y -> bmath(y, state) end) end)
+
+    #    |> IO.inspect()
+    {:noreply, bright_step(state)}
+  end
+
+  def handle_info({:EXIT, pid, err}, state) do
+    IO.inspect(err)
+    {:noreply, state}
   end
 
   defp do_slower(current_val) do
@@ -139,8 +162,6 @@ defmodule LambentEx.Machine do
   end
 
   defp do_bright_step(tgt, curr) do
-    IO.inspect({"Bs", tgt, curr})
-
     if curr < tgt do
       curr + 1
     else

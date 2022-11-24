@@ -1,10 +1,9 @@
 defmodule LambentEx.Utils.Color do
-
-  # floating point modulo 💍💍💍
+  # floating point modulo 🌀💍💍💍
   @spec _fmod(float, float) :: float
   defp _fmod(mod, b) when mod >= b do
     mod = mod - b
-    _fmod(mod ,b)
+    _fmod(mod, b)
   end
 
   defp _fmod(mod, _b) do
@@ -15,8 +14,7 @@ defmodule LambentEx.Utils.Color do
   defp fmod(a, b) do
     a = abs(a)
     b = abs(b)
-    mod = a
-    _fmod(mod, b) |> abs
+    _fmod(a, b) |> abs
   end
 
   @spec sys_255_to_1([number]) :: [float]
@@ -26,24 +24,28 @@ defmodule LambentEx.Utils.Color do
 
   @spec _rgb_to_hsv([float]) :: [float]
   defp _rgb_to_hsv([r, g, b]) do
-    maxc = Enum.max([r,g,b])
-    minc = Enum.min([r,g,b])
+    maxc = Enum.max([r, g, b])
+    minc = Enum.min([r, g, b])
 
     v = maxc
+
     if minc == maxc do
-        [0.0, 0.0, v]
+      [0.0, 0.0, v]
     else
-      mami = maxc-minc
-      s = (mami) / maxc
-      rc = (maxc-r) / mami
-      gc = (maxc-g) / mami
-      bc = (maxc-b) / maxc-minc
-      h = cond do
-        r == maxc -> bc-gc
-        g == maxc -> 2.0 + rc - bc
-        true -> 4.0 + gc - rc
-      end
-      h = (h/6.0) |> fmod(1.0)
+      mami = maxc - minc
+      s = mami / maxc
+      rc = (maxc - r) / mami
+      gc = (maxc - g) / mami
+      bc = (maxc - b) / maxc - minc
+
+      h =
+        cond do
+          r == maxc -> bc - gc
+          g == maxc -> 2.0 + rc - bc
+          true -> 4.0 + gc - rc
+        end
+
+      h = (h / 6.0) |> fmod(1.0)
       [h, s, v]
     end
   end
@@ -69,16 +71,16 @@ defmodule LambentEx.Utils.Color do
     end
   end
 
-  @spec rgb_to_hsv([float]) :: [float]
-  def rgb_to_hsv(rgb) do
+  @spec rgb2hsv([float]) :: [float]
+  def rgb2hsv(rgb) do
     rgb
     |> sys_255_to_1
     |> _rgb_to_hsv
     |> sys_1_to_255
   end
 
-  @spec hsv_to_rgb([float]) :: [float]
-  def hsv_to_rgb(hsv) do
+  @spec hsv2rgb([float]) :: [float]
+  def hsv2rgb(hsv) do
     hsv
     |> sys_255_to_1
     |> _hsv_to_rgb

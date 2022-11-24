@@ -6,10 +6,12 @@ defmodule LambentEx.MachineSupervisor do
   end
 
   def start_child(step, opts, name, count \\ 300) do
-    # If MyWorker is not using the new child specs, we need to pass a map:
-    # spec = %{id: MyWorker, start: {MyWorker, :start_link, [foo, bar, baz]}}
     spec = {LambentEx.Machine, step: step, step_opts: opts, count: count, name: name}
     DynamicSupervisor.start_child(__MODULE__, spec)
+  end
+
+  def abort_child(pid) do
+    DynamicSupervisor.terminate_child(__MODULE__, pid)
   end
 
   @impl true
