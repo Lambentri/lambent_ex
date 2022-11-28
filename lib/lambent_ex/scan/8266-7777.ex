@@ -3,6 +3,8 @@ defmodule LambentEx.Scan.ESP8266x7777 do
   use GenServer
   require Logger
 
+  alias LambentEx.Utils.Color, as: C
+
   @registry :lambent
   @s "ꙭ📡"
   @filtered_prefixes ["br", "docker", "lo"]
@@ -12,6 +14,7 @@ defmodule LambentEx.Scan.ESP8266x7777 do
   end
 
   def init(_opts) do
+    {:ok, socket} = :gen_udp.open(0, [:binary])
     Process.send_after(self(), :arp, :timer.seconds(1))
     Process.send_after(self(), :scan, :timer.seconds(3))
     interfaces = get_valid_interfaces()
@@ -20,7 +23,8 @@ defmodule LambentEx.Scan.ESP8266x7777 do
      %{
        interfaces: interfaces,
        arps: %{},
-       devices: %{"10:52:1c:02:d4:d2" => %{"ip" => {192, 168, 13, 226}, "name" => "AssFace3k"}}
+       devices: %{"10:52:1c:02:d4:d2" => %{"ip" => {192, 168, 13, 226}, "name" => "AssFace3k", "ord" => :rgb}},
+       socket: socket
      }}
   end
 
@@ -80,6 +84,35 @@ defmodule LambentEx.Scan.ESP8266x7777 do
 
       {:error, _err} ->
         {:not_lambent, ip}
+    end
+  end
+
+  defp rgb_shift(stream, device) do
+    chunked = Enum.chunk_by(stream, 3)
+    case device |> Map.get(:ord) do
+      :rgb -> chunked
+      :grb -> chunked |> Enum.map(fn [r, g, b] -> [g, r, b] end)
+      :rgbww -> chunked |> Enum.map(fn [r, g, b] -> [r, g, b, Enum.min(C.wrgb([r, g, b]), r)] end)
+      :rgbnw -> chunked |> Enum.map(fn [r, g, b] -> [r, g, b, C.wrgb([r, g, b])] end)
+      :rgbcw -> chunked |> Enum.map(fn [r, g, b] -> [r, g, b, Enum.min([C.wrgb([r, g, b]), b])] end)
+      :rgbaw -> chunked |> Enum.map(fn [r, g, b] -> [r, g, b, C.argb([r, g, b]), C.wrgb([r, g, b])] end)
+      :rgbxw -> chunked |> Enum.map(fn [r, g, b] -> [r, g, b, 0] end)
+      nil -> chunked
+    end
+    |> List.flatten
+  end
+
+  defp rgb_stream(stream) do
+    stream # TOOD FIGURE OUT HOW TO RECREATE THE PYTHON PACKING
+  end
+
+  @impl
+  def handle_cast({:submit, dvc, stream}, state) do
+    case state[:devices] |> Map.get(dvc) do
+      nil -> {:noreply, state}
+      device ->
+        :gen_udp.send(state.socket, device[:ip], 7777, rgb_shift(stream) |> rgb_stream)
+        {:noreply, state}
     end
   end
 

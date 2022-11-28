@@ -1,4 +1,10 @@
 defmodule LambentEx.Utils.Color do
+
+  # Int-ify
+  defp iiy(v) when is_float(v), do: trunc(v)
+  defp iiy(v) when is_binary(v), do: Integer.parse(v)
+  defp iiy(v), do: v
+
   # floating point modulo 🌀💍💍💍
   @spec _fmod(float, float) :: float
   defp _fmod(mod, b) when mod >= b do
@@ -85,5 +91,26 @@ defmodule LambentEx.Utils.Color do
     |> sys_255_to_1
     |> _hsv_to_rgb
     |> sys_1_to_255
+  end
+
+  # color generation and expansion functions
+  def wrgb([r,g,b], coef \\ 2) do
+    Enum.min([r,g,b]) / coef |> iiy
+  end
+
+  def wwrgb([r,g,b]) do
+
+  end
+
+  def argb([r,g,b]) do
+    w = wrgb([r,g,b])
+    a = r - w
+    a = if (a > (g - w) * 2) do
+      a = (g - w) * 2
+    else
+      a
+    end
+
+    a |> iiy
   end
 end
