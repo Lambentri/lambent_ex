@@ -111,7 +111,7 @@ defmodule LambentEx.Scan.ESP8266x7777 do
     case state[:devices] |> Map.get(dvc) do
       nil -> {:noreply, state}
       device ->
-        :gen_udp.send(state.socket, device[:ip], 7777, rgb_shift(stream) |> rgb_stream)
+        :gen_udp.send(state.socket, device[:ip], 7777, rgb_shift(stream, device) |> rgb_stream)
         {:noreply, state}
     end
   end
