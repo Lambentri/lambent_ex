@@ -16,7 +16,7 @@ RUN cd ${phoenix_subdir}/assets \
     # =&& npm ci \
     && cd ../ \
     && mix phx.digest \
-    && mix assets.deploy \
+    && mix assets.deploy
 RUN mix release ${app_name} \
     && mv _build/${build_env}/rel/${app_name} /opt/release \
     && mv /opt/release/bin/${app_name} /opt/release/bin/start_server
