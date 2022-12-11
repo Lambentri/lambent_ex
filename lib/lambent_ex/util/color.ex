@@ -65,7 +65,7 @@ defmodule LambentEx.Utils.Color do
     p = v * (1.0 - s)
     q = v * (1.0 - s * f)
     t = v * (1.0 - s * (1.0 - f))
-    i = i |> fmod(6.0)
+    i = i |> fmod(6.0) |> trunc
 
     case i do
       0 -> [v, t, p]

@@ -2,7 +2,10 @@ defmodule LambentEx.Machine do
   @moduledoc false
   use Parent.GenServer
 
-  @registry :lambent
+  @registry :lambent_machine
+
+  @pubsub_name LambentEx.PubSub
+  @pubsub_topic "machine-"
 
   @speeds %{
     # 1 => :THOU,
@@ -104,11 +107,12 @@ defmodule LambentEx.Machine do
     state[:steps]
     |> Enum.map(&GenServer.cast(&1, :step))
 
-    state[:steps]
+    data = state[:steps]
     |> Enum.map(&GenServer.call(&1, :read))
     |> Enum.map(fn x -> x |> Enum.map(fn y -> bmath(y, state) end) end)
-
-    #    |> IO.inspect()
+#
+#        |> IO.inspect()
+    Phoenix.PubSub.broadcast(@pubsub_name, @pubsub_topic <> state[:name], {:publish, data})
     {:noreply, bright_step(state)}
   end
 

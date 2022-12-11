@@ -15,7 +15,11 @@ config :lambent_ex, LambentExWeb.Endpoint,
     layout: false
   ],
   pubsub_server: LambentEx.PubSub,
-  live_view: [signing_salt: "9XX1FUrk"]
+  live_view: [signing_salt: "9XX1FUrk"],
+  live_editable: [
+#    ple_interface: Phoenix.LiveEditable.Interface.Tailwind3
+    ple_interface: LambentEx.Phoenix.LiveEditable.Interface.Tailwind3
+  ]
 
 # Configure esbuild (the version is required)
 config :esbuild,

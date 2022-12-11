@@ -4,7 +4,7 @@ defmodule LambentEx.Application do
   @moduledoc false
 
   use Application
-  @registry :lambent
+  @default_registry :lambent
 
   @impl true
   def start(_type, _args) do
@@ -17,7 +17,7 @@ defmodule LambentEx.Application do
       LambentExWeb.Endpoint,
       # Start a worker by calling: LambentEx.Worker.start_link(arg)
       # {LambentEx.Worker, arg}
-      {Registry, [keys: :unique, name: @registry]},
+      {Registry, [keys: :unique, name: @default_registry]},
       LambentEx.ComponentSupervisor
     ]
 

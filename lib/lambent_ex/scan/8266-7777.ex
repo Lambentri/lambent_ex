@@ -8,6 +8,7 @@ defmodule LambentEx.Scan.ESP8266x7777 do
   @registry :lambent
   @s "ꙭ📡"
   @filtered_prefixes ["br", "docker", "lo"]
+  @pubsub_name LambentEx.PubSub
 
   def start_link(opts) do
     GenServer.start_link(__MODULE__, opts, name: via_tuple("scan_8266"))
@@ -17,13 +18,20 @@ defmodule LambentEx.Scan.ESP8266x7777 do
     {:ok, socket} = :gen_udp.open(0, [:binary])
     Process.send_after(self(), :arp, :timer.seconds(1))
     Process.send_after(self(), :scan, :timer.seconds(3))
+    Process.send_after(self(), :publish, :timer.seconds(5))
     interfaces = get_valid_interfaces()
     # gets overwritten
     {:ok,
      %{
        interfaces: interfaces,
        arps: %{},
-       devices: %{"10:52:1c:02:d4:d2" => %{"ip" => {192, 168, 13, 226}, "name" => "AssFace3k", "ord" => :rgb}},
+       devices: %{
+         "10:52:1c:02:d4:d2" => %{
+           "ip" => {192, 168, 13, 226},
+           "name" => "AssFace3k",
+           "ord" => :rgb
+         }
+       },
        socket: socket
      }}
   end
@@ -33,37 +41,67 @@ defmodule LambentEx.Scan.ESP8266x7777 do
   # public
 
   def rename(:mac, mac, name) do
-    via_tuple("scan_8266") |> GenServer.call({:rename_mac, mac, name})
+    via_tuple("scan_8266") |> GenServer.cast({:rename_mac, mac, name})
   end
 
   def rename(:ip, ip, name) do
-    via_tuple("scan_8266") |> GenServer.call({:rename_ip, ip, name})
+    via_tuple("scan_8266") |> GenServer.cast({:rename_ip, ip, name})
+  end
+
+  def reorder(:mac, mac, name) do
+    via_tuple("scan_8266") |> GenServer.cast({:reorder, mac, name})
+  end
+
+  def submit(dvc, stream) do
+    via_tuple("scan_8266") |> GenServer.cast({:submit, dvc, stream})
+  end
+
+  def devices() do
+    via_tuple("scan_8266") |> GenServer.call(:get_devices)
   end
 
   # impls
 
   @impl true
-  def handle_call({:rename_mac, mac, name}, _from, state) do
+  def handle_cast({:rename_mac, mac, name}, state) do
     d = state[:devices] |> Map.get(mac)
     dev = state[:devices] |> Map.put(mac, d |> Map.put("name", name))
-    {:reply, :ok, %{state | devices: dev}}
+    {:noreply, %{state | devices: dev}}
   end
 
-  def handle_call({:rename_ip, ip, name}, _from, state) do
-    mac = state[:arps] |> Map.get(ip)
+  @impl true
+  def handle_cast({:rename_ip, ip, name}, state) do
+    mac = state[:arps] |> Enum.map(fn {iface, arr} -> arr |> Enum.map(fn {k,v} -> {k,v} end) end) |> List.flatten |> Map.new |> Map.get(ip)
     d = state[:devices] |> Map.get(mac)
-    state = state[:devices] |> Map.put(mac, d |> Map.put("name", name))
-    {:reply, :ok, state}
+    dvcs = state[:devices] |> Map.put(mac, d |> Map.put("name", name))
+    {:noreply, %{state | devices: dvcs}}
   end
 
   @impl true
-  def handle_call(_msg, _from, state) do
-    {:reply, :ok, state}
+  def handle_cast({:reorder, mac, ord}, state) do
+    d = state[:devices] |> Map.get(mac)
+    dev = state[:devices] |> Map.put(mac, d |> Map.put("ord", ord))
+    {:noreply, %{state | devices: dev}}
   end
 
   @impl true
-  def handle_cast(_msg, state) do
-    {:noreply, state}
+  def handle_cast({:submit, dvc, stream}, state) do
+    IO.inspect(state[:devices])
+    IO.inspect(dvc)
+
+    case state[:devices] |> Map.get(dvc) do
+      nil ->
+        IO.inspect(:nd)
+        {:noreply, state}
+
+      device ->
+        :gen_udp.send(state.socket, device["ip"], 7777, rgb_shift(stream, device) |> rgb_stream)
+        {:noreply, state}
+    end
+  end
+
+  def handle_call(:get_devices, _from, state) do
+    {:reply, state[:devices], state}
   end
 
   def query_http(ip) do
@@ -88,32 +126,51 @@ defmodule LambentEx.Scan.ESP8266x7777 do
   end
 
   defp rgb_shift(stream, device) do
-    chunked = Enum.chunk_by(stream, 3)
+    chunked = Enum.chunk_every(stream, 3)
+
     case device |> Map.get(:ord) do
-      :rgb -> chunked
-      :grb -> chunked |> Enum.map(fn [r, g, b] -> [g, r, b] end)
-      :rgbww -> chunked |> Enum.map(fn [r, g, b] -> [r, g, b, Enum.min(C.wrgb([r, g, b]), r)] end)
-      :rgbnw -> chunked |> Enum.map(fn [r, g, b] -> [r, g, b, C.wrgb([r, g, b])] end)
-      :rgbcw -> chunked |> Enum.map(fn [r, g, b] -> [r, g, b, Enum.min([C.wrgb([r, g, b]), b])] end)
-      :rgbaw -> chunked |> Enum.map(fn [r, g, b] -> [r, g, b, C.argb([r, g, b]), C.wrgb([r, g, b])] end)
-      :rgbxw -> chunked |> Enum.map(fn [r, g, b] -> [r, g, b, 0] end)
-      nil -> chunked
+      :rgb ->
+        chunked
+
+      :grb ->
+        chunked |> Enum.map(fn [r, g, b] -> [g, r, b] end)
+
+      :rgbww ->
+        chunked |> Enum.map(fn [r, g, b] -> [r, g, b, Enum.min(C.wrgb([r, g, b]), r)] end)
+
+      :rgbnw ->
+        chunked |> Enum.map(fn [r, g, b] -> [r, g, b, C.wrgb([r, g, b])] end)
+
+      :rgbcw ->
+        chunked |> Enum.map(fn [r, g, b] -> [r, g, b, Enum.min([C.wrgb([r, g, b]), b])] end)
+
+      :rgbaw ->
+        chunked |> Enum.map(fn [r, g, b] -> [r, g, b, C.argb([r, g, b]), C.wrgb([r, g, b])] end)
+
+      :rgbxw ->
+        chunked |> Enum.map(fn [r, g, b] -> [r, g, b, 0] end)
+
+      nil ->
+        chunked
     end
-    |> List.flatten
+    |> List.flatten()
   end
 
   defp rgb_stream(stream) do
-    stream # TOOD FIGURE OUT HOW TO RECREATE THE PYTHON PACKING
+    # TOOD FIGURE OUT HOW TO RECREATE THE PYTHON PACKING
+    stream
   end
 
-  @impl
-  def handle_cast({:submit, dvc, stream}, state) do
-    case state[:devices] |> Map.get(dvc) do
-      nil -> {:noreply, state}
-      device ->
-        :gen_udp.send(state.socket, device[:ip], 7777, rgb_shift(stream, device) |> rgb_stream)
-        {:noreply, state}
-    end
+
+
+  @impl true
+  def handle_call(_msg, _from, state) do
+    {:reply, :ok, state}
+  end
+
+  @impl true
+  def handle_cast(_msg, state) do
+    {:noreply, state}
   end
 
   @impl true
@@ -136,6 +193,7 @@ defmodule LambentEx.Scan.ESP8266x7777 do
           [_ip, _dev, _iface, "INCOMPLETE"] -> false
           [_ip, _dev, _iface, "FAILED"] -> false
           [] -> false
+          _otherwise -> false
         end
       end)
       |> Enum.map(fn x ->
@@ -153,7 +211,8 @@ defmodule LambentEx.Scan.ESP8266x7777 do
         end
       )
 
-    {:noreply, %{state | arps: neighbors}}
+    state = join_arps(neighbors, state)
+    {:noreply, state}
   end
 
   @impl true
@@ -182,6 +241,27 @@ defmodule LambentEx.Scan.ESP8266x7777 do
     state = join_new_instances_old(instances, state)
 
     {:noreply, state}
+  end
+
+  defp add_type(devices) do
+    devices |> Enum.map(fn {k,v} -> {k, v |> Map.put("type", "8266-7777")} end) |> Map.new
+  end
+
+  @impl true
+  def handle_info(:publish, state) do
+    Process.send_after(self(), :publish, :timer.seconds(2))
+    Phoenix.PubSub.broadcast(@pubsub_name, "scan-82667777", {:publish, state[:devices] |> add_type})
+    {:noreply, state}
+  end
+
+
+  defp join_arps(new, state) do
+    arps = state[:arps]
+
+    result = arps |> Map.merge(new, fn _k, v1, v2 ->
+      v1 |> Map.merge(v2)
+    end)
+    %{state | arps: result}
   end
 
   defp join_new_instances_old(new, state) do

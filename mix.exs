@@ -56,7 +56,11 @@ defmodule LambentEx.MixProject do
       #
       {:httpoison, "~> 1.8"},
       {:parent, "~> 0.12"},
-      {:net_address, "~> 0.3"}
+      {:net_address, "~> 0.3"},
+      {:phoenix_live_editable,
+        github: "andyl/phoenix_live_editable",
+        subdir: "apps/phoenix_live_editable",}
+
     ]
   end
 
