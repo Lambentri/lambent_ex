@@ -11,7 +11,7 @@ RUN apk update \
     && mix local.hex --force
 COPY . .
 RUN mix do deps.get, compile
-RUN npm install -g npm@6.14.4
+RUN npm install -g npm
 RUN cd ${phoenix_subdir}/assets \
     && npm ci \
     && cd ../ \
