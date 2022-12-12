@@ -13,7 +13,7 @@ COPY . .
 RUN mix do deps.get, compile
 RUN npm install -g npm@6.14.4
 RUN cd ${phoenix_subdir}/assets \
-    # =&& npm ci \
+    && npm ci \
     && cd ../ \
     && mix phx.digest \
     && mix assets.deploy
