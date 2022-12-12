@@ -4,58 +4,58 @@ defmodule LambentEx.Link do
 
   @pubsub_name LambentEx.PubSub
   @pubsub_topic "machine-"
+  @pubsub_topic_idx "links_idx"
 
-  @registry :lambent
+  @registry :lambent_links
 
   def start_link(opts) do
     GenServer.start_link(__MODULE__, opts, name: via_tuple("link-#{opts[:name]}"))
   end
 
-  def init(_opts) do
-    Phoenix.PubSub.subscribe(@pubsub_name, @pubsub_topic)
+  def init(opts) do
+    Process.send_after(self(), :publish, 50)
+    {:ok, opts} = Keyword.validate(opts, [:source, :target, :name])
+    Phoenix.PubSub.subscribe(@pubsub_name, @pubsub_topic <> opts[:source])
 
-    # gets overwritten
+    # todo
+    # publish-pause-siblings
+    # subscribe-pause-siblings
+
     {
       :ok,
-      %{}
+      %{
+        source: opts[:source],
+        target: opts[:target],
+        name: opts[:name],
+        enabled: true,
+      }
     }
   end
 
   defp via_tuple(name), do: {:via, Registry, {@registry, name}}
 
+  defp publish(state) do
+    %{
+      name: state[:name],
+      source: state[:source],
+      target: state[:target],
+      enabled: state[:enabled]
+    }
+  end
+
   def handle_info({:publish, data}, state) do
-    IO.puts("hhh")
-
-    dvcs =
-      [
-        {192, 168, 13, 203},
-        {192, 168, 13, 209},
-        {192, 168, 13, 211},
-        {192, 168, 13, 214},
-        {192, 168, 13, 215},
-        {192, 168, 13, 222},
-        {192, 168, 13, 225},
-        {192, 168, 13, 228},
-        {192, 168, 13, 230},
-        {192, 168, 13, 241}
-      ]
-
-    dvcs = [
-      "10:52:1c:02:8c:12",
-      "10:52:1c:02:d4:d2",
-      "18:fe:34:d4:7a:b5",
-      "68:c6:3a:a4:d3:b6",
-      "8c:aa:b5:1b:46:09",
-      "a4:cf:12:b3:fc:b6",
-      "ec:fa:bc:c0:96:98",
-
-    ]
-
-    for i <- dvcs do
-      LambentEx.Scan.ESP8266x7777.submit(i, data |> List.flatten)
+    case state[:enabled] do
+      true -> LambentEx.Scan.ESP8266x7777.submit(state[:target], data |> List.flatten)
+      false -> :ok
     end
-    #    IO.inspect(data)
 
+    {:noreply, state}
+  end
+
+  @impl true
+  def handle_info(:publish, state) do
+    Process.send_after(self(), :publish, 400)
+    Phoenix.PubSub.broadcast(@pubsub_name, @pubsub_topic_idx, {:publish, publish(state)})
     {:noreply, state}
   end
 end

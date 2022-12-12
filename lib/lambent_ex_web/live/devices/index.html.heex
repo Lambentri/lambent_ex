@@ -22,7 +22,7 @@
             <td><.ple id={k <> "ord"} ple_data={v["ord"]} ple_type="select" ple_options={options} ple_action="reorder"  ple_handler={LiveEdit} /></td>
             <td><%= v["type"] %></td>
             <td>
-                <button class="btn btn-circle">
+                <button class="btn btn-circle" phx-click="poke" phx-value-id={k}>
                     <i class="fa-solid fa-bolt-lightning"></i>
                 </button>
             </td>

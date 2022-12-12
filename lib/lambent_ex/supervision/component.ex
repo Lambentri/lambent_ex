@@ -9,8 +9,10 @@ defmodule LambentEx.ComponentSupervisor do
   @impl true
   def init(_init_arg) do
     children = [
+      {LambentEx.Meta, []},
       {LambentEx.Scan.ESP8266x7777, []},
       {LambentEx.MachineSupervisor, []},
+      {LambentEx.LinkSupervisor, []},
       {Registry, [keys: :unique, name: :lambent_machine]},
       {Registry, [keys: :unique, name: :lambent_links]},
       {Registry, [keys: :unique, name: :lambent_steps]},

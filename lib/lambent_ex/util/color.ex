@@ -113,4 +113,20 @@ defmodule LambentEx.Utils.Color do
 
     a |> iiy
   end
+
+  def cr, do: [255, 0,0]
+  def cg, do: [0, 255, 0]
+  def cb, do: [0,0, 255]
+  def cc, do: [0, 192, 192]
+  def cm, do: [192, 0, 192]
+  def cy, do: [192, 192, 0]
+  def ck, do: [0,0,0]
+
+  def cre, do: cr |> Stream.cycle |> Enum.take(900)
+  def cge, do: cg |> Stream.cycle |> Enum.take(900)
+  def cbe, do: cb |> Stream.cycle |> Enum.take(900)
+  def cce, do: cc |> Stream.cycle |> Enum.take(900)
+  def cme, do: cm |> Stream.cycle |> Enum.take(900)
+  def cye, do: cy |> Stream.cycle |> Enum.take(900)
+  def cke, do: ck |> Stream.cycle |> Enum.take(900)
 end

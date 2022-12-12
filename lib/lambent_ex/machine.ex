@@ -6,6 +6,7 @@ defmodule LambentEx.Machine do
 
   @pubsub_name LambentEx.PubSub
   @pubsub_topic "machine-"
+  @pubsub_topic_idx "machines_idx"
 
   @speeds %{
     # 1 => :THOU,
@@ -42,6 +43,7 @@ defmodule LambentEx.Machine do
 
   def init(opts) do
     Process.send_after(self(), :step, 100)
+    Process.send_after(self(), :publish, 50)
     {:ok, opts} = Keyword.validate(opts, [:step, :step_opts, :name, count: 300])
     cnt = opts[:count]
 
@@ -62,6 +64,7 @@ defmodule LambentEx.Machine do
 
     {:ok,
      %{
+       step: opts[:step],
        steps: pids,
        name: opts[:name],
        # todo configurable
@@ -97,7 +100,28 @@ defmodule LambentEx.Machine do
   # impls
 
   defp bmath(i, state) do
-    (i * state.bright_curr / 255.0) |> trunc
+    (i * state.bright_curr / 255.0) |> round
+  end
+
+  def stripstep(step) do
+    [_head, step] = step |> to_string |> String.split(".Steps.")
+    step
+  end
+
+  defp id(state) do
+    step = state[:step] |> stripstep
+    [step, "x", state[:name]] |> Enum.join("")
+  end
+
+  defp publish(state) do
+    %{
+      id: id(state),
+      name: state[:name],
+      step: state[:step] |> stripstep,
+      speed: state[:speed],
+      cnt: state[:cnt],
+      bgt: state[:bright_curr]
+    }
   end
 
   @impl true
@@ -107,13 +131,22 @@ defmodule LambentEx.Machine do
     state[:steps]
     |> Enum.map(&GenServer.cast(&1, :step))
 
-    data = state[:steps]
-    |> Enum.map(&GenServer.call(&1, :read))
-    |> Enum.map(fn x -> x |> Enum.map(fn y -> bmath(y, state) end) end)
-#
-#        |> IO.inspect()
+    data =
+      state[:steps]
+      |> Enum.map(&GenServer.call(&1, :read))
+      |> Enum.map(fn x -> x |> Enum.map(fn y -> bmath(y, state) end) end)
+
+    #
+    #        |> IO.inspect()
     Phoenix.PubSub.broadcast(@pubsub_name, @pubsub_topic <> state[:name], {:publish, data})
     {:noreply, bright_step(state)}
+  end
+
+  @impl true
+  def handle_info(:publish, state) do
+    Process.send_after(self(), :publish, 400)
+    Phoenix.PubSub.broadcast(@pubsub_name, @pubsub_topic_idx, {:publish, publish(state)})
+    {:noreply, state}
   end
 
   def handle_info({:EXIT, pid, err}, state) do

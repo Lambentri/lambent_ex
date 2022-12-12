@@ -1,0 +1,30 @@
+<div class="overflow-x-auto">
+    <table class="table table-zebra w-full">
+        <!-- head -->
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Source</th>
+            <th>Target</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- row 1 -->
+        <%= for {k,v} <- @links do %>
+        <tr>
+            <th><%= k %></th>
+            <td><%= v[:source] %></td>
+            <td><%= v[:target] %></td>
+            <td>
+                <%= if v[:enabled] == true do %>
+                <input type="checkbox" class="toggle" checked />
+                <% else %>
+                <input type="checkbox" class="toggle" />
+                <% end %>
+            </td>
+        </tr>
+        <% end %>
+        </tbody>
+    </table>
+</div>

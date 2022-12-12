@@ -20,8 +20,10 @@ defmodule LambentExWeb.Router do
     get "/", PageController, :home
 
     live "/cfg/devices", DevicesLive.Index, :index
-    live "/cfg/devices/:id", DevicesLive.Show, :show
-    live "/cfg/devices/:id/show/edit", DevicesLive.Show, :edit
+    live "/cfg/machines", MachinesLive.Index, :index
+    live "/cfg/links", LinksLive.Index, :index
+#    live "/cfg/devices/:id", DevicesLive.Show, :show
+#    live "/cfg/devices/:id/show/edit", DevicesLive.Show, :edit
   end
 
   # Other scopes may use custom stacks.

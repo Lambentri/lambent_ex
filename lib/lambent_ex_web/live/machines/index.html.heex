@@ -1,0 +1,41 @@
+<div class="overflow-x-auto">
+    <table class="table table-zebra w-full">
+        <!-- head -->
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Class</th>
+            <th>Name</th>
+            <th>Speed</th>
+            <th>Brightness</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- row 1 -->
+        <%= for {k,v} <- @machines do %>
+        <tr>
+            <th><%= k %></th>
+            <td><%= v[:step] %></td>
+            <td><%= v[:name] %></td>
+            <td><%= v[:speed] |> spd %></td>
+            <td><%= v[:bgt] |> bgt %> %</td>
+            <td>
+                <button class="btn btn-circle" phx-click="slower" phx-value-id={v[:name] }>
+                    <i class="fa-solid fa-2x fa-circle-minus"></i>
+                </button>
+                <button class="btn btn-circle" phx-click="faster" phx-value-id={v[:name] }>
+                    <i class="fa-solid fa-2x fa-circle-plus"></i>
+                </button>
+                <button class="btn btn-circle" phx-click="dimmer" phx-value-id={v[:name] }>
+                    <i class="fa-regular fa-2x fa-lightbulb"></i>
+                </button>
+                <button class="btn btn-circle" phx-click="brighter" phx-value-id={v[:name] }>
+                    <i class="fa-solid fa-2x fa-lightbulb"></i>
+                </button>
+            </td>
+        </tr>
+        <% end %>
+        </tbody>
+    </table>
+</div>

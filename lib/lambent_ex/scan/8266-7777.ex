@@ -4,6 +4,7 @@ defmodule LambentEx.Scan.ESP8266x7777 do
   require Logger
 
   alias LambentEx.Utils.Color, as: C
+  alias LambentEx.Meta, as: M
 
   @registry :lambent
   @s "ꙭ📡"
@@ -25,13 +26,7 @@ defmodule LambentEx.Scan.ESP8266x7777 do
      %{
        interfaces: interfaces,
        arps: %{},
-       devices: %{
-         "10:52:1c:02:d4:d2" => %{
-           "ip" => {192, 168, 13, 226},
-           "name" => "AssFace3k",
-           "ord" => :rgb
-         }
-       },
+       devices: %{},
        socket: socket
      }}
   end
@@ -56,6 +51,10 @@ defmodule LambentEx.Scan.ESP8266x7777 do
     via_tuple("scan_8266") |> GenServer.cast({:submit, dvc, stream})
   end
 
+  def poke(dvc) do
+    via_tuple("scan_8266") |> GenServer.cast({:poke, dvc})
+  end
+
   def devices() do
     via_tuple("scan_8266") |> GenServer.call(:get_devices)
   end
@@ -66,14 +65,24 @@ defmodule LambentEx.Scan.ESP8266x7777 do
   def handle_cast({:rename_mac, mac, name}, state) do
     d = state[:devices] |> Map.get(mac)
     dev = state[:devices] |> Map.put(mac, d |> Map.put("name", name))
+    # write to ets
+    M.put_name(mac, name)
     {:noreply, %{state | devices: dev}}
   end
 
   @impl true
   def handle_cast({:rename_ip, ip, name}, state) do
-    mac = state[:arps] |> Enum.map(fn {iface, arr} -> arr |> Enum.map(fn {k,v} -> {k,v} end) end) |> List.flatten |> Map.new |> Map.get(ip)
+    mac =
+      state[:arps]
+      |> Enum.map(fn {iface, arr} -> arr |> Enum.map(fn {k, v} -> {k, v} end) end)
+      |> List.flatten()
+      |> Map.new()
+      |> Map.get(ip)
+
     d = state[:devices] |> Map.get(mac)
     dvcs = state[:devices] |> Map.put(mac, d |> Map.put("name", name))
+
+    M.put_name(mac, name)
     {:noreply, %{state | devices: dvcs}}
   end
 
@@ -81,17 +90,15 @@ defmodule LambentEx.Scan.ESP8266x7777 do
   def handle_cast({:reorder, mac, ord}, state) do
     d = state[:devices] |> Map.get(mac)
     dev = state[:devices] |> Map.put(mac, d |> Map.put("ord", ord))
+
+    M.put_ord(mac, ord)
     {:noreply, %{state | devices: dev}}
   end
 
   @impl true
   def handle_cast({:submit, dvc, stream}, state) do
-    IO.inspect(state[:devices])
-    IO.inspect(dvc)
-
     case state[:devices] |> Map.get(dvc) do
       nil ->
-        IO.inspect(:nd)
         {:noreply, state}
 
       device ->
@@ -100,6 +107,23 @@ defmodule LambentEx.Scan.ESP8266x7777 do
     end
   end
 
+  @impl true
+  def handle_cast({:poke, dvc}, state) do
+    case state[:devices] |> Map.get(dvc) do
+      nil ->
+        {:noreply, state}
+
+      device ->
+        for {i,c} <- [{10, C.cre}, {100, C.cbe}, {200, C.cge}, {300, C.cce}, {400, C.cye}, {500, C.cme}, {600, C.cke}] do
+          Process.send_after(self(), {:send, device, c}, i)
+        end
+        {:noreply, state}
+    end
+
+    {:noreply, state}
+  end
+
+  @impl true
   def handle_call(:get_devices, _from, state) do
     {:reply, state[:devices], state}
   end
@@ -130,28 +154,28 @@ defmodule LambentEx.Scan.ESP8266x7777 do
 
     case device |> Map.get(:ord) do
       :rgb ->
-        chunked
+        chunked |> Enum.map(fn [r, g, b] -> [g,r,b] end)
 
       :grb ->
-        chunked |> Enum.map(fn [r, g, b] -> [g, r, b] end)
+        chunked |> Enum.map(fn [r, g, b] -> [r, g, b] end)
 
       :rgbww ->
-        chunked |> Enum.map(fn [r, g, b] -> [r, g, b, Enum.min(C.wrgb([r, g, b]), r)] end)
+        chunked |> Enum.map(fn [r, g, b] -> [g,r,b, Enum.min(C.wrgb([r, g, b]), r)] end)
 
       :rgbnw ->
-        chunked |> Enum.map(fn [r, g, b] -> [r, g, b, C.wrgb([r, g, b])] end)
+        chunked |> Enum.map(fn [r, g, b] -> [g,r,b, C.wrgb([r, g, b])] end)
 
       :rgbcw ->
-        chunked |> Enum.map(fn [r, g, b] -> [r, g, b, Enum.min([C.wrgb([r, g, b]), b])] end)
+        chunked |> Enum.map(fn [r, g, b] -> [g,r,b, Enum.min([C.wrgb([r, g, b]), b])] end)
 
       :rgbaw ->
-        chunked |> Enum.map(fn [r, g, b] -> [r, g, b, C.argb([r, g, b]), C.wrgb([r, g, b])] end)
+        chunked |> Enum.map(fn [r, g, b] -> [g,r,b, C.argb([r, g, b]), C.wrgb([r, g, b])] end)
 
       :rgbxw ->
-        chunked |> Enum.map(fn [r, g, b] -> [r, g, b, 0] end)
+        chunked |> Enum.map(fn [r, g, b] -> [g,r,b, 0] end)
 
       nil ->
-        chunked
+        chunked |> Enum.map(fn [r, g, b] -> [g,r,b] end)
     end
     |> List.flatten()
   end
@@ -160,8 +184,6 @@ defmodule LambentEx.Scan.ESP8266x7777 do
     # TOOD FIGURE OUT HOW TO RECREATE THE PYTHON PACKING
     stream
   end
-
-
 
   @impl true
   def handle_call(_msg, _from, state) do
@@ -243,24 +265,38 @@ defmodule LambentEx.Scan.ESP8266x7777 do
     {:noreply, state}
   end
 
+  def handle_info({:send, dvc, stream}, state) do
+
+    :gen_udp.send(state.socket, dvc["ip"], 7777, rgb_shift(stream, dvc) |> rgb_stream)
+    {:noreply, state}
+  end
+
   defp add_type(devices) do
-    devices |> Enum.map(fn {k,v} -> {k, v |> Map.put("type", "8266-7777")} end) |> Map.new
+    devices |> Enum.map(fn {k, v} -> {k, v |> Map.put("type", "8266-7777")} end) |> Map.new()
   end
 
   @impl true
   def handle_info(:publish, state) do
     Process.send_after(self(), :publish, :timer.seconds(2))
-    Phoenix.PubSub.broadcast(@pubsub_name, "scan-82667777", {:publish, state[:devices] |> add_type})
+
+    Phoenix.PubSub.broadcast(
+      @pubsub_name,
+      "scan-82667777",
+      {:publish, state[:devices] |> add_type}
+    )
+
     {:noreply, state}
   end
-
 
   defp join_arps(new, state) do
     arps = state[:arps]
 
-    result = arps |> Map.merge(new, fn _k, v1, v2 ->
-      v1 |> Map.merge(v2)
-    end)
+    result =
+      arps
+      |> Map.merge(new, fn _k, v1, v2 ->
+        v1 |> Map.merge(v2)
+      end)
+
     %{state | arps: result}
   end
 
@@ -281,8 +317,11 @@ defmodule LambentEx.Scan.ESP8266x7777 do
       |> Enum.reduce(fn x, y ->
         Map.merge(x, y, fn _k, v1, v2 -> v2 ++ v1 end)
       end)
+      |> Enum.map(fn {k,v} -> {k, v |> Map.put("name", M.get_name(k)) |> Map.put("ord", M.get_ord(k))}end)
+      |> Enum.filter(fn {k, _v} -> k != nil end)
+      |> Map.new
 
-    state |> Map.put(:devices, rez)
+    state |> Map.put(:devices, Map.merge(devices, rez))
   end
 
   def get_valid_interfaces() do
