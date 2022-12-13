@@ -8,6 +8,7 @@ defmodule LambentEx.Scan.ESP8266x7777 do
 
   @registry :lambent
   @s "ꙭ📡"
+  @p "ꙭ👉"
   @filtered_prefixes ["br", "docker", "lo"]
   @pubsub_name LambentEx.PubSub
 
@@ -114,6 +115,7 @@ defmodule LambentEx.Scan.ESP8266x7777 do
         {:noreply, state}
 
       device ->
+        Logger.notice("#{@p} Poking #{dvc}}")
         for {i,c} <- [{10, C.cre}, {100, C.cbe}, {200, C.cge}, {300, C.cce}, {400, C.cye}, {500, C.cme}, {600, C.cke}] do
           Process.send_after(self(), {:send, device, c}, i)
         end
