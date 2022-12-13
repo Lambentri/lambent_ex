@@ -91,6 +91,9 @@ defmodule LambentExWeb do
       # Shortcut for generating JS commands
       alias Phoenix.LiveView.JS
 
+      # Custom Components
+      import LambentEx.Components.Buttons
+
       # Routes generation with the ~p sigil
       unquote(verified_routes())
     end

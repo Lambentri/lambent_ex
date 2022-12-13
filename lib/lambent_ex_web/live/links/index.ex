@@ -17,7 +17,14 @@ defmodule LambentExWeb.LinksLive.Index do
      |> assign(
        :links,
        %{}
-     )}
+     )
+    |> assign(:link, nil)
+     |> assign(:nonew, :true)
+     |> assign(:newctrl, [
+       %{link: ~p"/cfg/links/new", icon: "plus"},
+       %{link: ~p"/cfg/links/bulk", icon: "bucket"}
+     ])
+    }
   end
 
   @impl true
@@ -30,6 +37,14 @@ defmodule LambentExWeb.LinksLive.Index do
     |> assign(:page_link, "Links")
     |> assign(:page_title, "Links")
     |> assign(:source, nil)
+  end
+
+  defp apply_action(socket, :new, _params) do
+    socket
+    |> assign(:id, :new)
+    |> assign(:page_link, "Links")
+    |> assign(:page_title, "New Link")
+    |> assign(:link, %LambentEx.Schema.Links{})
   end
 
   def handle_info({:publish, link}, socket) do

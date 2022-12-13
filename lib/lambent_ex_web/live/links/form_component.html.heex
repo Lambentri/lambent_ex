@@ -1,0 +1,18 @@
+<div>
+    <h1 class="text-3xl font-bold">New Link</h1>
+    <.simple_form
+    :let={f}
+    for={@changeset}
+    id="links-form"
+    phx-target={@myself}
+    phx-change="validate"
+    phx-submit="save"
+    >
+    <.input field={{f, :name}} type="text" label="Name" options={1..2} />
+    <.input field={{f, :source_id}} type="select" label="Source" options={1..2} />
+    <.input field={{f, :target_id}} type="select" label="Target" options={1..2} />
+    <:actions>
+        <.button phx-disable-with="Saving...">Create Link</.button>
+    </:actions>
+    </.simple_form>
+</div>
