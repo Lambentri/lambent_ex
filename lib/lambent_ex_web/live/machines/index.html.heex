@@ -13,6 +13,11 @@
         </thead>
         <tbody>
         <!-- row 1 -->
+        <%= if Enum.empty?(@machines) do %>
+        <tr>
+            <th colspan="6">No machines yet, Create some above</th>
+        </tr>
+        <% end %>
         <%= for {k,v} <- @machines do %>
         <tr>
             <th><%= k %></th>

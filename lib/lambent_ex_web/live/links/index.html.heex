@@ -11,6 +11,11 @@
         </thead>
         <tbody>
         <!-- row 1 -->
+        <%= if Enum.empty?(@links) do %>
+        <tr>
+            <th colspan="6">No links yet, create some using the + above</th>
+        </tr>
+        <% end %>
         <%= for {k,v} <- @links do %>
         <tr>
             <th><%= k %></th>
