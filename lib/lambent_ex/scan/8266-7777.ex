@@ -284,7 +284,7 @@ defmodule LambentEx.Scan.ESP8266x7777 do
     Phoenix.PubSub.broadcast(
       @pubsub_name,
       "scan-82667777",
-      {:publish, state[:devices] |> add_type}
+      {:devices_pub, state[:devices] |> add_type}
     )
 
     {:noreply, state}

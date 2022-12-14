@@ -42,7 +42,7 @@ defmodule LambentExWeb.MachinesLive.Index do
     |> assign(:source, nil)
   end
 
-  def handle_info({:publish, machine}, socket) do
+  def handle_info({:machines_pub, machine}, socket) do
 #    IO.inspect(machine)
     {:noreply, socket |> assign(:machines, socket.assigns.machines |> Map.put(machine[:id], machine))}
   end

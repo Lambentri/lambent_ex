@@ -34,6 +34,16 @@ defmodule LambentEx.LinksLive.FormComponent do
         {:noreply, assign(socket, :changeset, changeset)}
     end
 #    save_testyyyy(socket, socket.assigns.action, testyyyy_params)
-:ok
+    :ok
+  end
+
+  def for_selectm(array) do
+    array |> Enum.map(fn {k,v} -> {v[:id], v[:name]} end)
+  end
+
+  def for_selectd(array) do
+    IO.inspect(array)
+    array |> Enum.map(fn {iface,entries} -> entries |> Enum.map(fn {k, v} -> {v["name"], k} end) end) |> List.flatten |> Enum.sort_by(fn {k, v} -> k end)
+#    [1,2,3]
   end
 end

@@ -19,7 +19,7 @@ defmodule LambentExWeb.DevicesLive.Index do
     {:noreply, apply_action(socket, socket.assigns.live_action, params)}
   end
 
-  def handle_info({:publish, devices}, socket) do
+  def handle_info({:devices_pub, devices}, socket) do
     {:noreply, socket |> assign(:devices, devices)}
   end
 

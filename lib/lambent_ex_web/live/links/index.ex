@@ -10,15 +10,16 @@ defmodule LambentExWeb.LinksLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
+    Phoenix.PubSub.subscribe(@pubsub_name, "machines_idx")
+    Phoenix.PubSub.subscribe(@pubsub_name, "scan-82667777")
     Phoenix.PubSub.subscribe(@pubsub_name, "links_idx")
 
     {:ok,
      socket
-     |> assign(
-       :links,
-       %{}
-     )
-    |> assign(:link, nil)
+     |> assign(:links, %{} )
+     |> assign(:machines, %{})
+     |> assign(:devices, %{})
+     |> assign(:link, nil)
      |> assign(:nonew, :true)
      |> assign(:newctrl, [
        %{link: ~p"/cfg/links/new", icon: "plus"},
@@ -47,7 +48,15 @@ defmodule LambentExWeb.LinksLive.Index do
     |> assign(:link, %LambentEx.Schema.Links{})
   end
 
-  def handle_info({:publish, link}, socket) do
+  def handle_info({:machines_pub, machine}, socket) do
+    {:noreply, socket |> assign(:machines, socket.assigns.machines |> Map.put(machine[:name], machine))}
+  end
+
+  def handle_info({:links_pub, link}, socket) do
     {:noreply, socket |> assign(:links, socket.assigns.links |> Map.put(link[:name], link))}
+  end
+
+  def handle_info({:devices_pub, device}, socket) do
+    {:noreply, socket |> assign(:devices, socket.assigns.devices |> Map.put(device[:mac], device))}
   end
 end

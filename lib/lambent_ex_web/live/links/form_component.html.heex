@@ -9,8 +9,8 @@
     phx-submit="save"
     >
     <.input field={{f, :name}} type="text" label="Name" options={1..2} />
-    <.input field={{f, :source_id}} type="select" label="Source" options={1..2} />
-    <.input field={{f, :target_id}} type="select" label="Target" options={1..2} />
+    <.input field={{f, :source_id}} type="select" label="Source" options={@machines |> for_selectm} />
+    <.input field={{f, :target_id}} type="select" label="Target" options={@devices |> for_selectd} />
     <:actions>
         <.button phx-disable-with="Saving...">Create Link</.button>
     </:actions>

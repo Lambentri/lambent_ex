@@ -145,7 +145,7 @@ defmodule LambentEx.Machine do
   @impl true
   def handle_info(:publish, state) do
     Process.send_after(self(), :publish, 400)
-    Phoenix.PubSub.broadcast(@pubsub_name, @pubsub_topic_idx, {:publish, publish(state)})
+    Phoenix.PubSub.broadcast(@pubsub_name, @pubsub_topic_idx, {:machines_pub, publish(state)})
     {:noreply, state}
   end
 
