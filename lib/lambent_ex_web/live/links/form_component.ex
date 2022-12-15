@@ -2,6 +2,8 @@ defmodule LambentEx.LinksLive.FormComponent do
   use LambentExWeb, :live_component
 
   alias LambentEx.Schema.Links
+  alias LambentEx.Names
+
   @impl true
   def update(%{link: link} = assigns, socket) do
     changeset = Links.change_link(link)
@@ -34,7 +36,12 @@ defmodule LambentEx.LinksLive.FormComponent do
         {:noreply, assign(socket, :changeset, changeset)}
     end
 #    save_testyyyy(socket, socket.assigns.action, testyyyy_params)
-    :ok
+#    :ok
+  end
+
+  def handle_event("new-name", _params, socket) do
+    changeset = socket.assigns.changeset |> Ecto.Changeset.change(name: Names.name())
+    {:noreply, assign(socket, :changeset, changeset)}
   end
 
   def for_selectm(array) do

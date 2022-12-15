@@ -10,9 +10,9 @@ defmodule LambentEx.Schema.Links do
   embedded_schema do
     field :name, :string
     field :source_id, :string
-    field :source_type, Ecto.Enum, values: [:machine, :anchor]
+    field :source_type, Ecto.Enum, values: [:machine, :anchor], default: :machine
     field :target_id, :string
-    field :target_type, Ecto.Enum, values: [:device, :group]
+    field :target_type, Ecto.Enum, values: [:device, :group], default: :device
   end
 
   def change_link(%Links{} = link, attrs \\ %{}) do
@@ -22,9 +22,16 @@ defmodule LambentEx.Schema.Links do
   def update_links(%Links{} = link, attrs) do
     IO.puts("actual write")
 
-    link
+
+    res = link
     |> Links.changeset(attrs)
-    |> IO.inspect
+
+    IO.inspect([name: res.changes[:name], source: res.changes[:source_id], target: res.changes[:target_id]])
+
+    case res.valid? do
+      true -> {:ok, LambentEx.LinkSupervisor.start_child(res.changes[:name],  res.changes[:source_id],  res.changes[:target_id])}
+      false -> {:error, res}
+    end
   end
   
   def changeset(source, params) do

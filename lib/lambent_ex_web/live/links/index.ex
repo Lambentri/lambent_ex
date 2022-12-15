@@ -16,16 +16,15 @@ defmodule LambentExWeb.LinksLive.Index do
 
     {:ok,
      socket
-     |> assign(:links, %{} )
+     |> assign(:links, %{})
      |> assign(:machines, %{})
      |> assign(:devices, %{})
      |> assign(:link, nil)
-     |> assign(:nonew, :true)
+     |> assign(:nonew, true)
      |> assign(:newctrl, [
        %{link: ~p"/cfg/links/new", icon: "plus"},
        %{link: ~p"/cfg/links/bulk", icon: "bucket"}
-     ])
-    }
+     ])}
   end
 
   @impl true
@@ -49,7 +48,8 @@ defmodule LambentExWeb.LinksLive.Index do
   end
 
   def handle_info({:machines_pub, machine}, socket) do
-    {:noreply, socket |> assign(:machines, socket.assigns.machines |> Map.put(machine[:name], machine))}
+    {:noreply,
+     socket |> assign(:machines, socket.assigns.machines |> Map.put(machine[:name], machine))}
   end
 
   def handle_info({:links_pub, link}, socket) do
@@ -57,6 +57,18 @@ defmodule LambentExWeb.LinksLive.Index do
   end
 
   def handle_info({:devices_pub, device}, socket) do
-    {:noreply, socket |> assign(:devices, socket.assigns.devices |> Map.put(device[:mac], device))}
+    {:noreply,
+     socket |> assign(:devices, socket.assigns.devices |> Map.put(device[:mac], device))}
+  end
+
+  def handle_event("toggle", params, socket) do
+    LambentEx.Link.toggle(params["tgt"])
+    {:noreply, socket}
+  end
+
+  def handle_event("quit", params, socket) do
+    LambentEx.Link.quit(params["tgt"])
+    links = socket.assigns.links |> Map.delete(params["tgt"])
+    {:noreply, socket |> assign(:links, links)}
   end
 end

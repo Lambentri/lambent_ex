@@ -6,8 +6,8 @@ defmodule LambentEx.LinkSupervisor do
   end
 
   def start_child(name, source, target) do
-    spec = {LambentEx.Link, name: name, source: source, target: target}
-    DynamicSupervisor.start_child(__MODULE__, spec)
+    spec = {LambentEx.Link, [name: name, source: source, target: target]}
+    DynamicSupervisor.start_child(__MODULE__, spec) |> IO.inspect
   end
 
   def abort_child(pid) do

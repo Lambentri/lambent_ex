@@ -73,7 +73,8 @@ defmodule LambentEx.Machine do
        bright_curr: 255,
        bright_delay: 0,
        bright_mvmul: 2,
-       cnt: cnt
+       cnt: cnt,
+       started: DateTime.utc_now
      }}
   end
 

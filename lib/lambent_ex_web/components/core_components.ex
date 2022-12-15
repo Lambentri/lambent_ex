@@ -262,6 +262,8 @@ defmodule LambentExWeb.CoreComponents do
   attr :rest, :global, include: ~w(autocomplete disabled form max maxlength min minlength
                                    pattern placeholder readonly required size step)
   slot :inner_block
+  slot :icon_pre
+  slot :icon_post
 
   def input(%{field: {f, field}} = assigns) do
     assigns
@@ -339,21 +341,23 @@ defmodule LambentExWeb.CoreComponents do
 
   def input(assigns) do
     ~H"""
-    <div phx-feedback-for={@name}>
+    <div phx-feedback-for={@name} class="form-control">
       <.label for={@id}><%= @label %></.label>
-      <input
-        type={@type}
-        name={@name}
-        id={@id || @name}
-        value={@value}
-        class={[
-          input_border(@errors),
-          "mt-2 block w-full rounded-lg border-zinc-300 py-[7px] px-[11px]",
-          "text-zinc-900 focus:outline-none focus:ring-4 sm:text-sm sm:leading-6",
-          "phx-no-feedback:border-zinc-300 phx-no-feedback:focus:border-zinc-400 phx-no-feedback:focus:ring-zinc-800/5"
-        ]}
-        {@rest}
-      />
+      <div class="input-group">
+        <%= render_slot(@icon_pre) %>
+        <input
+          type={@type}
+          name={@name}
+          id={@id || @name}
+          value={@value}
+          class={[
+            input_border(@errors),
+            "input input-bordered"
+          ]}
+          {@rest}
+        />
+        <%= render_slot(@icon_post) %>
+      </div>
       <.error :for={msg <- @errors}><%= msg %></.error>
     </div>
     """

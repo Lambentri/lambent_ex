@@ -8,7 +8,14 @@
     phx-change="validate"
     phx-submit="save"
     >
-    <.input field={{f, :name}} type="text" label="Name" options={1..2} />
+
+    <.input field={{f, :name}} type="text" label="Name" options={1..2}>
+        <:icon_pre>
+            <btn class="btn btn-accent" phx-click="new-name" phx-target={@myself}>
+                <i class="fa-solid fa-arrows-rotate"></i>
+            </btn>
+        </:icon_pre>
+    </.input>
     <.input field={{f, :source_id}} type="select" label="Source" options={@machines |> for_selectm} />
     <.input field={{f, :target_id}} type="select" label="Target" options={@devices |> for_selectd} />
     <:actions>
