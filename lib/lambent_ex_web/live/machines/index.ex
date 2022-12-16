@@ -27,7 +27,14 @@ defmodule LambentExWeb.MachinesLive.Index do
   @impl true
   def mount(_params, _session, socket) do
     Phoenix.PubSub.subscribe(@pubsub_name, "machines_idx")
-    {:ok, socket |> assign(:machines, %{})}
+    {:ok, socket
+          |> assign(:machine, nil)
+          |> assign(:machines, %{})
+          |> assign(:nonew, true)
+          |> assign(:newctrl, [
+      %{link: ~p"/cfg/machines/new", icon: "plus"},
+    ])
+    }
   end
 
   @impl true
@@ -40,6 +47,14 @@ defmodule LambentExWeb.MachinesLive.Index do
     |> assign(:page_link, "Machines")
     |> assign(:page_title, "Machine Library")
     |> assign(:source, nil)
+  end
+
+  defp apply_action(socket, :new, _params) do
+    socket
+    |> assign(:id, :new)
+    |> assign(:page_link, "Machines")
+    |> assign(:page_title, "New Machine")
+    |> assign(:machine, %LambentEx.Schema.Machines{})
   end
 
   def handle_info({:machines_pub, machine}, socket) do

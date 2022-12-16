@@ -1,4 +1,20 @@
 <div class="overflow-x-auto">
+    <%= if @live_action in [:new, :edit] do %>
+    <.modal return_to={~p"/cfg/machines"} id="new"
+    :if={@live_action in [:new, :edit]}
+    show
+    on_cancel={JS.navigate(~p"/cfg/machines")}>
+    <.live_component
+    module={LambentEx.MachinesLive.FormComponent}
+    id={:new}
+    title={@page_title}
+    action={@live_action}
+    machine={@machine}
+    return_to={~p"/cfg/machines"}
+    navigate={~p"/cfg/machines"}
+    />
+    </.modal>
+    <% end %>
     <table class="table table-zebra w-full">
         <!-- head -->
         <thead>

@@ -40,3 +40,4 @@ defmodule LambentEx.Schema.Links do
     |> validate_required([:name, :source_id, :source_type, :target_id, :target_type])
   end
 end
+

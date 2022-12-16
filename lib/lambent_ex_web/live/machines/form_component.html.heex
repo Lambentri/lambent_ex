@@ -1,0 +1,17 @@
+<div>
+    <h1 class="text-3xl font-bold">New Machine</h1>
+    <.simple_form
+    :let={f}
+    for={@changeset}
+    id="machines-form"
+    phx-target={@myself}
+    phx-change="validate"
+    phx-submit="save"
+    >
+
+
+<:actions>
+    <.button phx-disable-with="Saving...">Create Machine</.button>
+</:actions>
+</.simple_form>
+</div>
