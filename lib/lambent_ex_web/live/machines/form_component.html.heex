@@ -8,10 +8,17 @@
     phx-change="validate"
     phx-submit="save"
     >
-
+    <div class="flex">
+        <div class="flex-none">
+            <.input field={{f, :type}} type="select" label="Class" options={values} />
+        </div>
+        <div class="flex-auto">
+            The Form For <%= @changeset.changes |> Map.get(:type)%>
+        </div>
+    </div>
 
 <:actions>
-    <.button phx-disable-with="Saving...">Create Machine</.button>
+    <.button phx-disable-with="Creating...">Create Machine</.button>
 </:actions>
 </.simple_form>
 </div>

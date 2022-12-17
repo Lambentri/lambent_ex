@@ -52,6 +52,7 @@ defmodule LambentEx.MixProject do
       {:telemetry_poller, "~> 1.0"},
       {:gettext, "~> 0.20"},
       {:jason, "~> 1.2"},
+      {:poison, "~> 5.0"},
       {:plug_cowboy, "~> 2.5"},
       #
       {:httpoison, "~> 1.8"},
@@ -63,6 +64,7 @@ defmodule LambentEx.MixProject do
 
       {:ecto, "~> 3.0"},
       {:phoenix_ecto, "~> 4.0"},
+      {:polymorphic_embed, "~> 2.0.0"},
     ]
   end
 

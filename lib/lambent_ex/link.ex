@@ -1,6 +1,6 @@
 defmodule LambentEx.Link do
   @moduledoc false
-  use Parent.GenServer
+  use GenServer
 
   @pubsub_name LambentEx.PubSub
   @pubsub_topic "machine-"
