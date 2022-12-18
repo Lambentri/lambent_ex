@@ -5,8 +5,8 @@ defmodule LambentEx.MachineSupervisor do
     DynamicSupervisor.start_link(__MODULE__, init_arg, name: __MODULE__)
   end
 
-  def start_child(step, opts, name, count \\ 300) do
-    spec = {LambentEx.Machine, step: step, step_opts: opts, count: count, name: name}
+  def start_child(step, opts, name, options, count \\ 300) do
+    spec = {LambentEx.Machine, [step: step, step_opts: opts, count: count, name: name] ++ options}
     DynamicSupervisor.start_child(__MODULE__, spec)
   end
 

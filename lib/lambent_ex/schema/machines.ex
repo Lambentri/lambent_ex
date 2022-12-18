@@ -9,7 +9,7 @@ defmodule LambentEx.Schema.Machines do
 
   @values %{
     gen_solid: "Solid",
-    gen_solid_h: "Solid",
+    gen_solid_h: "Solid (HSV)",
     gen_color_cycle: "Color Cycler",
     gen_chaser: "Chaser",
     gen_chaser_h: "Chaser (HSV)",
@@ -24,20 +24,25 @@ defmodule LambentEx.Schema.Machines do
     rcv_gsi: "GSI Receiver"
   }
 
+  @steps %{
+    #    gen_solid: "Solid",
+    gen_solid_h: LambentEx.Machine.Steps.Solid,
+    #    gen_color_cycle: "Color Cycler",
+    #    gen_chaser: "Chaser",
+    gen_chaser_h: LambentEx.Machine.Steps.Chase
+  }
+
   embedded_schema do
     field(:name, :string)
 
-    field(:type, Ecto.Enum,
-      values:
-       @values |> Map.keys()
-    )
+    field(:type, Ecto.Enum, values: @values |> Map.keys())
 
     field(:class, PolymorphicEmbed,
       types: [
-#        gen_solid: LambentEx.Schema.Steps.Solid,
-#        gen_solid_h: LambentEx.Schema.Steps.Solid,
+        #        gen_solid: LambentEx.Schema.Steps.Solid,
+        gen_solid_h: LambentEx.Schema.Steps.Solid,
         gen_chaser: LambentEx.Schema.Steps.Chase,
-        gen_chaser_h: LambentEx.Schema.Steps.Chase,
+        gen_chaser_h: LambentEx.Schema.Steps.Chase
       ],
       on_type_not_found: :raise,
       on_replace: :update
@@ -57,5 +62,27 @@ defmodule LambentEx.Schema.Machines do
 
   def change_machine(%Machines{} = machine, attrs \\ %{}) do
     Machines.changeset(machine, attrs)
+  end
+
+  def update_machines(%Machines{} = machines, attrs) do
+    res = machines |> Machines.changeset(attrs)
+    IO.inspect(res)
+
+    opts = case res.changes[:type] do
+      :gen_solid -> [single: true]
+      :gen_solid_h -> [single: true]
+      _otherwise -> []
+    end
+
+    opts = []
+    case res.valid? do
+      true -> {:ok, LambentEx.MachineSupervisor.start_child(
+        Map.get(@steps, res.changes[:type]),
+        res.changes[:class] |> Map.from_struct,
+        res.changes[:name],
+        opts
+      )}
+      false -> {:error, res}
+    end
   end
 end

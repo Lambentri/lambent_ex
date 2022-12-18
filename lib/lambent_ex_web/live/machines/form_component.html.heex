@@ -28,16 +28,22 @@
                 <%= :gen_chaser -> %> rgb
                 <%= :gen_chaser_h -> %>
                     <%= polymorphic_embed_inputs_for f, :class, :gen_chaser_h, fn gch -> %>
-                    <.input field={{gch, :h}} type="range" min="0" max="255" label="Hue" class="range range-priamry range-lg" />
-                    <div class="w-full flex justify-between text-xs px-2 mb-4" style={"color: #{@rgb}"}>
-                        <span>&#9608;</span>
-                        <span>&#9608;</span>
-                        <span>&#9608;</span>
-                        <span>&#9608;</span>
-                        <span>&#9608;</span>
-                        <span>&#9608;</span>
-                        <span>&#9608;</span>
+                    <div class="flex">
+                        <div class="flex-auto">
+                            <.input field={{gch, :h}} type="range" min="0" max="255" label="Hue" class="range range-priamry range-lg" />
+                            <div class="w-full flex justify-between text-xs px-2 mb-4" style={"color: #{@rgb}"}>
+                            <span>&#9608;</span>
+                            <span>&#9608;</span>
+                            <span>&#9608;</span>
+                            <span>&#9608;</span>
+                            <span>&#9608;</span>
+                            <span>&#9608;</span>
+                            <span>&#9608;</span>
+                            </div>
+                        </div>
+                        <div class="flex-none text-5xl p-8"><%= @h %></div>
                     </div>
+
                     <div tabindex="0" class="collapse collapse-arrow border border-base-300 bg-base-100 rounded-box">
                         <div class="collapse-title text-xl font-medium">
                             Extra Configuration Values
@@ -51,6 +57,36 @@
                     </div>
                     <% end %>
 
+                <%= :gen_solid_h -> %>
+                    <%= polymorphic_embed_inputs_for f, :class, :gen_solid_h, fn gsh -> %>
+                        <div class="flex">
+                            <div class="flex-auto">
+                                <.input field={{gsh, :h}} type="range" min="0" max="255" label="Hue" class="range range-priamry range-lg" />
+                                <div class="w-full flex justify-between text-xs px-2 mb-4" style={"color: #{@rgb}"}>
+                                <span>&#9608;</span>
+                                <span>&#9608;</span>
+                                <span>&#9608;</span>
+                                <span>&#9608;</span>
+                                <span>&#9608;</span>
+                                <span>&#9608;</span>
+                                <span>&#9608;</span>
+                            </div>
+                        </div>
+                        <div class="flex-none text-5xl p-8"><%= @h %></div>
+                    </div>
+
+                    <div tabindex="0" class="collapse collapse-arrow border border-base-300 bg-base-100 rounded-box">
+                        <div class="collapse-title text-xl font-medium">
+                            Extra Configuration Values
+                        </div>
+                        <div class="collapse-content">
+                            <p>
+                                <.input field={{gsh, :s}} type="range" min="0" max="255" label="Saturation" class="range range-priamry range-lg" />
+                                <.input field={{gsh, :v}} type="range" min="0" max="255" label="Saturation" class="range range-priamry range-lg" />
+                            </p>
+                        </div>
+                    </div>
+                <% end %>
             <% end %>
         </div>
     </div>

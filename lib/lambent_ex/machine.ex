@@ -44,17 +44,24 @@ defmodule LambentEx.Machine do
   def init(opts) do
     Process.send_after(self(), :step, 100)
     Process.send_after(self(), :publish, 50)
-    {:ok, opts} = Keyword.validate(opts, [:step, :step_opts, :name, count: 300])
+    {:ok, opts} = Keyword.validate(opts, [:step, :step_opts, :name, single: false, count: 300])
     cnt = opts[:count]
 
-    specs =
-      1..cnt
+    specs = case opts[:single] do
+      true -> # only start one, and then step & expand to meet cnt
+        [Parent.child_spec(
+          {opts[:step], opts[:step_opts] |> Map.put(:id, 0) |> Map.put(:name, opts[:name])},
+          id: 0
+        )]
+      false -> # start cnt children
+      0..cnt
       |> Enum.map(fn id ->
         Parent.child_spec(
           {opts[:step], opts[:step_opts] |> Map.put(:id, id) |> Map.put(:name, opts[:name])},
           id: id
         )
       end)
+    end
 
     pids =
       specs
@@ -74,6 +81,7 @@ defmodule LambentEx.Machine do
        bright_delay: 0,
        bright_mvmul: 2,
        cnt: cnt,
+       single: opts[:single],
        started: DateTime.utc_now
      }}
   end
@@ -132,10 +140,17 @@ defmodule LambentEx.Machine do
     state[:steps]
     |> Enum.map(&GenServer.cast(&1, :step))
 
-    data =
-      state[:steps]
-      |> Enum.map(&GenServer.call(&1, :read))
-      |> Enum.map(fn x -> x |> Enum.map(fn y -> bmath(y, state) end) end)
+    data = state[:steps]
+           |> Enum.map(&GenServer.call(&1, :read))
+           |> Enum.map(fn x -> x |> Enum.map(fn y -> bmath(y, state) end) end)
+
+    data = case state[:single] do
+      true -> # expand single to fill cnt
+        data |> List.flatten |> Stream.cycle |> Enum.take(state[:cnt] * 3)
+      false -> # do nothing
+        data
+    end
+
 
     #
     #        |> IO.inspect()

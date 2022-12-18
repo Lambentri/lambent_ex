@@ -20,9 +20,6 @@ defmodule LambentEx.Schema.Links do
   end
 
   def update_links(%Links{} = link, attrs) do
-    IO.puts("actual write")
-
-
     res = link
     |> Links.changeset(attrs)
 

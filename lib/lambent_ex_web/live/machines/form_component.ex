@@ -32,15 +32,30 @@ defmodule LambentEx.MachinesLive.FormComponent do
     IO.inspect(changeset)
     keys = case changeset.changes[:type] do
       :gen_chaser_h -> changeset.changes[:class] |> hue_keys
+      :gen_solid_h -> changeset.changes[:class] |> hue_keys
       _otherwise -> []
     end
 
     socket = case keys do
       [r: r, g: g, b: b] -> socket |> assign(:rgb, "rgb(#{r}, #{g}, #{b})")
+      [r: r, g: g, b: b, h: h] -> socket |> assign(:rgb, "rgb(#{r}, #{g}, #{b})") |> assign(:h, h)
       [] -> socket
     end
 
     {:noreply, assign(socket, :changeset, changeset)}
+  end
+
+  def handle_event("save", %{"machines" => machines_params}, socket) do
+    case Machines.update_machines(socket.assigns.machine, machines_params) do
+      {:ok, _machine} ->
+        {:noreply,
+          socket
+          |> put_flash(:info, "Machine Created Successfully")
+          |> push_navigate(to: socket.assigns.navigate)}
+
+      {:error, %Ecto.Changeset{} = changeset} ->
+        {:noreply, assign(socket, :changeset, changeset)}
+    end
   end
 
   def handle_event("new-name", _params, socket) do
@@ -55,6 +70,6 @@ defmodule LambentEx.MachinesLive.FormComponent do
   defp hue_keys(nil), do: []
   defp hue_keys(%{h: h, s: s, v: v}) do
     [r,g,b] = LambentEx.Utils.Color.hsv2rgb([h,s,v])
-    [r: r, g: g, b: b]
+    [r: r, g: g, b: b, h: h]
   end
 end
