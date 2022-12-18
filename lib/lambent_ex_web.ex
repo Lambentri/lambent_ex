@@ -94,6 +94,9 @@ defmodule LambentExWeb do
       # Custom Components
       import LambentEx.Components.Buttons
 
+      # Polymorphic Embed
+      import PolymorphicEmbed.HTML.Form
+
       # Routes generation with the ~p sigil
       unquote(verified_routes())
     end

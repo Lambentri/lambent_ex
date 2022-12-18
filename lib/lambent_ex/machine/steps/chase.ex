@@ -1,6 +1,6 @@
 defmodule LambentEx.Machine.Steps.Chase.Cfg do
   #   @enforce_keys [:h]
-  defstruct [:h, s: 255, v: 0, spacing: 30, fadeby: 15, id: 0, status: 0, window: 0]
+  defstruct [:h, s: 255, v: 255, spacing: 30, fadeby: 18, id: 0, status: 0, window: 0]
 end
 
 defmodule LambentEx.Machine.Steps.Chase do

@@ -9,11 +9,49 @@
     phx-submit="save"
     >
     <div class="flex">
-        <div class="flex-none">
-            <.input field={{f, :type}} type="select" label="Class" options={values} />
+        <div class="flex-none p-2">
+            <.input field={{f, :name}} type="text" label="Name">
+            <:icon_pre>
+                <btn class="btn btn-accent" phx-click="new-name" phx-target={@myself}>
+                    <i class="fa-solid fa-arrows-rotate"></i>
+                </btn>
+            </:icon_pre>
+            </.input>
+            <.input field={{f, :type}} type="select" label="Machine Type" options={values} prompt="Select" />
         </div>
-        <div class="flex-auto">
-            The Form For <%= @changeset.changes |> Map.get(:type)%>
+        <div class="flex-auto p-2">
+            <%= case  @changeset.changes |> Map.get(:type) do %>
+            <%= nil -> %>
+                    <h2 class="text-4xl text-bold text-accent">
+                    Select a machine type on the left to configure them.
+                    </h2>
+                <%= :gen_chaser -> %> rgb
+                <%= :gen_chaser_h -> %>
+                    <%= polymorphic_embed_inputs_for f, :class, :gen_chaser_h, fn gch -> %>
+                    <.input field={{gch, :h}} type="range" min="0" max="255" label="Hue" class="range range-priamry range-lg" />
+                    <div class="w-full flex justify-between text-xs px-2 mb-4" style={"color: #{@rgb}"}>
+                        <span>&#9608;</span>
+                        <span>&#9608;</span>
+                        <span>&#9608;</span>
+                        <span>&#9608;</span>
+                        <span>&#9608;</span>
+                        <span>&#9608;</span>
+                        <span>&#9608;</span>
+                    </div>
+                    <div tabindex="0" class="collapse collapse-arrow border border-base-300 bg-base-100 rounded-box">
+                        <div class="collapse-title text-xl font-medium">
+                            Extra Configuration Values
+                        </div>
+                        <div class="collapse-content">
+                            <p>
+                                <.input field={{gch, :s}} type="range" min="0" max="255" label="Saturation" class="range range-priamry range-lg" />
+                                <.input field={{gch, :v}} type="range" min="0" max="255" label="Saturation" class="range range-priamry range-lg" />
+                            </p>
+                        </div>
+                    </div>
+                    <% end %>
+
+            <% end %>
         </div>
     </div>
 

@@ -34,8 +34,10 @@ defmodule LambentEx.Schema.Machines do
 
     field(:class, PolymorphicEmbed,
       types: [
-        static: RoomSanctum.Configuration.Queries.AQI,
-        chase: RoomSanctum.Configuration.Queries.Calendar
+#        gen_solid: LambentEx.Schema.Steps.Solid,
+#        gen_solid_h: LambentEx.Schema.Steps.Solid,
+        gen_chaser: LambentEx.Schema.Steps.Chase,
+        gen_chaser_h: LambentEx.Schema.Steps.Chase,
       ],
       on_type_not_found: :raise,
       on_replace: :update

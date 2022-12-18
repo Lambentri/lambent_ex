@@ -9,7 +9,7 @@
     phx-submit="save"
     >
 
-    <.input field={{f, :name}} type="text" label="Name" options={1..2}>
+    <.input field={{f, :name}} type="text" label="Name" >
         <:icon_pre>
             <btn class="btn btn-accent" phx-click="new-name" phx-target={@myself}>
                 <i class="fa-solid fa-arrows-rotate"></i>

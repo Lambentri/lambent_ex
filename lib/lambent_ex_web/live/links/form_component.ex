@@ -29,7 +29,7 @@ defmodule LambentEx.LinksLive.FormComponent do
       {:ok, _link} ->
         {:noreply,
           socket
-          |> put_flash(:info, "Testyyyy updated successfully")
+          |> put_flash(:info, "Link Created Successfully")
           |> push_navigate(to: socket.assigns.navigate)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
