@@ -29,7 +29,6 @@ defmodule LambentEx.MachinesLive.FormComponent do
       |> Machines.change_machine(machine_params)
       |> Map.put(:action, :validate)
 
-    IO.inspect(changeset)
     keys = case changeset.changes[:type] do
       :gen_chaser_h -> changeset.changes[:class] |> hue_keys
       :gen_solid_h -> changeset.changes[:class] |> hue_keys

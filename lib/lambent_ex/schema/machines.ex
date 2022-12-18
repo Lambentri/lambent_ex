@@ -21,7 +21,8 @@ defmodule LambentEx.Schema.Machines do
     gen_scape: "Scape",
     gen_twinkler: "LA3PortTwinler",
     rcv_fft: "FFT Receiver",
-    rcv_gsi: "GSI Receiver"
+    rcv_gsi: "GSI Receiver",
+    rcv_hyp: "Hyperion Receiver",
   }
 
   @steps %{
@@ -66,7 +67,6 @@ defmodule LambentEx.Schema.Machines do
 
   def update_machines(%Machines{} = machines, attrs) do
     res = machines |> Machines.changeset(attrs)
-    IO.inspect(res)
 
     opts = case res.changes[:type] do
       :gen_solid -> [single: true]

@@ -151,9 +151,6 @@ defmodule LambentEx.Machine do
         data
     end
 
-
-    #
-    #        |> IO.inspect()
     Phoenix.PubSub.broadcast(@pubsub_name, @pubsub_topic <> state[:name], {:publish, data})
     {:noreply, bright_step(state)}
   end

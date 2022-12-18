@@ -23,8 +23,6 @@ defmodule LambentEx.Schema.Links do
     res = link
     |> Links.changeset(attrs)
 
-    IO.inspect([name: res.changes[:name], source: res.changes[:source_id], target: res.changes[:target_id]])
-
     case res.valid? do
       true -> {:ok, LambentEx.LinkSupervisor.start_child(res.changes[:name],  res.changes[:source_id],  res.changes[:target_id])}
       false -> {:error, res}

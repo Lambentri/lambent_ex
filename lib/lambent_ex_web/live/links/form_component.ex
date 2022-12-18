@@ -49,8 +49,6 @@ defmodule LambentEx.LinksLive.FormComponent do
   end
 
   def for_selectd(array) do
-    IO.inspect(array)
     array |> Enum.map(fn {iface,entries} -> entries |> Enum.map(fn {k, v} -> {v["name"], k} end) end) |> List.flatten |> Enum.sort_by(fn {k, v} -> k end)
-#    [1,2,3]
   end
 end
