@@ -7,10 +7,12 @@ defmodule LambentEx.MachineSupervisor do
 
   def start_child(step, opts, name, options, count \\ 300) do
     spec = {LambentEx.Machine, [step: step, step_opts: opts, count: count, name: name] ++ options}
-    DynamicSupervisor.start_child(__MODULE__, spec)
+    IO.inspect(spec)
+    DynamicSupervisor.start_child(__MODULE__, spec) |> IO.inspect
   end
 
   def abort_child(pid) do
+    IO.inspect("here")
     DynamicSupervisor.terminate_child(__MODULE__, pid)
   end
 

@@ -44,7 +44,7 @@ defmodule LambentEx.Machine do
   def init(opts) do
     Process.send_after(self(), :step, 100)
     Process.send_after(self(), :publish, 50)
-    {:ok, opts} = Keyword.validate(opts, [:step, :step_opts, :name, single: false, count: 300])
+    {:ok, opts} = Keyword.validate(opts, [:step, :step_opts, :name, single: false, persist: false, count: 300])
     cnt = opts[:count]
 
     specs = case opts[:single] do
@@ -82,7 +82,8 @@ defmodule LambentEx.Machine do
        bright_mvmul: 2,
        cnt: cnt,
        single: opts[:single],
-       started: DateTime.utc_now
+       started: DateTime.utc_now,
+       persist: opts[:persist],
      }}
   end
 
@@ -104,6 +105,14 @@ defmodule LambentEx.Machine do
 
   def dimmer(id) do
     via_tuple("machine-#{id}") |> GenServer.cast(:dimmer)
+  end
+
+  def persist(id) do
+    via_tuple("machine-#{id}") |> GenServer.cast(:persist)
+  end
+
+  def quit(id) do
+    via_tuple("machine-#{id}") |> GenServer.cast(:quit)
   end
 
   # impls
@@ -129,7 +138,8 @@ defmodule LambentEx.Machine do
       step: state[:step] |> stripstep,
       speed: state[:speed],
       cnt: state[:cnt],
-      bgt: state[:bright_curr]
+      bgt: state[:bright_curr],
+      persist: state[:persist],
     }
   end
 
@@ -275,6 +285,17 @@ defmodule LambentEx.Machine do
   @impl true
   def handle_cast(:dimmer, state) do
     {:noreply, state |> Map.put(:bright_tgt, do_dimmer(state.bright_tgt))}
+  end
+
+  @impl true
+  def handle_cast(:persist, state) do
+    {:noreply, state |> Map.put(:persist, !state.persist)}
+  end
+
+  @impl
+  def handle_cast(:quit, state) do
+    LambentEx.MachineSupervisor.abort_child(self())
+    {:noreply, state}
   end
 
   def handle_call(_msg, _from, state) do

@@ -82,6 +82,17 @@ defmodule LambentExWeb.MachinesLive.Index do
     {:noreply, socket}
   end
 
+  def handle_event("quit", params, socket) do
+    LambentEx.Machine.quit(params["tgt"])
+    machines = socket.assigns.machines |> Map.delete(params["tgt"])
+    {:noreply, socket |> assign(:machines, machines)}
+  end
+
+  def handle_event("persist", data, socket) do
+    LambentEx.Machine.persist(data["tgt"])
+    {:noreply, socket}
+  end
+
   defp spd(val) do
     @speeds[val]
   end

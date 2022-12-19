@@ -87,6 +87,37 @@
                         </div>
                     </div>
                 <% end %>
+
+                <%= :gen_rainbow -> %>
+                <%= polymorphic_embed_inputs_for f, :class, :gen_rainbow, fn gr -> %>
+                <div tabindex="0" class="collapse collapse-arrow border border-base-300 bg-base-100 rounded-box">
+                    <div class="collapse-title text-xl font-medium">
+                        Extra Configuration Values
+                    </div>
+                    <div class="collapse-content">
+                        <p>
+                            <.input field={{gr, :modulo}} type="range" min="0" max="255" label="Saturation" class="range range-priamry range-lg" />
+                        </p>
+                    </div>
+                </div>
+                <% end %>
+
+
+                <%= :gen_rainbow_s -> %>
+                <%= polymorphic_embed_inputs_for f, :class, :gen_rainbow_s, fn grs -> %>
+                <div tabindex="0" class="collapse collapse-arrow border border-base-300 bg-base-100 rounded-box">
+                    <div class="collapse-title text-xl font-medium">
+                        Extra Configuration Values
+                    </div>
+                    <div class="collapse-content">
+                        <p>
+                            <.input field={{grs, :modulo}} type="range" min="0" max="255" label="Saturation" class="range range-priamry range-lg" />
+                        </p>
+                    </div>
+                </div>
+                <% end %>
+
+
             <% end %>
         </div>
     </div>
