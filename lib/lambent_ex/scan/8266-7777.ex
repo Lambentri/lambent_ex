@@ -154,26 +154,26 @@ defmodule LambentEx.Scan.ESP8266x7777 do
   defp rgb_shift(stream, device) do
     chunked = Enum.chunk_every(stream, 3)
 
-    case device |> Map.get(:ord) do
-      :rgb ->
+    case device |> Map.get("ord") do
+      "rgb" ->
         chunked |> Enum.map(fn [r, g, b] -> [g,r,b] end)
 
-      :grb ->
+      "grb" ->
         chunked |> Enum.map(fn [r, g, b] -> [r, g, b] end)
 
-      :rgbww ->
+      "rgbww" ->
         chunked |> Enum.map(fn [r, g, b] -> [g,r,b, Enum.min(C.wrgb([r, g, b]), r)] end)
 
-      :rgbnw ->
+      "rgbnw" ->
         chunked |> Enum.map(fn [r, g, b] -> [g,r,b, C.wrgb([r, g, b])] end)
 
-      :rgbcw ->
+      "rgbcw" ->
         chunked |> Enum.map(fn [r, g, b] -> [g,r,b, Enum.min([C.wrgb([r, g, b]), b])] end)
 
-      :rgbaw ->
+      "rgbaw" ->
         chunked |> Enum.map(fn [r, g, b] -> [g,r,b, C.argb([r, g, b]), C.wrgb([r, g, b])] end)
 
-      :rgbxw ->
+      "rgbxw" ->
         chunked |> Enum.map(fn [r, g, b] -> [g,r,b, 0] end)
 
       nil ->

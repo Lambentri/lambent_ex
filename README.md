@@ -1,5 +1,46 @@
 # LambentEx
 
+A Reimplementation of Lambent Aether 4, in Elixir
+
+## Information
+
+### New Features
+
+- Device implementation is 100x more robust in device discovery on-net
+- ~Devices can be virtually grouped~
+- Individual Machine Brightness Controls
+- ~Links can target groups~ 
+
+### Device Support
+
+- ESP8266-WS2812-I2S
+- ##### TODO
+- Home-Assistant Singles/Strips
+
+### Built-in Machines
+
+- Solid (RGB/HSV)
+- Rainbow (Cycling/Solid)
+- Chaser (Single, Multi)
+- ##### TODO
+- Growth
+- Rocker
+- Scapes
+- Twinkles
+- GSI Receiver
+- FFT Receiver
+- Hyperion Receiver
+- Apollo Receiver
+
+
+## Running
+```
+docker pull lambentri/labmentex
+docker run lambentex
+```
+
+## Development
+
 To start your Phoenix server:
 
   * Install dependencies with `mix deps.get`
