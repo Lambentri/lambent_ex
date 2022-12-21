@@ -9,7 +9,7 @@ defmodule LambentEx.Scan.ESP8266x7777 do
   @registry :lambent
   @s "ꙭ📡"
   @p "ꙭ👉"
-  @filtered_prefixes ["br", "docker", "lo"]
+  @filtered_prefixes ["br", "docker", "lo", "cni", "flannel"]
   @pubsub_name LambentEx.PubSub
 
   def start_link(opts) do
