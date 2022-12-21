@@ -15,5 +15,5 @@ build-master:
 
 
 
-    only:
+  only:
     - master
