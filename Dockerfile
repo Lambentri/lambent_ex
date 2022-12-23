@@ -23,8 +23,12 @@ RUN mix release ${app_name} \
 FROM alpine:latest
 ARG project_id
 RUN apk update \
-    && apk --no-cache --update add bash ca-certificates openssl-dev libgcc libstdc++ libcrypto1.1
+    && apk --no-cache --update add bash ca-certificates openssl-dev libgcc libstdc++ libcrypto1.1 iproute2
 EXPOSE ${PORT}
 WORKDIR /opt/app
 COPY --from=0 /opt/release .
+RUN mkdir -p /opt/app/meta &&  \
+    cd /opt/app/meta  \
+    && /opt/app/bin/start_server eval ":dets.open_file(:lex_metadata, [type: :set])"
+ENV PHX_SERVER=true
 CMD exec /opt/app/bin/start_server start

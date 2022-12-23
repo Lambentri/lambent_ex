@@ -35,9 +35,11 @@ A Reimplementation of Lambent Aether 4, in Elixir
 
 ## Running
 ```
-docker pull lambentri/labmentex
-docker run lambentex
+docker pull lambentri/lambentex
+docker run --net=host -d --restart always --mount type=bind,source"$(pwd)"/lex_metadata,target=/opt/app/lex_metadata lambentri/lambentex 
 ```
+
+Then load host:4000 in your web browser
 
 ## Development
 

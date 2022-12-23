@@ -4,7 +4,9 @@ defmodule LambentEx.Meta do
   @table :lex_metadata
 
   def init(arg) do
+    File.cd("meta")
     {:ok, table} = :dets.open_file(@table, [type: :set])
+    File.cd("..")
 
     {:ok, %{table: table}}
   end
