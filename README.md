@@ -23,9 +23,10 @@ A Reimplementation of Lambent Aether 4, in Elixir
 - Rainbow (Cycling/Solid)
 - Chaser (Single, Multi)
 - Rocker
-- ##### TODO
-- Growth
 - Scapes
+- ##### TODO
+- Firefly
+- Growth
 - Twinkles
 - GSI Receiver
 - FFT Receiver

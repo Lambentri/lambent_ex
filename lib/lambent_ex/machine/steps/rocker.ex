@@ -14,35 +14,6 @@ defmodule LambentEx.Machine.Steps.Rocker do
   alias LambentEx.Machine.Steps.Rocker.Cfg
   alias LambentEx.Utils.Color
 
-  # TODO. pass in the cfg here, destructured to grab the s/v instead of hardcoding 255
-  def generate_status_hsvs(hues, linger, true) do
-    # dark
-    hues
-    |> Enum.map(fn h ->
-      [
-        0..255 |> Enum.map(fn x -> [h, 255, x] end),
-        0..linger |> Enum.map(fn _x -> [h, 255, 255] end),
-        255..0 |> Enum.map(fn x -> [h, 255, x] end)
-      ]
-      |> Enum.concat()
-    end)
-    |> Enum.concat()
-  end
-
-  def generate_status_hsvs(hues, linger, false) do
-    # light
-    hues
-    |> Enum.map(fn h ->
-      [
-        0..255 |> Enum.map(fn x -> [h, x, 255] end),
-        0..linger |> Enum.map(fn _x -> [h, 255, 255] end),
-        255..0 |> Enum.map(fn x -> [h, x, 255] end)
-      ]
-      |> Enum.concat()
-    end)
-    |> Enum.concat()
-  end
-
   defp n(opts) do
     "#{@cls}-#{opts[:name]}-#{opts[:id]}"
   end
@@ -76,5 +47,34 @@ defmodule LambentEx.Machine.Steps.Rocker do
 
   def handle_call(:read, _from, state) do
     {:reply, read(state), state}
+  end
+
+  # TODO. pass in the cfg here, destructured to grab the s/v instead of hardcoding 255
+  def generate_status_hsvs(hues, linger, true) do
+    # dark
+    hues
+    |> Enum.map(fn h ->
+      [
+        0..255 |> Enum.map(fn x -> [h, 255, x] end),
+        0..linger |> Enum.map(fn _x -> [h, 255, 255] end),
+        255..0 |> Enum.map(fn x -> [h, 255, x] end)
+      ]
+      |> Enum.concat()
+    end)
+    |> Enum.concat()
+  end
+
+  def generate_status_hsvs(hues, linger, false) do
+    # light
+    hues
+    |> Enum.map(fn h ->
+      [
+        0..255 |> Enum.map(fn x -> [h, x, 255] end),
+        0..linger |> Enum.map(fn _x -> [h, 255, 255] end),
+        255..0 |> Enum.map(fn x -> [h, x, 255] end)
+      ]
+      |> Enum.concat()
+    end)
+    |> Enum.concat()
   end
 end
