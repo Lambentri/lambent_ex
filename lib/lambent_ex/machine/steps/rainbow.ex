@@ -9,7 +9,7 @@ defmodule LambentEx.Machine.Steps.Rainbow do
   #  @behaviour LambentEx.Machine.Steps
 
   @registry :lambent_steps
-  @cls :chase
+  @cls :rainbow
 
   alias LambentEx.Machine.Steps.Rainbow.Cfg
   alias LambentEx.Utils.Color
