@@ -22,9 +22,9 @@ A Reimplementation of Lambent Aether 4, in Elixir
 - Solid (RGB/HSV)
 - Rainbow (Cycling/Solid)
 - Chaser (Single, Multi)
+- Rocker
 - ##### TODO
 - Growth
-- Rocker
 - Scapes
 - Twinkles
 - GSI Receiver
@@ -36,7 +36,7 @@ A Reimplementation of Lambent Aether 4, in Elixir
 ## Running
 ```
 docker pull lambentri/lambentex
-docker run --net=host -d --restart always --mount type=bind,source"$(pwd)"/lex_metadata,target=/opt/app/lex_metadata lambentri/lambentex 
+docker run --net=host -d --restart always --mount type=bind,source="$(pwd)"/meta,target=/opt/app/meta lambentri/lambentex 
 ```
 
 Then load host:4000 in your web browser
