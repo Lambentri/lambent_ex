@@ -84,6 +84,7 @@ defmodule LambentEx.Machine do
        single: opts[:single],
        started: DateTime.utc_now,
        persist: opts[:persist],
+       full_opts: opts,
      }}
   end
 
@@ -136,6 +137,7 @@ defmodule LambentEx.Machine do
       id: id(state),
       name: state[:name],
       step: state[:step] |> stripstep,
+      opts: state[:full_opts] |> Keyword.update(:persist, true, fn _ -> state[:persist] end),
       speed: state[:speed],
       cnt: state[:cnt],
       bgt: state[:bright_curr],

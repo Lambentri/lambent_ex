@@ -39,15 +39,10 @@ defmodule LambentEx.Machine.Steps.Scape do
   end
 
   defp read(state) do
-#    if state.id == 0 do
-#      IO.inspect(state.status)
-#      IO.inspect([state.hues |> Enum.at(state.status), state.s, state.v])
-#    end
     Color.hsv2rgb([state.hues |> Enum.at(state.status), state.s, state.v])
   end
 
   defp do_status_step(current, target, size \\ 1) do
-#    IO.inspect({current, target})
     if (current - target) |> abs > size do
       cond do
         current > target -> current - size
@@ -80,7 +75,7 @@ defmodule LambentEx.Machine.Steps.Scape do
 
 
   def generate_hue_range(low, high) when low > high,
-    do: Enum.to_list(low..255) ++ Enum.to_list(0..high) |> IO.inspect()
+    do: Enum.to_list(low..255) ++ Enum.to_list(0..high)
   def generate_hue_range(low, high), do: low..high |> Enum.to_list()
 
 end
