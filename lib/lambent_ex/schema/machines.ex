@@ -8,18 +8,20 @@ defmodule LambentEx.Schema.Machines do
   alias LambentEx.Schema.Machines
 
   @values %{
-    gen_solid: "Solid",
-    gen_solid_h: "Solid (HSV)",
-    gen_color_cycle: "Color Cycler",
-    gen_chaser: "Chaser",
-    gen_chaser_h: "Chaser (HSV)",
+    gen_solid: "Solid", #
+    gen_solid_h: "Solid (HSV)", #
+    gen_color_cycle: "Color Cycler", #
+    gen_chaser: "Chaser", #
+    gen_chaser_h: "Chaser (HSV)", #
     gen_chaser_m: "Multi-Chaser",
     gen_chaser_mh: "Multi-Chaser (HSV)",
     gen_growth: "Growth",
-    gen_rocker: "Rocker",
-    gen_rainbow: "Rainbow",
-    gen_rainbow_s: "Rainbow (Solid)",
-    gen_scape: "Scape",
+    gen_rocker: "Rocker", #
+    gen_rocker_s: "Rocker (Solid)", #
+    gen_rainbow: "Rainbow", #
+    gen_rainbow_s: "Rainbow (Solid)", #
+    gen_scape: "Scape", #
+    gen_scape_s: "Scape (Solid)", #
     gen_twinkler: "LA3PortTwinler",
     rcv_fft: "FFT Receiver",
     rcv_gsi: "GSI Receiver",
@@ -34,6 +36,10 @@ defmodule LambentEx.Schema.Machines do
     gen_chaser_h: LambentEx.Machine.Steps.Chase,
     gen_rainbow: LambentEx.Machine.Steps.Rainbow,
     gen_rainbow_s: LambentEx.Machine.Steps.Rainbow,
+    gen_rocker: LambentEx.Machine.Steps.Rocker,
+    gen_rocker_s: LambentEx.Machine.Steps.Rocker,
+    gen_scape: LambentEx.Machine.Steps.Scape,
+    gen_scape_s: LambentEx.Machine.Steps.Scape,
   }
 
   embedded_schema do
@@ -47,6 +53,10 @@ defmodule LambentEx.Schema.Machines do
         gen_solid_h: LambentEx.Schema.Steps.Solid,
         gen_chaser: LambentEx.Schema.Steps.Chase,
         gen_chaser_h: LambentEx.Schema.Steps.Chase,
+        gen_rocker: LambentEx.Schema.Steps.Rocker,
+        gen_rocker_s: LambentEx.Schema.Steps.Rocker,
+        gen_scape: LambentEx.Schema.Steps.Scape,
+        gen_scape_s: LambentEx.Schema.Steps.Scape,
         gen_rainbow: LambentEx.Schema.Steps.Rainbow,
         gen_rainbow_s: LambentEx.Schema.Steps.Rainbow
       ],
@@ -79,6 +89,8 @@ defmodule LambentEx.Schema.Machines do
         :gen_solid -> [single: true]
         :gen_solid_h -> [single: true]
         :gen_rainbow_s -> [single: true]
+        :gen_rocker_s -> [single: true]
+        :gen_scape_s -> [single: true]
         _otherwise -> []
       end |> IO.inspect()
 

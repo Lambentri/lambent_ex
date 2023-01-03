@@ -96,7 +96,7 @@
                     </div>
                     <div class="collapse-content">
                         <p>
-                            <.input field={{gr, :modulo}} type="range" min="0" max="255" label="Saturation" class="range range-priamry range-lg" />
+                            <.input field={{gr, :modulo}} type="range" min="0" max="255" label="Modulo" class="range range-priamry range-lg" />
                         </p>
                     </div>
                 </div>
@@ -111,7 +111,175 @@
                     </div>
                     <div class="collapse-content">
                         <p>
-                            <.input field={{grs, :modulo}} type="range" min="0" max="255" label="Saturation" class="range range-priamry range-lg" />
+                            <.input field={{grs, :modulo}} type="range" min="0" max="255" label="Modulo" class="range range-priamry range-lg" />
+                        </p>
+                    </div>
+                </div>
+                <% end %>
+
+
+                <%= :gen_rocker -> %>
+                <%= polymorphic_embed_inputs_for f, :class, :gen_rocker, fn grr -> %>
+                <div class="flex">
+                    <div class="flex-auto">
+                        <.input field={{grr, :h}} type="hidden" value={[]} />
+                        <.input field={{grr, :h_sel}} type="range" min="0" max="255" label="Hue (Selecting)" class="range range-priamry range-lg" />
+                        <div class="w-full flex justify-between text-xs px-2 mb-4" style={"color: #{@rgb}"}>
+                        <span>&#9608;</span>
+                        <span>&#9608;</span>
+                        <span>&#9608;</span>
+                        <span>&#9608;</span>
+                        <span>&#9608;</span>
+                        <span>&#9608;</span>
+                        <span>&#9608;</span>
+                        </div>
+                    </div>
+                    <div class="flex-none text-5xl p-8"><%= @h %></div>
+                    <div class="flex-none py-10">
+                        <btn class="btn btn-accent btn-lg" phx-click="add-sel" phx-target={@myself} phx-value-data={grr.data.h_sel}>
+                            <i class="fa-solid fa-plus"></i>
+                        </btn>
+                    </div>
+                </div>
+                <div tabindex="0" class="collapse collapse-arrow border border-base-300 bg-base-100 rounded-box">
+                    <div class="collapse-title text-xl font-medium">
+                        Extra Configuration Values
+                    </div>
+                    <div class="collapse-content">
+                        <p>
+                            <.input field={{grr, :dark}} type="checkbox" label="Linger" class="range range-priamry range-lg" />
+                            <.input field={{grr, :linger}} type="number" min="0" max="20000" label="Linger" class="range range-priamry range-lg" />
+                            <.input field={{grr, :s}} type="range" min="0" max="255" label="Saturation" class="range range-priamry range-lg" />
+                            <.input field={{grr, :v}} type="range" min="0" max="255" label="Value" class="range range-priamry range-lg" />
+                        </p>
+                    </div>
+                </div>
+                <% end %>
+
+                <%= :gen_rocker_s -> %>
+                <%= polymorphic_embed_inputs_for f, :class, :gen_rocker_s, fn grrs -> %>
+                <div class="flex">
+                    <div class="flex-auto">
+                        <.input field={{grrs, :h}} type="hidden" value={[]} />
+                        <.input field={{grrs, :h_sel}} type="range" min="0" max="255" label="Hue (Selecting)" class="range range-priamry range-lg" />
+                        <div class="w-full flex justify-between text-xs px-2 mb-4" style={"color: #{@rgbs}"}>
+                        <span>&#9608;</span>
+                        <span>&#9608;</span>
+                        <span>&#9608;</span>
+                        <span>&#9608;</span>
+                        <span>&#9608;</span>
+                        <span>&#9608;</span>
+                        <span>&#9608;</span>
+                        </div>
+                    </div>
+                    <div class="flex-none text-5xl p-8"><%= @h %></div>
+                </div>
+                <div tabindex="0" class="collapse collapse-arrow border border-base-300 bg-base-100 rounded-box">
+                    <div class="collapse-title text-xl font-medium">
+                        Extra Configuration Values
+                    </div>
+                    <div class="collapse-content">
+                        <p>
+                            <.input field={{grrs, :dark}} type="checkbox" min="0" max="20000" label="Linger" class="range range-priamry range-lg" />
+                            <.input field={{grrs, :linger}} type="number" min="0" max="20000" label="Linger" class="range range-priamry range-lg" />
+                            <.input field={{grrs, :s}} type="range" min="0" max="255" label="Saturation" class="range range-priamry range-lg" />
+                            <.input field={{grrs, :v}} type="range" min="0" max="255" label="Value" class="range range-priamry range-lg" />
+                        </p>
+                    </div>
+                </div>
+                <% end %>
+
+
+                <%= :gen_scape -> %>
+                <%= polymorphic_embed_inputs_for f, :class, :gen_scape, fn gsc -> %>
+                <div class="flex">
+                    <div class="flex-auto">
+                        <.input field={{gsc, :h_sel}} type="range" min="0" max="255" label="Hue (Low)" class="range range-priamry range-lg" />
+                        <div class="w-full flex justify-between text-xs px-2 mb-4" style={"color: #{@rgbs |> Enum.at(1)}"}>
+                            <span>&#9608;</span>
+                            <span>&#9608;</span>
+                            <span>&#9608;</span>
+                            <span>&#9608;</span>
+                            <span>&#9608;</span>
+                            <span>&#9608;</span>
+                            <span>&#9608;</span>
+                        </div>
+                    </div>
+                    <div class="flex-none text-5xl p-8"><%= @hs |> Enum.at(1) %></div>
+                </div>
+                <div class="flex">
+                    <div class="flex-auto">
+                        <.input field={{gsc, :h_h}} type="range" min="0" max="255" label="Hue (High)" class="range range-priamry range-lg" />
+                        <div class="w-full flex justify-between text-xs px-2 mb-4" style={"color: #{@rgbs |> Enum.at(0)}"}>
+                            <span>&#9608;</span>
+                            <span>&#9608;</span>
+                            <span>&#9608;</span>
+                            <span>&#9608;</span>
+                            <span>&#9608;</span>
+                            <span>&#9608;</span>
+                            <span>&#9608;</span>
+                        </div>
+                    </div>
+                    <div class="flex-none text-5xl p-8"><%= @hs |> Enum.at(0) %></div>
+                </div>
+                <div tabindex="0" class="collapse collapse-arrow border border-base-300 bg-base-100 rounded-box">
+                    <div class="collapse-title text-xl font-medium">
+                        Extra Configuration Values
+                    </div>
+                    <div class="collapse-content">
+                        <p>
+                            <.input field={{gsc, :dark}} type="checkbox" min="0" max="20000" label="Linger" class="range range-priamry range-lg" />
+                            <.input field={{gsc, :linger}} type="number" min="0" max="20000" label="Linger" class="range range-priamry range-lg" />
+                            <.input field={{gsc, :s}} type="range" min="0" max="255" label="Saturation" class="range range-priamry range-lg" />
+                            <.input field={{gsc, :v}} type="range" min="0" max="255" label="Value" class="range range-priamry range-lg" />
+                        </p>
+                    </div>
+                </div>
+                <% end %>
+
+
+                <%= :gen_scape_s -> %>
+                <%= polymorphic_embed_inputs_for f, :class, :gen_scape_s, fn gscs -> %>
+                <div class="flex">
+                    <div class="flex-auto">
+                        <.input field={{gscs, :h_l}} type="range" min="0" max="255" label="Hue (Low)" class="range range-priamry range-lg" />
+                        <div class="w-full flex justify-between text-xs px-2 mb-4" style={"color: #{@rgbs |> Enum.at(1)}"}>
+                            <span>&#9608;</span>
+                            <span>&#9608;</span>
+                            <span>&#9608;</span>
+                            <span>&#9608;</span>
+                            <span>&#9608;</span>
+                            <span>&#9608;</span>
+                            <span>&#9608;</span>
+                        </div>
+                    </div>
+                    <div class="flex-none text-5xl p-8"><%= @hs |> Enum.at(1) %></div>
+                </div>
+                <div class="flex">
+                    <div class="flex-auto">
+                        <.input field={{gscs, :h_h}} type="range" min="0" max="255" label="Hue (High)" class="range range-priamry range-lg" />
+                        <div class="w-full flex justify-between text-xs px-2 mb-4" style={"color: #{@rgbs |> Enum.at(0)}"}>
+                            <span>&#9608;</span>
+                            <span>&#9608;</span>
+                            <span>&#9608;</span>
+                            <span>&#9608;</span>
+                            <span>&#9608;</span>
+                            <span>&#9608;</span>
+                            <span>&#9608;</span>
+                        </div>
+                    </div>
+                    <div class="flex-none text-5xl p-8"><%= @hs |> Enum.at(0) %></div>
+                </div>
+                <div tabindex="0" class="collapse collapse-arrow border border-base-300 bg-base-100 rounded-box">
+                    <div class="collapse-title text-xl font-medium">
+                        Extra Configuration Values
+                    </div>
+                    <div class="collapse-content">
+                        <p>
+                            <.input field={{gscs, :dark}} type="checkbox" min="0" max="20000" label="Linger" class="range range-priamry range-lg" />
+                            <.input field={{gscs, :linger}} type="number" min="0" max="20000" label="Linger" class="range range-priamry range-lg" />
+                            <.input field={{gscs, :s}} type="range" min="0" max="255" label="Saturation" class="range range-priamry range-lg" />
+                            <.input field={{gscs, :v}} type="range" min="0" max="255" label="Value" class="range range-priamry range-lg" />
                         </p>
                     </div>
                 </div>

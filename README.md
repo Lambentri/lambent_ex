@@ -9,6 +9,7 @@ A Reimplementation of Lambent Aether 4, in Elixir
 - Device implementation is 100x more robust in device discovery on-net
 - ~Devices can be virtually grouped~
 - Individual Machine Brightness Controls
+- Machine Persistence / ~TODO Link Persistence~
 - ~Links can target groups~ 
 
 ### Device Support
