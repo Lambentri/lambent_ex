@@ -122,6 +122,12 @@ defmodule LambentEx.MachinesLive.FormComponent do
 
   defp hue_keys(nil), do: []
 
+  defp hue_keys(%{h: h, s: s, v: v}) do
+    [r, g, b] = LambentEx.Utils.Color.hsv2rgb([h, s, v])
+    [r: r, g: g, b: b, h: h]
+  end
+
+
   defp hue_keys(%{h: h, s: s, v: v, h_sel: h_sel}) do
     [r, g, b] = LambentEx.Utils.Color.hsv2rgb([h, s, v])
     [r: r, g: g, b: b, h: h]

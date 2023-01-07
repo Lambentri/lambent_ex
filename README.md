@@ -6,23 +6,24 @@ A Reimplementation of Lambent Aether 4, in Elixir
 
 ### New Features
 
-- Device implementation is 100x more robust in device discovery on-net
+- 8266ws2812i2s device implementation is 100x more robust in device discovery on-net ~avoids booming current ones too often~
 - ~Devices can be virtually grouped~
 - Individual Machine Brightness Controls
 - Machine Persistence / ~TODO Link Persistence~
 - ~Links can target groups~ 
+- ~Machine Previews~
 
 ### Device Support
 
 - ESP8266-WS2812-I2S
 - ##### TODO
-- Home-Assistant Singles/Strips
+- Home-Assistant `Light` Entities
 
 ### Built-in Machines
 
-- Solid (RGB/HSV)
+- Solid (~RGB~/HSV)
 - Rainbow (Cycling/Solid)
-- Chaser (Single, Multi)
+- Chaser (Single, ~Multi~)
 - Rocker
 - Scapes
 - ##### TODO
@@ -32,10 +33,10 @@ A Reimplementation of Lambent Aether 4, in Elixir
 - GSI Receiver
 - FFT Receiver
 - Hyperion Receiver
-- Apollo Receiver
-
+- ApollosCrib Receiver
 
 ## Running
+
 ```
 docker pull lambentri/lambentex
 docker run --net=host -d --restart always --mount type=bind,source="$(pwd)"/meta,target=/opt/app/meta lambentri/lambentex 
@@ -52,12 +53,6 @@ To start your Phoenix server:
 
 Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 
-Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
+## Production
 
-## Learn more
-
-  * Official website: https://www.phoenixframework.org/
-  * Guides: https://hexdocs.pm/phoenix/overview.html
-  * Docs: https://hexdocs.pm/phoenix
-  * Forum: https://elixirforum.com/c/phoenix-forum
-  * Source: https://github.com/phoenixframework/phoenix
+`docker build -t "lambentri/lambentex:latest" .`
