@@ -1,4 +1,4 @@
-defmodule LambentEx.Schema.Steps.Chase do
+defmodule LambentEx.Schema.Steps.Chaser do
   use Ecto.Schema
   import Ecto.Changeset
 

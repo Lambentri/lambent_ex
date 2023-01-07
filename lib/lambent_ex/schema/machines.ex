@@ -51,8 +51,8 @@ defmodule LambentEx.Schema.Machines do
       types: [
         #        gen_solid: LambentEx.Schema.Steps.Solid,
         gen_solid_h: LambentEx.Schema.Steps.Solid,
-        gen_chaser: LambentEx.Schema.Steps.Chase,
-        gen_chaser_h: LambentEx.Schema.Steps.Chase,
+        gen_chaser: LambentEx.Schema.Steps.Chaser,
+        gen_chaser_h: LambentEx.Schema.Steps.Chaser,
         gen_rocker: LambentEx.Schema.Steps.Rocker,
         gen_rocker_s: LambentEx.Schema.Steps.Rocker,
         gen_scape: LambentEx.Schema.Steps.Scape,
