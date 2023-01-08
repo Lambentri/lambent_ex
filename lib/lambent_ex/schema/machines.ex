@@ -8,10 +8,10 @@ defmodule LambentEx.Schema.Machines do
   alias LambentEx.Schema.Machines
 
   @values %{
-    gen_solid: "Solid", #
+    gen_solid: "Solid",
     gen_solid_h: "Solid (HSV)", #
-    gen_color_cycle: "Color Cycler", #
-    gen_chaser: "Chaser", #
+    gen_color_cycle: "Color Cycler",
+    gen_chaser: "Chaser",
     gen_chaser_h: "Chaser (HSV)", #
     gen_chaser_m: "Multi-Chaser",
     gen_chaser_mh: "Multi-Chaser (HSV)",
@@ -22,7 +22,8 @@ defmodule LambentEx.Schema.Machines do
     gen_rainbow_s: "Rainbow (Solid)", #
     gen_scape: "Scape", #
     gen_scape_s: "Scape (Solid)", #
-    gen_twinkler: "LA3PortTwinler",
+    gen_twinkler: "LA3PortTwinkler",
+    gen_firefly: "Firefly", #
     rcv_fft: "FFT Receiver",
     rcv_gsi: "GSI Receiver",
     rcv_hyp: "Hyperion Receiver"
@@ -40,6 +41,7 @@ defmodule LambentEx.Schema.Machines do
     gen_rocker_s: LambentEx.Machine.Steps.Rocker,
     gen_scape: LambentEx.Machine.Steps.Scape,
     gen_scape_s: LambentEx.Machine.Steps.Scape,
+    gen_firefly: LambentEx.Machine.Steps.Firefly,
   }
 
   embedded_schema do
@@ -58,7 +60,8 @@ defmodule LambentEx.Schema.Machines do
         gen_scape: LambentEx.Schema.Steps.Scape,
         gen_scape_s: LambentEx.Schema.Steps.Scape,
         gen_rainbow: LambentEx.Schema.Steps.Rainbow,
-        gen_rainbow_s: LambentEx.Schema.Steps.Rainbow
+        gen_rainbow_s: LambentEx.Schema.Steps.Rainbow,
+        gen_firefly: LambentEx.Schema.Steps.Firefly,
       ],
       on_type_not_found: :raise,
       on_replace: :update

@@ -26,8 +26,8 @@ A Reimplementation of Lambent Aether 4, in Elixir
 - Chaser (Single, ~Multi~)
 - Rocker
 - Scapes
-- ##### TODO
 - Firefly
+- ##### TODO
 - Growth
 - Twinkles
 - GSI Receiver

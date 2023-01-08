@@ -35,8 +35,34 @@ defmodule LambentEx.MachinesLive.FormComponent do
     end
   end
 
+  defp is_multi(v) do
+    case v do
+      "gen_firefly" -> true
+      "gen_rocker" -> true
+      "gen_rocker_s" -> true
+      _otherwise -> false
+    end
+  end
+
   @impl true
   def handle_event("validate", %{"machines" => machine_params}, socket) do
+    machine_params = case machine_params["type"] do
+      "gen_firefly" -> case Ecto.Changeset.get_field(socket.assigns.changeset, :class) do
+        nil -> machine_params
+        val -> machine_params |> put_in(["class","h"], val |> Map.get(:h))
+      end
+      "gen_rocker" -> case Ecto.Changeset.get_field(socket.assigns.changeset, :class) do
+                         nil -> machine_params
+                         val -> machine_params |> put_in(["class","h"], val |> Map.get(:h))
+                       end
+      "gen_rocker_s" -> case Ecto.Changeset.get_field(socket.assigns.changeset, :class) do
+                        nil -> machine_params
+                        val -> machine_params |> put_in(["class","h"], val |> Map.get(:h))
+                      end
+      _otherwise -> machine_params
+    end
+
+    IO.inspect(machine_params)
     #    machine_params = case machine_params["type"] do
     #      "gen_rocker" -> rocker_params(machine_params)
     #      "gen_rocker_s" -> rocker_params(machine_params)
@@ -59,6 +85,7 @@ defmodule LambentEx.MachinesLive.FormComponent do
         :gen_rocker_s -> changeset.changes[:class] |> rocker_keys
         :gen_scape -> changeset.changes[:class] |> scape_keys
         :gen_scape_s -> changeset.changes[:class] |> scape_keys
+        :gen_firefly -> changeset.changes[:class] |> hue_keys
         _otherwise -> []
       end
       |> IO.inspect()
@@ -90,6 +117,14 @@ defmodule LambentEx.MachinesLive.FormComponent do
   end
 
   def handle_event("save", %{"machines" => machines_params}, socket) do
+    machines_params = case machines_params["type"] do
+      "gen_firefly" -> machines_params |> put_in(["class","h"], Ecto.Changeset.get_field(socket.assigns.changeset, :class) |> Map.get(:h))
+      "gen_rocker" -> machines_params |> put_in(["class","h"], Ecto.Changeset.get_field(socket.assigns.changeset, :class) |> Map.get(:h))
+      "gen_rocker_s" -> machines_params |> put_in(["class","h"], Ecto.Changeset.get_field(socket.assigns.changeset, :class) |> Map.get(:h))
+
+      _otherwise -> machines_params
+   end
+
     case Machines.update_machines(socket.assigns.machine, machines_params) do
       {:ok, _machine} ->
         {:noreply,
@@ -108,9 +143,32 @@ defmodule LambentEx.MachinesLive.FormComponent do
   end
 
   def handle_event("add-sel", %{"data" => data}, socket) do
-    curr_h = Ecto.Changeset.get_change(socket.assigns.changeset, :h) || []
-    changeset = socket.assigns.changeset |> Ecto.Changeset.change(h: curr_h ++ [data])
-    {:noreply, socket}
+    curr_cls = Ecto.Changeset.get_field(socket.assigns.changeset, :class)
+    curr_h = case curr_cls do
+      %LambentEx.Schema.Steps.Firefly{h: h} -> h
+      %LambentEx.Schema.Steps.Rocker{h: h} -> h
+      cs -> Ecto.Changeset.get_field(cs, :h)
+    end
+
+    cls_up = case curr_cls do
+      %LambentEx.Schema.Steps.Firefly{} = x -> x |> Map.put(:h, curr_h ++ [data])
+      %LambentEx.Schema.Steps.Rocker{} = x -> x |> Map.put(:h, curr_h ++ [data])
+      cs -> Ecto.Changeset.get_field(socket.assigns.changeset, :class) |> Ecto.Changeset.change(h: curr_h ++ [data])
+    end
+
+    changeset = socket.assigns.changeset |> Ecto.Changeset.change(class: cls_up) |> Map.put(:action, :validate)
+    {:noreply, assign(socket, :changeset, changeset)}
+  end
+
+  def handle_event("add-sel", _params, socket) do
+    {:noreply, socket |> put_flash(:info, "Please select another hue")}
+  end
+
+  def handle_event("del-sel", %{"idx" => idx}, socket) do
+    curr_cls = Ecto.Changeset.get_field(socket.assigns.changeset, :class)
+    cls_up = curr_cls |> Map.put(:h,  curr_cls.h |> List.delete_at(int(idx)))
+    changeset = socket.assigns.changeset |> Ecto.Changeset.change(class: cls_up) |> Map.put(:action, :validate)
+    {:noreply, assign(socket, :changeset, changeset)}
   end
 
   defp values,
@@ -120,17 +178,43 @@ defmodule LambentEx.MachinesLive.FormComponent do
     (int / 255 * 360) |> round
   end
 
+  def get_sel(values) do
+    case values |> Map.get(:params) do
+      %{"h_sel" => sel} -> sel
+      %{} -> nil
+    end
+  end
+
+  defp int(v) when is_binary(v) do
+    {i, _v} = Integer.parse(v)
+    i
+  end
+  defp int(v) when is_integer(v), do: v
+
   defp hue_keys(nil), do: []
+
+  defp hue_keys(%{h_sel: h, s: s, v: v}) do
+    [r, g, b] = LambentEx.Utils.Color.hsv2rgb([h, s, v])
+    [r: r, g: g, b: b, h: h]
+  end
 
   defp hue_keys(%{h: h, s: s, v: v}) do
     [r, g, b] = LambentEx.Utils.Color.hsv2rgb([h, s, v])
     [r: r, g: g, b: b, h: h]
   end
 
-
   defp hue_keys(%{h: h, s: s, v: v, h_sel: h_sel}) do
     [r, g, b] = LambentEx.Utils.Color.hsv2rgb([h, s, v])
     [r: r, g: g, b: b, h: h]
+  end
+
+  defp hue_keys(%{h: h}) do
+    [r, g, b] = LambentEx.Utils.Color.hsv2rgb([int(h), 255, 255])
+    [r: r, g: g, b: b]
+  end
+
+  defp hrgb([r: r, g: g, b: b]) do
+    rgb(r,g,b)
   end
 
   defp rocker_keys(nil), do: [] |> IO.inspect()
