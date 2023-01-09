@@ -27,8 +27,8 @@ A Reimplementation of Lambent Aether 4, in Elixir
 - Rocker
 - Scapes
 - Firefly
-- ##### TODO
 - Growth
+- ##### TODO
 - Twinkles
 - GSI Receiver
 - FFT Receiver
