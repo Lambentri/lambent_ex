@@ -10,7 +10,6 @@ defmodule LambentEx.Schema.Machines do
   @values %{
     gen_solid: "Solid",
     gen_solid_h: "Solid (HSV)", #
-    gen_color_cycle: "Color Cycler",
     gen_chaser: "Chaser",
     gen_chaser_h: "Chaser (HSV)", #
     gen_chaser_m: "Multi-Chaser",
@@ -32,7 +31,6 @@ defmodule LambentEx.Schema.Machines do
   @steps %{
     #    gen_solid: "Solid",
     gen_solid_h: LambentEx.Machine.Steps.Solid,
-    #    gen_color_cycle: "Color Cycler",
     #    gen_chaser: "Chaser",
     gen_chaser_h: LambentEx.Machine.Steps.Chase,
     gen_rainbow: LambentEx.Machine.Steps.Rainbow,
@@ -42,6 +40,7 @@ defmodule LambentEx.Schema.Machines do
     gen_scape: LambentEx.Machine.Steps.Scape,
     gen_scape_s: LambentEx.Machine.Steps.Scape,
     gen_firefly: LambentEx.Machine.Steps.Firefly,
+    gen_growth: LambentEx.Machine.Steps.Growth,
   }
 
   embedded_schema do
@@ -62,6 +61,7 @@ defmodule LambentEx.Schema.Machines do
         gen_rainbow: LambentEx.Schema.Steps.Rainbow,
         gen_rainbow_s: LambentEx.Schema.Steps.Rainbow,
         gen_firefly: LambentEx.Schema.Steps.Firefly,
+      gen_growth: LambentEx.Schema.Steps.Growth,
       ],
       on_type_not_found: :raise,
       on_replace: :update

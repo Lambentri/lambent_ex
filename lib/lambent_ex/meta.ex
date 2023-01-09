@@ -5,9 +5,9 @@ defmodule LambentEx.Meta do
   @pubsub_name LambentEx.PubSub
 
   def init(arg) do
-    File.cd("meta")
+#    File.cd("meta")
     {:ok, table} = :dets.open_file(@table, type: :set)
-    File.cd("..")
+#    File.cd("..")
 
     Phoenix.PubSub.subscribe(@pubsub_name, "machines_idx")
     Process.send_after(self(), :machine_flush, 5000)
