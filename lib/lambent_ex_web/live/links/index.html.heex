@@ -41,11 +41,20 @@ on_cancel={JS.navigate(~p"/cfg/links")}>
             <td><%= v[:target] %></td>
             <td>
                 <%= if v[:enabled] == true do %>
-                <input type="checkbox" phx-click="toggle" phx-value-tgt={k} class="toggle" checked />
+                <input type="checkbox" phx-click="toggle" phx-value-tgt={k} class="toggle mb-4" checked />
                 <% else %>
-                <input type="checkbox" phx-click="toggle" phx-value-tgt={k} class="toggle" />
+                <input type="checkbox" phx-click="toggle" phx-value-tgt={k} class="toggle mb-4" />
                 <% end %>
                 &emsp;
+                <%= if v[:persist] == true do %>
+                    <a class="btn btn-success btn-circle" phx-click="persist" phx-value-tgt={v[:name]}>
+                        <i class="fa-solid fa-2x fa-thumbtack"></i>
+                    </a>
+                <% else %>
+                    <a class="btn btn-success btn-outline btn-circle" phx-click="persist" phx-value-tgt={v[:name]}>
+                        <i class="fa-solid fa-2x fa-thumbtack"></i>
+                    </a>
+                <% end %>
                 <a class="btn btn-error btn-outline btn-circle" phx-click="quit" phx-value-tgt={k}>
                     <i class="fa-solid fa-2x fa-xmark"></i>
                 </a>

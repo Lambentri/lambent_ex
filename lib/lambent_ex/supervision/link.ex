@@ -16,9 +16,21 @@ defmodule LambentEx.LinkSupervisor do
 
   @impl true
   def init(init_arg) do
-    DynamicSupervisor.init(
+    r = DynamicSupervisor.init(
       strategy: :one_for_one,
       extra_arguments: [init_arg]
     )
+
+    Task.start(fn ->
+      LambentEx.Meta.get_saved_links()
+      |> Enum.map(fn l ->
+        IO.inspect(l[:opts])
+        spec = {LambentEx.Link, l[:opts]}
+        #
+        DynamicSupervisor.start_child(__MODULE__, spec) |> IO.inspect
+      end)
+    end)
+
+    r
   end
 end

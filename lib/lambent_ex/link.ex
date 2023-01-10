@@ -15,7 +15,7 @@ defmodule LambentEx.Link do
 
   def init(opts) do
     Process.send_after(self(), :publish, 50)
-    {:ok, opts} = Keyword.validate(opts, [:source, :target, :name])
+    {:ok, opts} = Keyword.validate(opts, [:source, :target, :name, :persist])
     Phoenix.PubSub.subscribe(@pubsub_name, @pubsub_topic <> opts[:source])
     Phoenix.PubSub.subscribe(@pubsub_name, @pubsub_pfx_on <> opts[:target])
 
@@ -24,7 +24,9 @@ defmodule LambentEx.Link do
       target: opts[:target],
       name: opts[:name],
       enabled: true,
-      started: DateTime.utc_now
+      started: DateTime.utc_now,
+      persist: opts[:persist] || false,
+      full_opts: opts
     }
 
     neighbor_on(state)
@@ -47,6 +49,10 @@ defmodule LambentEx.Link do
     via_tuple("link-#{id}") |> GenServer.cast(:do_toggle)
   end
 
+  def persist(id) do
+    via_tuple("link-#{id}") |> GenServer.cast(:persist)
+  end
+
   def quit(id) do
     via_tuple("link-#{id}") |> GenServer.cast(:quit)
   end
@@ -56,7 +62,9 @@ defmodule LambentEx.Link do
       name: state[:name],
       source: state[:source],
       target: state[:target],
-      enabled: state[:enabled]
+      enabled: state[:enabled],
+      persist: state[:persist],
+      opts: state[:full_opts] |> Keyword.update(:persist, true, fn _ -> state[:persist] end),
     }
   end
 
@@ -105,5 +113,10 @@ defmodule LambentEx.Link do
   def handle_cast(:quit, state) do
     LambentEx.LinkSupervisor.abort_child(self())
     {:noreply, state}
+  end
+
+  @impl true
+  def handle_cast(:persist, state) do
+    {:noreply, state |> Map.put(:persist, !state.persist)}
   end
 end

@@ -66,9 +66,14 @@ defmodule LambentExWeb.LinksLive.Index do
     {:noreply, socket}
   end
 
-  def handle_event("quit", params, socket) do
-    LambentEx.Link.quit(params["tgt"])
-    links = socket.assigns.links |> Map.delete(params["tgt"])
+  def handle_event("quit", %{"tgt" => tgt}, socket) do
+    LambentEx.Link.quit(tgt)
+    links = socket.assigns.links |> Map.delete(tgt)
     {:noreply, socket |> assign(:links, links)}
+  end
+
+  def handle_event("persist", %{"tgt" => tgt}, socket) do
+    LambentEx.Link.persist(tgt)
+    {:noreply, socket}
   end
 end
