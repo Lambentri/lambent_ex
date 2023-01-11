@@ -42,9 +42,7 @@
             <td><%= v[:speed] |> spd %></td>
             <td><%= v[:bgt] |> bgt %> %</td>
             <td>
-                <button class="btn btn-circle" data-bs-toggle="tooltip" data-bs-html="true" title={preview(@previews, v[:name])}>
-                    <i class="fa-solid fa-2x fa-magnifying-glass"></i>
-                </button>
+                
                 <button class="btn btn-circle" phx-click="slower" phx-value-id={v[:name] }>
                     <i class="fa-solid fa-2x fa-forward-step"></i>
                 </button>
