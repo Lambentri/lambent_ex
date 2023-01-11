@@ -90,8 +90,6 @@ defmodule LambentEx.Meta do
 
   def handle_info(:link_flush, state) do
     Process.send_after(self(), :link_flush, 5000)
-    IO.puts("flushen")
-    IO.inspect(state.links)
     if state.links |> MapSet.size() == 0 do
       {:noreply, state}
     else
@@ -106,7 +104,6 @@ defmodule LambentEx.Meta do
         {:noreply, %{state | machines: MapSet.put(state.machines, machine)}}
 
       false ->
-#        IO.inspect(machine)
         {:noreply,
          %{state | machines: MapSet.delete(state.machines, machine |> Map.put(:persist, true) |> Map.put(:opts, machine[:opts] |> Keyword.update(:persist, true, fn _ -> true end)))}}
     end
@@ -118,7 +115,6 @@ defmodule LambentEx.Meta do
         {:noreply, %{state | links: MapSet.put(state.links, link)}}
 
       false ->
-        #        IO.inspect(machine)
         {:noreply,
           %{state | links: MapSet.delete(state.links, link |> Map.put(:persist, true) |> Map.put(:opts, link[:opts] |> Keyword.update(:persist, true, fn _ -> true end)))}}
     end

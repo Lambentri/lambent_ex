@@ -6,6 +6,7 @@ defmodule LambentEx.Machine do
 
   @pubsub_name LambentEx.PubSub
   @pubsub_topic "machine-"
+  @pubsub_topic_fh "machine:"
   @pubsub_topic_idx "machines_idx"
 
   @speeds %{
@@ -164,6 +165,7 @@ defmodule LambentEx.Machine do
     end
 
     Phoenix.PubSub.broadcast(@pubsub_name, @pubsub_topic <> state[:name], {:publish, data})
+    Phoenix.PubSub.broadcast(@pubsub_name, @pubsub_topic_fh, {:firehose, {state[:name],  data |> Enum.slice(0..50)}})
     {:noreply, bright_step(state)}
   end
 
