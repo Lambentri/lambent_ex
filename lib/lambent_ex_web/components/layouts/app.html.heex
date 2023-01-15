@@ -59,34 +59,46 @@
         <div class="navbar bg-base-100 rounded-2xl">
           <div class="flex-1">
             <%= if @page_link == "Devices" do %>
-              <.link patch={~p"/cfg/devices"} class="btn btn-primary normal-case text-xl">Devices</.link>
+              <.link patch={~p"/cfg/devices"} class="btn btn-primary normal-case text-xl">
+                Devices
+              </.link>
             <% else %>
-              <.link patch={~p"/cfg/devices"} class="btn btn-ghost normal-case text-xl">Devices</.link>
+              <.link patch={~p"/cfg/devices"} class="btn btn-ghost normal-case text-xl">
+                Devices
+              </.link>
             <% end %>
 
             <%= if @page_link == "Machines" do %>
-              <.link patch={~p"/cfg/machines"} class="btn btn-primary normal-case text-xl">Machines</.link>
+              <.link patch={~p"/cfg/machines"} class="btn btn-primary normal-case text-xl">
+                Machines
+              </.link>
             <% else %>
-              <.link patch={~p"/cfg/machines"} class="btn btn-ghost normal-case text-xl">Machines</.link>
+              <.link patch={~p"/cfg/machines"} class="btn btn-ghost normal-case text-xl">
+                Machines
+              </.link>
             <% end %>
 
             <%= if @page_link == "Links" do %>
-              <.link patch={~p"/cfg/links"} class="btn btn-primary normal-case text-xl">Links</.link>
+              <.link patch={~p"/cfg/links"} class="btn btn-primary normal-case text-xl">
+                Links
+              </.link>
             <% else %>
-              <.link patch={~p"/cfg/links"} class="btn btn-ghost normal-case text-xl">Links</.link>
+              <.link patch={~p"/cfg/links"} class="btn btn-ghost normal-case text-xl">
+                Links
+              </.link>
             <% end %>
           </div>
           <div class="flex-none">
             <%= if assigns[:nonew] == nil do %>
-            <button class="btn btn-circle btn-ghost float-right" phx-click={JS.navigate("new")}>
-              <i class="fa-solid fa-plus"></i>
-            </button>
+              <button class="btn btn-circle btn-ghost float-right" phx-click={JS.navigate("new")}>
+                <i class="fa-solid fa-plus"></i>
+              </button>
             <% end %>
             <%= if assigns[:newctrl] != nil do %>
               <%= for n <- assigns[:newctrl] do %>
-            <.link patch={n[:link]} class="btn btn-ghost normal-case text-xl">
-            <i class={"fa-solid fa-#{n[:icon]}"}></i>
-            </.link>
+                <.link patch={n[:link]} class="btn btn-ghost normal-case text-xl">
+                  <i class={"fa-solid fa-#{n[:icon]}"}></i>
+                </.link>
               <% end %>
             <% end %>
           </div>

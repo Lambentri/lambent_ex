@@ -48,7 +48,11 @@ defmodule LambentExWeb.CoreComponents do
   def modal(assigns) do
     ~H"""
     <div id={@id} phx-mounted={@show && show_modal(@id)} class="relative z-50 hidden">
-      <div id={"#{@id}-bg"} class="fixed inset-0 bg-base-300/90 transition-opacity" aria-hidden="true" />
+      <div
+        id={"#{@id}-bg"}
+        class="fixed inset-0 bg-base-300/90 transition-opacity"
+        aria-hidden="true"
+      />
       <div
         class="fixed inset-0 overflow-y-auto"
         aria-labelledby={"#{@id}-title"}

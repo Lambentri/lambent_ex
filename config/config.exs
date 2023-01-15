@@ -17,7 +17,7 @@ config :lambent_ex, LambentExWeb.Endpoint,
   pubsub_server: LambentEx.PubSub,
   live_view: [signing_salt: "9XX1FUrk"],
   live_editable: [
-#    ple_interface: Phoenix.LiveEditable.Interface.Tailwind3
+    #    ple_interface: Phoenix.LiveEditable.Interface.Tailwind3
     ple_interface: LambentEx.Phoenix.LiveEditable.Interface.Tailwind3
   ]
 

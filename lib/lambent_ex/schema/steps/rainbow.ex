@@ -5,7 +5,7 @@ defmodule LambentEx.Schema.Steps.Rainbow do
   @primary_key false
 
   embedded_schema do
-    field :modulo, :integer
+    field(:modulo, :integer)
   end
 
   def changeset(source, params) do

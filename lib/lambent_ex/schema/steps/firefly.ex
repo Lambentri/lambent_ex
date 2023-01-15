@@ -5,11 +5,11 @@ defmodule LambentEx.Schema.Steps.Firefly do
   @primary_key false
 
   embedded_schema do
-    field :h, {:array, :integer}, default: []
-    field :h_sel, :integer
-    field :mult, :integer, default: 1000
-    field :s, :integer, default: 255
-    field :v, :integer, default: 255
+    field(:h, {:array, :integer}, default: [])
+    field(:h_sel, :integer)
+    field(:mult, :integer, default: 1000)
+    field(:s, :integer, default: 255)
+    field(:v, :integer, default: 255)
   end
 
   def changeset(source, params) do

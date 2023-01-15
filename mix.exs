@@ -59,12 +59,10 @@ defmodule LambentEx.MixProject do
       {:parent, "~> 0.12"},
       {:net_address, "~> 0.3"},
       {:phoenix_live_editable,
-        github: "andyl/phoenix_live_editable",
-        subdir: "apps/phoenix_live_editable",},
-
+       github: "andyl/phoenix_live_editable", subdir: "apps/phoenix_live_editable"},
       {:ecto, "~> 3.0"},
       {:phoenix_ecto, "~> 4.0"},
-      {:polymorphic_embed, "~> 2.0.0"},
+      {:polymorphic_embed, "~> 2.0.0"}
     ]
   end
 

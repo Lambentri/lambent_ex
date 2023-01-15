@@ -116,9 +116,19 @@ defmodule LambentEx.Scan.ESP8266x7777 do
 
       device ->
         Logger.notice("#{@p} Poking #{dvc}}")
-        for {i,c} <- [{10, C.cre}, {100, C.cbe}, {200, C.cge}, {300, C.cce}, {400, C.cye}, {500, C.cme}, {600, C.cke}] do
+
+        for {i, c} <- [
+              {10, C.cre()},
+              {100, C.cbe()},
+              {200, C.cge()},
+              {300, C.cce()},
+              {400, C.cye()},
+              {500, C.cme()},
+              {600, C.cke()}
+            ] do
           Process.send_after(self(), {:send, device, c}, i)
         end
+
         {:noreply, state}
     end
 
@@ -156,28 +166,28 @@ defmodule LambentEx.Scan.ESP8266x7777 do
 
     case device |> Map.get("ord") do
       "rgb" ->
-        chunked |> Enum.map(fn [r, g, b] -> [g,r,b] end)
+        chunked |> Enum.map(fn [r, g, b] -> [g, r, b] end)
 
       "grb" ->
         chunked |> Enum.map(fn [r, g, b] -> [r, g, b] end)
 
       "rgbww" ->
-        chunked |> Enum.map(fn [r, g, b] -> [g,r,b, Enum.min(C.wrgb([r, g, b]), r)] end)
+        chunked |> Enum.map(fn [r, g, b] -> [g, r, b, Enum.min(C.wrgb([r, g, b]), r)] end)
 
       "rgbnw" ->
-        chunked |> Enum.map(fn [r, g, b] -> [g,r,b, C.wrgb([r, g, b])] end)
+        chunked |> Enum.map(fn [r, g, b] -> [g, r, b, C.wrgb([r, g, b])] end)
 
       "rgbcw" ->
-        chunked |> Enum.map(fn [r, g, b] -> [g,r,b, Enum.min([C.wrgb([r, g, b]), b])] end)
+        chunked |> Enum.map(fn [r, g, b] -> [g, r, b, Enum.min([C.wrgb([r, g, b]), b])] end)
 
       "rgbaw" ->
-        chunked |> Enum.map(fn [r, g, b] -> [g,r,b, C.argb([r, g, b]), C.wrgb([r, g, b])] end)
+        chunked |> Enum.map(fn [r, g, b] -> [g, r, b, C.argb([r, g, b]), C.wrgb([r, g, b])] end)
 
       "rgbxw" ->
-        chunked |> Enum.map(fn [r, g, b] -> [g,r,b, 0] end)
+        chunked |> Enum.map(fn [r, g, b] -> [g, r, b, 0] end)
 
       nil ->
-        chunked |> Enum.map(fn [r, g, b] -> [g,r,b] end)
+        chunked |> Enum.map(fn [r, g, b] -> [g, r, b] end)
     end
     |> List.flatten()
   end
@@ -268,7 +278,6 @@ defmodule LambentEx.Scan.ESP8266x7777 do
   end
 
   def handle_info({:send, dvc, stream}, state) do
-
     :gen_udp.send(state.socket, dvc["ip"], 7777, rgb_shift(stream, dvc) |> rgb_stream)
     {:noreply, state}
   end
@@ -319,9 +328,11 @@ defmodule LambentEx.Scan.ESP8266x7777 do
       |> Enum.reduce(fn x, y ->
         Map.merge(x, y, fn _k, v1, v2 -> v2 ++ v1 end)
       end)
-      |> Enum.map(fn {k,v} -> {k, v |> Map.put("name", M.get_name(k)) |> Map.put("ord", M.get_ord(k))}end)
+      |> Enum.map(fn {k, v} ->
+        {k, v |> Map.put("name", M.get_name(k)) |> Map.put("ord", M.get_ord(k))}
+      end)
       |> Enum.filter(fn {k, _v} -> k != nil end)
-      |> Map.new
+      |> Map.new()
 
     state |> Map.put(:devices, Map.merge(devices, rez))
   end

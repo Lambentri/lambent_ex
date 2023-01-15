@@ -1,5 +1,4 @@
 defmodule LambentEx.Utils.Color do
-
   # Int-ify
   defp iiy(v) when is_float(v), do: trunc(v)
   defp iiy(v) when is_binary(v), do: Integer.parse(v)
@@ -94,39 +93,40 @@ defmodule LambentEx.Utils.Color do
   end
 
   # color generation and expansion functions
-  def wrgb([r,g,b], coef \\ 2) do
-    Enum.min([r,g,b]) / coef |> iiy
+  def wrgb([r, g, b], coef \\ 2) do
+    (Enum.min([r, g, b]) / coef) |> iiy
   end
 
-  def wwrgb([r,g,b]) do
-
+  def wwrgb([r, g, b]) do
   end
 
-  def argb([r,g,b]) do
-    w = wrgb([r,g,b])
+  def argb([r, g, b]) do
+    w = wrgb([r, g, b])
     a = r - w
-    a = if (a > (g - w) * 2) do
-      a = (g - w) * 2
-    else
-      a
-    end
+
+    a =
+      if a > (g - w) * 2 do
+        a = (g - w) * 2
+      else
+        a
+      end
 
     a |> iiy
   end
 
-  def cr, do: [255, 0,0]
+  def cr, do: [255, 0, 0]
   def cg, do: [0, 255, 0]
-  def cb, do: [0,0, 255]
+  def cb, do: [0, 0, 255]
   def cc, do: [0, 192, 192]
   def cm, do: [192, 0, 192]
   def cy, do: [192, 192, 0]
-  def ck, do: [0,0,0]
+  def ck, do: [0, 0, 0]
 
-  def cre, do: cr |> Stream.cycle |> Enum.take(900)
-  def cge, do: cg |> Stream.cycle |> Enum.take(900)
-  def cbe, do: cb |> Stream.cycle |> Enum.take(900)
-  def cce, do: cc |> Stream.cycle |> Enum.take(900)
-  def cme, do: cm |> Stream.cycle |> Enum.take(900)
-  def cye, do: cy |> Stream.cycle |> Enum.take(900)
-  def cke, do: ck |> Stream.cycle |> Enum.take(900)
+  def cre, do: cr |> Stream.cycle() |> Enum.take(900)
+  def cge, do: cg |> Stream.cycle() |> Enum.take(900)
+  def cbe, do: cb |> Stream.cycle() |> Enum.take(900)
+  def cce, do: cc |> Stream.cycle() |> Enum.take(900)
+  def cme, do: cm |> Stream.cycle() |> Enum.take(900)
+  def cye, do: cy |> Stream.cycle() |> Enum.take(900)
+  def cke, do: ck |> Stream.cycle() |> Enum.take(900)
 end

@@ -42,5 +42,4 @@ defmodule LambentEx.Machine.Steps.Solid do
   def handle_call(:read, _from, state) do
     {:reply, read(state), state}
   end
-
 end

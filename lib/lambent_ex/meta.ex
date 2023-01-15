@@ -5,9 +5,9 @@ defmodule LambentEx.Meta do
   @pubsub_name LambentEx.PubSub
 
   def init(arg) do
-#    File.cd("meta")
+    #    File.cd("meta")
     {:ok, table} = :dets.open_file(@table, type: :set)
-#    File.cd("..")
+    #    File.cd("..")
 
     Phoenix.PubSub.subscribe(@pubsub_name, "machines_idx")
     Phoenix.PubSub.subscribe(@pubsub_name, "links_idx")
@@ -55,7 +55,9 @@ defmodule LambentEx.Meta do
   # machines
   def get_saved_machines do
     case :dets.lookup(@table, "machs") do
-      [] -> []
+      [] ->
+        []
+
       [{_key, value}] ->
         value
     end
@@ -63,7 +65,9 @@ defmodule LambentEx.Meta do
 
   def get_saved_links do
     case :dets.lookup(@table, "links") do
-      [] -> []
+      [] ->
+        []
+
       [{_key, value}] ->
         value
     end
@@ -90,6 +94,7 @@ defmodule LambentEx.Meta do
 
   def handle_info(:link_flush, state) do
     Process.send_after(self(), :link_flush, 5000)
+
     if state.links |> MapSet.size() == 0 do
       {:noreply, state}
     else
@@ -105,7 +110,19 @@ defmodule LambentEx.Meta do
 
       false ->
         {:noreply,
-         %{state | machines: MapSet.delete(state.machines, machine |> Map.put(:persist, true) |> Map.put(:opts, machine[:opts] |> Keyword.update(:persist, true, fn _ -> true end)))}}
+         %{
+           state
+           | machines:
+               MapSet.delete(
+                 state.machines,
+                 machine
+                 |> Map.put(:persist, true)
+                 |> Map.put(
+                   :opts,
+                   machine[:opts] |> Keyword.update(:persist, true, fn _ -> true end)
+                 )
+               )
+         }}
     end
   end
 
@@ -116,7 +133,19 @@ defmodule LambentEx.Meta do
 
       false ->
         {:noreply,
-          %{state | links: MapSet.delete(state.links, link |> Map.put(:persist, true) |> Map.put(:opts, link[:opts] |> Keyword.update(:persist, true, fn _ -> true end)))}}
+         %{
+           state
+           | links:
+               MapSet.delete(
+                 state.links,
+                 link
+                 |> Map.put(:persist, true)
+                 |> Map.put(
+                   :opts,
+                   link[:opts] |> Keyword.update(:persist, true, fn _ -> true end)
+                 )
+               )
+         }}
     end
   end
 end

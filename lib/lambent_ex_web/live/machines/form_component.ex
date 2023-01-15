@@ -46,21 +46,29 @@ defmodule LambentEx.MachinesLive.FormComponent do
 
   @impl true
   def handle_event("validate", %{"machines" => machine_params}, socket) do
-    machine_params = case machine_params["type"] do
-      "gen_firefly" -> case Ecto.Changeset.get_field(socket.assigns.changeset, :class) do
-        nil -> machine_params
-        val -> machine_params |> put_in(["class","h"], val |> Map.get(:h))
+    machine_params =
+      case machine_params["type"] do
+        "gen_firefly" ->
+          case Ecto.Changeset.get_field(socket.assigns.changeset, :class) do
+            nil -> machine_params
+            val -> machine_params |> put_in(["class", "h"], val |> Map.get(:h))
+          end
+
+        "gen_rocker" ->
+          case Ecto.Changeset.get_field(socket.assigns.changeset, :class) do
+            nil -> machine_params
+            val -> machine_params |> put_in(["class", "h"], val |> Map.get(:h))
+          end
+
+        "gen_rocker_s" ->
+          case Ecto.Changeset.get_field(socket.assigns.changeset, :class) do
+            nil -> machine_params
+            val -> machine_params |> put_in(["class", "h"], val |> Map.get(:h))
+          end
+
+        _otherwise ->
+          machine_params
       end
-      "gen_rocker" -> case Ecto.Changeset.get_field(socket.assigns.changeset, :class) do
-                         nil -> machine_params
-                         val -> machine_params |> put_in(["class","h"], val |> Map.get(:h))
-                       end
-      "gen_rocker_s" -> case Ecto.Changeset.get_field(socket.assigns.changeset, :class) do
-                        nil -> machine_params
-                        val -> machine_params |> put_in(["class","h"], val |> Map.get(:h))
-                      end
-      _otherwise -> machine_params
-    end
 
     IO.inspect(machine_params)
     #    machine_params = case machine_params["type"] do
@@ -117,13 +125,32 @@ defmodule LambentEx.MachinesLive.FormComponent do
   end
 
   def handle_event("save", %{"machines" => machines_params}, socket) do
-    machines_params = case machines_params["type"] do
-      "gen_firefly" -> machines_params |> put_in(["class","h"], Ecto.Changeset.get_field(socket.assigns.changeset, :class) |> Map.get(:h))
-      "gen_rocker" -> machines_params |> put_in(["class","h"], Ecto.Changeset.get_field(socket.assigns.changeset, :class) |> Map.get(:h))
-      "gen_rocker_s" -> machines_params |> put_in(["class","h"], Ecto.Changeset.get_field(socket.assigns.changeset, :class) |> Map.get(:h))
+    machines_params =
+      case machines_params["type"] do
+        "gen_firefly" ->
+          machines_params
+          |> put_in(
+            ["class", "h"],
+            Ecto.Changeset.get_field(socket.assigns.changeset, :class) |> Map.get(:h)
+          )
 
-      _otherwise -> machines_params
-   end
+        "gen_rocker" ->
+          machines_params
+          |> put_in(
+            ["class", "h"],
+            Ecto.Changeset.get_field(socket.assigns.changeset, :class) |> Map.get(:h)
+          )
+
+        "gen_rocker_s" ->
+          machines_params
+          |> put_in(
+            ["class", "h"],
+            Ecto.Changeset.get_field(socket.assigns.changeset, :class) |> Map.get(:h)
+          )
+
+        _otherwise ->
+          machines_params
+      end
 
     case Machines.update_machines(socket.assigns.machine, machines_params) do
       {:ok, _machine} ->
@@ -144,19 +171,32 @@ defmodule LambentEx.MachinesLive.FormComponent do
 
   def handle_event("add-sel", %{"data" => data}, socket) do
     curr_cls = Ecto.Changeset.get_field(socket.assigns.changeset, :class)
-    curr_h = case curr_cls do
-      %LambentEx.Schema.Steps.Firefly{h: h} -> h
-      %LambentEx.Schema.Steps.Rocker{h: h} -> h
-      cs -> Ecto.Changeset.get_field(cs, :h)
-    end
 
-    cls_up = case curr_cls do
-      %LambentEx.Schema.Steps.Firefly{} = x -> x |> Map.put(:h, curr_h ++ [data])
-      %LambentEx.Schema.Steps.Rocker{} = x -> x |> Map.put(:h, curr_h ++ [data])
-      cs -> Ecto.Changeset.get_field(socket.assigns.changeset, :class) |> Ecto.Changeset.change(h: curr_h ++ [data])
-    end
+    curr_h =
+      case curr_cls do
+        %LambentEx.Schema.Steps.Firefly{h: h} -> h
+        %LambentEx.Schema.Steps.Rocker{h: h} -> h
+        cs -> Ecto.Changeset.get_field(cs, :h)
+      end
 
-    changeset = socket.assigns.changeset |> Ecto.Changeset.change(class: cls_up) |> Map.put(:action, :validate)
+    cls_up =
+      case curr_cls do
+        %LambentEx.Schema.Steps.Firefly{} = x ->
+          x |> Map.put(:h, curr_h ++ [data])
+
+        %LambentEx.Schema.Steps.Rocker{} = x ->
+          x |> Map.put(:h, curr_h ++ [data])
+
+        cs ->
+          Ecto.Changeset.get_field(socket.assigns.changeset, :class)
+          |> Ecto.Changeset.change(h: curr_h ++ [data])
+      end
+
+    changeset =
+      socket.assigns.changeset
+      |> Ecto.Changeset.change(class: cls_up)
+      |> Map.put(:action, :validate)
+
     {:noreply, assign(socket, :changeset, changeset)}
   end
 
@@ -166,8 +206,13 @@ defmodule LambentEx.MachinesLive.FormComponent do
 
   def handle_event("del-sel", %{"idx" => idx}, socket) do
     curr_cls = Ecto.Changeset.get_field(socket.assigns.changeset, :class)
-    cls_up = curr_cls |> Map.put(:h,  curr_cls.h |> List.delete_at(int(idx)))
-    changeset = socket.assigns.changeset |> Ecto.Changeset.change(class: cls_up) |> Map.put(:action, :validate)
+    cls_up = curr_cls |> Map.put(:h, curr_cls.h |> List.delete_at(int(idx)))
+
+    changeset =
+      socket.assigns.changeset
+      |> Ecto.Changeset.change(class: cls_up)
+      |> Map.put(:action, :validate)
+
     {:noreply, assign(socket, :changeset, changeset)}
   end
 
@@ -189,6 +234,7 @@ defmodule LambentEx.MachinesLive.FormComponent do
     {i, _v} = Integer.parse(v)
     i
   end
+
   defp int(v) when is_integer(v), do: v
 
   defp hue_keys(nil), do: []
@@ -213,8 +259,8 @@ defmodule LambentEx.MachinesLive.FormComponent do
     [r: r, g: g, b: b]
   end
 
-  defp hrgb([r: r, g: g, b: b]) do
-    rgb(r,g,b)
+  defp hrgb(r: r, g: g, b: b) do
+    rgb(r, g, b)
   end
 
   defp rocker_keys(nil), do: [] |> IO.inspect()

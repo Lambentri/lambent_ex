@@ -29,15 +29,16 @@ defmodule LambentExWeb.MachinesLive.Index do
   def mount(_params, _session, socket) do
     Phoenix.PubSub.subscribe(@pubsub_name, "machines_idx")
     Phoenix.PubSub.subscribe(@pubsub_name, @pubsub_topic_fh)
-    {:ok, socket
-          |> assign(:machine, nil)
-          |> assign(:machines, %{})
-          |> assign(:previews, %{})
-          |> assign(:nonew, true)
-          |> assign(:newctrl, [
-      %{link: ~p"/cfg/machines/new", icon: "plus"},
-    ])
-    }
+
+    {:ok,
+     socket
+     |> assign(:machine, nil)
+     |> assign(:machines, %{})
+     |> assign(:previews, %{})
+     |> assign(:nonew, true)
+     |> assign(:newctrl, [
+       %{link: ~p"/cfg/machines/new", icon: "plus"}
+     ])}
   end
 
   @impl true
@@ -61,8 +62,9 @@ defmodule LambentExWeb.MachinesLive.Index do
   end
 
   def handle_info({:machines_pub, machine}, socket) do
-#    IO.inspect(machine)
-    {:noreply, socket |> assign(:machines, socket.assigns.machines |> Map.put(machine[:id], machine))}
+    #    IO.inspect(machine)
+    {:noreply,
+     socket |> assign(:machines, socket.assigns.machines |> Map.put(machine[:id], machine))}
   end
 
   def handle_info({:firehose, {name, data}}, socket) do
@@ -105,16 +107,12 @@ defmodule LambentExWeb.MachinesLive.Index do
   end
 
   def bgt(val) do
-    val/255 * 100 |> trunc
+    (val / 255 * 100) |> trunc
   end
+
+  defp hex(val), do: Integer.to_string(val, 16) |> String.pad_leading(2, ["0"])
 
   defp preview(pile, name) do
-    chunks = pile |> Map.get(name, []) |> Enum.chunk_every(3) |> Enum.map( fn [r,g,b] -> "<div style='background-color: rgb(#{r},#{g},#{b})'>&nbsp;</div>" end)
-    """
-    <div class='grid grid-cols-1 gap-4'>
-      #{chunks}
-    </div>
-    """
+    pile |> Map.get(name, []) |> Enum.map(fn [r, g, b] -> "##{hex(r)}#{hex(g)}#{hex(b)}" end)
   end
-
 end

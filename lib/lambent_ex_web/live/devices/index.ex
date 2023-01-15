@@ -11,7 +11,7 @@ defmodule LambentExWeb.DevicesLive.Index do
   @impl true
   def mount(_params, _session, socket) do
     Phoenix.PubSub.subscribe(@pubsub_name, "scan-82667777")
-    {:ok, socket |> assign(:devices, %{}) |> assign(:nonew, :true)}
+    {:ok, socket |> assign(:devices, %{}) |> assign(:nonew, true)}
   end
 
   @impl true
@@ -32,31 +32,45 @@ defmodule LambentExWeb.DevicesLive.Index do
 
   def handle_info({:rename, data}, socket) do
     id = data["id"] |> String.trim_trailing("name")
+
     case socket.assigns[:devices] |> Map.get(id) |> Map.get("type") do
-      "8266-7777" -> LambentEx.Scan.ESP8266x7777.rename(:mac, id, data["data"] |> re_nil)
-      type -> Logger.info("Need handler for this type: #{type}")
-           :ok
+      "8266-7777" ->
+        LambentEx.Scan.ESP8266x7777.rename(:mac, id, data["data"] |> re_nil)
+
+      type ->
+        Logger.info("Need handler for this type: #{type}")
+        :ok
     end
+
     {:noreply, socket}
   end
 
   def handle_info({:reorder, data}, socket) do
     id = data["id"] |> String.trim_trailing("ord")
     tgt = data["ok"]["ord"]
+
     case socket.assigns[:devices] |> Map.get(id) |> Map.get("type") do
-      "8266-7777" -> LambentEx.Scan.ESP8266x7777.reorder(:mac, id, tgt)
-      type -> Logger.info("Need handler for this type: #{type}")
-              :ok
+      "8266-7777" ->
+        LambentEx.Scan.ESP8266x7777.reorder(:mac, id, tgt)
+
+      type ->
+        Logger.info("Need handler for this type: #{type}")
+        :ok
     end
+
     {:noreply, socket}
   end
 
-  def handle_event("poke", %{"id" => id}, socket ) do
+  def handle_event("poke", %{"id" => id}, socket) do
     case socket.assigns[:devices] |> Map.get(id) |> Map.get("type") do
-      "8266-7777" -> LambentEx.Scan.ESP8266x7777.poke(id)
-      type -> Logger.info("Need handler for this type: #{type}")
-              :ok
+      "8266-7777" ->
+        LambentEx.Scan.ESP8266x7777.poke(id)
+
+      type ->
+        Logger.info("Need handler for this type: #{type}")
+        :ok
     end
+
     {:noreply, socket}
   end
 
@@ -68,7 +82,7 @@ defmodule LambentExWeb.DevicesLive.Index do
   end
 
   defp pip(ip) do
-    ip |> Tuple.to_list |> Enum.join(".")
+    ip |> Tuple.to_list() |> Enum.join(".")
   end
 
   defp options() do

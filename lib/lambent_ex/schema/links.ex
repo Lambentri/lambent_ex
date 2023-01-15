@@ -6,13 +6,12 @@ defmodule LambentEx.Schema.Links do
 
   alias LambentEx.Schema.Links
 
-
   embedded_schema do
-    field :name, :string
-    field :source_id, :string
-    field :source_type, Ecto.Enum, values: [:machine, :anchor], default: :machine
-    field :target_id, :string
-    field :target_type, Ecto.Enum, values: [:device, :group], default: :device
+    field(:name, :string)
+    field(:source_id, :string)
+    field(:source_type, Ecto.Enum, values: [:machine, :anchor], default: :machine)
+    field(:target_id, :string)
+    field(:target_type, Ecto.Enum, values: [:device, :group], default: :device)
   end
 
   def change_link(%Links{} = link, attrs \\ %{}) do
@@ -20,19 +19,27 @@ defmodule LambentEx.Schema.Links do
   end
 
   def update_links(%Links{} = link, attrs) do
-    res = link
-    |> Links.changeset(attrs)
+    res =
+      link
+      |> Links.changeset(attrs)
 
     case res.valid? do
-      true -> {:ok, LambentEx.LinkSupervisor.start_child(res.changes[:name],  res.changes[:source_id],  res.changes[:target_id])}
-      false -> {:error, res}
+      true ->
+        {:ok,
+         LambentEx.LinkSupervisor.start_child(
+           res.changes[:name],
+           res.changes[:source_id],
+           res.changes[:target_id]
+         )}
+
+      false ->
+        {:error, res}
     end
   end
-  
+
   def changeset(source, params) do
     source
     |> cast(params, ~w(name source_id source_type target_id target_type)a)
     |> validate_required([:name, :source_id, :source_type, :target_id, :target_type])
   end
 end
-

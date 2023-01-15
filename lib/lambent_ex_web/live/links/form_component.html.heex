@@ -1,25 +1,34 @@
 <div>
-    <h1 class="text-3xl font-bold">New Link</h1>
-    <.simple_form
+  <h1 class="text-3xl font-bold">New Link</h1>
+  <.simple_form
     :let={f}
     for={@changeset}
     id="links-form"
     phx-target={@myself}
     phx-change="validate"
     phx-submit="save"
-    >
-
-    <.input field={{f, :name}} type="text" label="Name" >
-        <:icon_pre>
-            <btn class="btn btn-accent" phx-click="new-name" phx-target={@myself}>
-                <i class="fa-solid fa-arrows-rotate"></i>
-            </btn>
-        </:icon_pre>
+  >
+    <.input field={{f, :name}} type="text" label="Name">
+      <:icon_pre>
+        <btn class="btn btn-accent" phx-click="new-name" phx-target={@myself}>
+          <i class="fa-solid fa-arrows-rotate"></i>
+        </btn>
+      </:icon_pre>
     </.input>
-    <.input field={{f, :source_id}} type="select" label="Source" options={@machines |> for_selectm} />
-    <.input field={{f, :target_id}} type="select" label="Target" options={@devices |> for_selectd} />
+    <.input
+      field={{f, :source_id}}
+      type="select"
+      label="Source"
+      options={@machines |> for_selectm}
+    />
+    <.input
+      field={{f, :target_id}}
+      type="select"
+      label="Target"
+      options={@devices |> for_selectd}
+    />
     <:actions>
-        <.button phx-disable-with="Saving...">Create Link</.button>
+      <.button phx-disable-with="Saving...">Create Link</.button>
     </:actions>
-    </.simple_form>
+  </.simple_form>
 </div>

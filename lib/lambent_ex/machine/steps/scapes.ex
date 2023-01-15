@@ -30,8 +30,7 @@ defmodule LambentEx.Machine.Steps.Scape do
      cfg
      |> Map.put(:hues, hues)
      |> Map.put(:target, length(hues) - 1)
-     |> Map.put(:status, Integer.mod(opts.id, length(hues) - 1))
-    }
+     |> Map.put(:status, Integer.mod(opts.id, length(hues) - 1))}
   end
 
   defp via_tuple(name) do
@@ -57,12 +56,15 @@ defmodule LambentEx.Machine.Steps.Scape do
   def handle_cast(:step, state) do
     state =
       case state.status == state.target do
-        true -> if state.target == 0 do
-              state |> Map.put(:target, length(state.hues) - 1)
-            else
-              state |> Map.put(:target, 0)
-            end
-        false -> state
+        true ->
+          if state.target == 0 do
+            state |> Map.put(:target, length(state.hues) - 1)
+          else
+            state |> Map.put(:target, 0)
+          end
+
+        false ->
+          state
       end
       |> Map.put(:status, do_status_step(state.status, state.target))
 
@@ -73,9 +75,8 @@ defmodule LambentEx.Machine.Steps.Scape do
     {:reply, read(state), state}
   end
 
-
   def generate_hue_range(low, high) when low > high,
     do: Enum.to_list(low..255) ++ Enum.to_list(0..high)
-  def generate_hue_range(low, high), do: low..high |> Enum.to_list()
 
+  def generate_hue_range(low, high), do: low..high |> Enum.to_list()
 end

@@ -29,12 +29,14 @@ if config_env() == :prod do
 
   # We don't use the sessions at all at the moment so I'm going to generate one on boot by
   # stolen from Mix.Tasks.Phx.Gen.Secret.run(["64"])
-  secret_key_base = :crypto.strong_rand_bytes(64) |> Base.encode64(padding: false) |> binary_part(0, 64)
-#    System.get_env("SECRET_KEY_BASE") ||
-#      raise """
-#      environment variable SECRET_KEY_BASE is missing.
-#      You can generate one by calling: mix phx.gen.secret
-#      """
+  secret_key_base =
+    :crypto.strong_rand_bytes(64) |> Base.encode64(padding: false) |> binary_part(0, 64)
+
+  #    System.get_env("SECRET_KEY_BASE") ||
+  #      raise """
+  #      environment variable SECRET_KEY_BASE is missing.
+  #      You can generate one by calling: mix phx.gen.secret
+  #      """
 
   host = System.get_env("PHX_HOST") || "example.com"
   port = String.to_integer(System.get_env("PORT") || "4000")

@@ -1,69 +1,84 @@
 <div class="overflow-x-auto">
-    <%= if @live_action in [:new, :edit] do %>
-    <.modal return_to={~p"/cfg/links"} id="new"
-:if={@live_action in [:new, :edit]}
-show
-on_cancel={JS.navigate(~p"/cfg/links")}>
-    <.live_component
-    module={LambentEx.LinksLive.FormComponent}
-    id={:new}
-    title={@page_title}
-    action={@live_action}
-    link={@link}
-    return_to={~p"/cfg/links"}
-    machines={@machines}
-    devices={@devices}
-    navigate={~p"/cfg/links"}
-    />
+  <%= if @live_action in [:new, :edit] do %>
+    <.modal
+      :if={@live_action in [:new, :edit]}
+      return_to={~p"/cfg/links"}
+      id="new"
+      show
+      on_cancel={JS.navigate(~p"/cfg/links")}
+    >
+      <.live_component
+        module={LambentEx.LinksLive.FormComponent}
+        id={:new}
+        title={@page_title}
+        action={@live_action}
+        link={@link}
+        return_to={~p"/cfg/links"}
+        machines={@machines}
+        devices={@devices}
+        navigate={~p"/cfg/links"}
+      />
     </.modal>
-    <% end %>
-    <table class="table table-zebra w-full">
-        <!-- head -->
-        <thead>
+  <% end %>
+  <table class="table table-zebra w-full">
+    <!-- head -->
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Source</th>
+        <th>Target</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- row 1 -->
+      <%= if Enum.empty?(@links) do %>
         <tr>
-            <th>Name</th>
-            <th>Source</th>
-            <th>Target</th>
-            <th></th>
+          <th colspan="6">No links yet, create some using the + above</th>
         </tr>
-        </thead>
-        <tbody>
-        <!-- row 1 -->
-        <%= if Enum.empty?(@links) do %>
+      <% end %>
+      <%= for {k,v} <- @links do %>
         <tr>
-            <th colspan="6">No links yet, create some using the + above</th>
+          <th><%= k %></th>
+          <td><%= v[:source] %></td>
+          <td><%= v[:target] %></td>
+          <td>
+            <%= if v[:enabled] == true do %>
+              <a
+                class="btn btn-secondary btn-outline btn-circle"
+                phx-click="toggle"
+                phx-value-tgt={k}
+              >
+                <i class="fa-solid fa-2x fa-cog fa-spin"></i>
+              </a>
+            <% else %>
+              <a
+                class="btn btn-primary btn-outline btn-circle"
+                phx-click="toggle"
+                phx-value-tgt={k}
+              >
+                <i class="fa-solid fa-2x fa-cog"></i>
+              </a>
+            <% end %>
+            <%= if v[:persist] == true do %>
+              <a class="btn btn-accent btn-circle" phx-click="persist" phx-value-tgt={v[:name]}>
+                <i class="fa-solid fa-2x fa-thumbtack"></i>
+              </a>
+            <% else %>
+              <a
+                class="btn btn-accent btn-outline btn-circle"
+                phx-click="persist"
+                phx-value-tgt={v[:name]}
+              >
+                <i class="fa-solid fa-2x fa-thumbtack"></i>
+              </a>
+            <% end %>
+            <a class="btn btn-error btn-outline btn-circle" phx-click="quit" phx-value-tgt={k}>
+              <i class="fa-solid fa-2x fa-xmark"></i>
+            </a>
+          </td>
         </tr>
-        <% end %>
-        <%= for {k,v} <- @links do %>
-        <tr>
-            <th><%= k %></th>
-            <td><%= v[:source] %></td>
-            <td><%= v[:target] %></td>
-            <td>
-                <%= if v[:enabled] == true do %>
-                <a class="btn btn-secondary btn-outline btn-circle"phx-click="toggle" phx-value-tgt={k}>
-                    <i class="fa-solid fa-2x fa-cog fa-spin"></i>
-                </a>
-                <% else %>
-                <a class="btn btn-primary btn-outline btn-circle"phx-click="toggle" phx-value-tgt={k}>
-                    <i class="fa-solid fa-2x fa-cog"></i>
-                </a>
-                <% end %>
-                <%= if v[:persist] == true do %>
-                    <a class="btn btn-accent btn-circle" phx-click="persist" phx-value-tgt={v[:name]}>
-                        <i class="fa-solid fa-2x fa-thumbtack"></i>
-                    </a>
-                <% else %>
-                    <a class="btn btn-accent btn-outline btn-circle" phx-click="persist" phx-value-tgt={v[:name]}>
-                        <i class="fa-solid fa-2x fa-thumbtack"></i>
-                    </a>
-                <% end %>
-                <a class="btn btn-error btn-outline btn-circle" phx-click="quit" phx-value-tgt={k}>
-                    <i class="fa-solid fa-2x fa-xmark"></i>
-                </a>
-            </td>
-        </tr>
-        <% end %>
-        </tbody>
-    </table>
+      <% end %>
+    </tbody>
+  </table>
 </div>

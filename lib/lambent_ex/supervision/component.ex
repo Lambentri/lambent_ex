@@ -15,7 +15,7 @@ defmodule LambentEx.ComponentSupervisor do
       {LambentEx.LinkSupervisor, []},
       {Registry, [keys: :unique, name: :lambent_machine]},
       {Registry, [keys: :unique, name: :lambent_links]},
-      {Registry, [keys: :unique, name: :lambent_steps]},
+      {Registry, [keys: :unique, name: :lambent_steps]}
       # {LambentEx.Links, []}
       # {LambentEx.Zones, []}
     ]

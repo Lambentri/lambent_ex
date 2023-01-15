@@ -5,9 +5,9 @@ defmodule LambentEx.Schema.Steps.Solid do
   @primary_key false
 
   embedded_schema do
-    field :h, :integer
-    field :s, :integer, default: 255
-    field :v, :integer, default: 255
+    field(:h, :integer)
+    field(:s, :integer, default: 255)
+    field(:v, :integer, default: 255)
   end
 
   def changeset(source, params) do

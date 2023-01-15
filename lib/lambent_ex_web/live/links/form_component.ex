@@ -9,9 +9,9 @@ defmodule LambentEx.LinksLive.FormComponent do
     changeset = Links.change_link(link)
 
     {:ok,
-      socket
-      |> assign(assigns)
-      |> assign(:changeset, changeset)}
+     socket
+     |> assign(assigns)
+     |> assign(:changeset, changeset)}
   end
 
   @impl true
@@ -28,15 +28,16 @@ defmodule LambentEx.LinksLive.FormComponent do
     case Links.update_links(socket.assigns.link, links_params) do
       {:ok, _link} ->
         {:noreply,
-          socket
-          |> put_flash(:info, "Link Created Successfully")
-          |> push_navigate(to: socket.assigns.navigate)}
+         socket
+         |> put_flash(:info, "Link Created Successfully")
+         |> push_navigate(to: socket.assigns.navigate)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, :changeset, changeset)}
     end
-#    save_testyyyy(socket, socket.assigns.action, testyyyy_params)
-#    :ok
+
+    #    save_testyyyy(socket, socket.assigns.action, testyyyy_params)
+    #    :ok
   end
 
   def handle_event("new-name", _params, socket) do
@@ -45,10 +46,13 @@ defmodule LambentEx.LinksLive.FormComponent do
   end
 
   def for_selectm(array) do
-    array |> Enum.map(fn {k,v} -> {v[:id], v[:name]} end)
+    array |> Enum.map(fn {k, v} -> {v[:id], v[:name]} end)
   end
 
   def for_selectd(array) do
-    array |> Enum.map(fn {iface,entries} -> entries |> Enum.map(fn {k, v} -> {v["name"], k} end) end) |> List.flatten |> Enum.sort_by(fn {k, v} -> k end)
+    array
+    |> Enum.map(fn {iface, entries} -> entries |> Enum.map(fn {k, v} -> {v["name"], k} end) end)
+    |> List.flatten()
+    |> Enum.sort_by(fn {k, v} -> k end)
   end
 end

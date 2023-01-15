@@ -1,5 +1,4 @@
 defmodule LambentEx.LiveEdit do
-
   use Phoenix.LiveEditableComponent
 
   # ----- event handlers -----

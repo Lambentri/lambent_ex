@@ -85,7 +85,7 @@ defmodule LambentEx.Names do
     "Star",
     "Stream",
     "Trace",
-    "Wave",
+    "Wave"
   ]
 
   def name do

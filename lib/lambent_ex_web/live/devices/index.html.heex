@@ -1,38 +1,53 @@
 <div class="overflow-x-auto">
-    <table class="table table-zebra w-full">
-        <!-- head -->
-        <thead>
+  <table class="table table-zebra w-full">
+    <!-- head -->
+    <thead>
+      <tr>
+        <th>MAC</th>
+        <th>IP</th>
+        <th>Name</th>
+        <th>Order</th>
+        <th>Type</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- row 1 -->
+      <%= if Enum.empty?(@devices) do %>
         <tr>
-            <th>MAC</th>
-            <th>IP</th>
-            <th>Name</th>
-            <th>Order</th>
-            <th>Type</th>
-            <th></th>
+          <th colspan="6">No devices detected, yet.</th>
         </tr>
-        </thead>
-        <tbody>
-        <!-- row 1 -->
-        <%= if Enum.empty?(@devices) do %>
+      <% end %>
+      <%= for {k,v} <- @devices do %>
         <tr>
-            <th colspan="6">No devices detected, yet.</th>
+          <th><%= k %></th>
+          <td><%= v["ip"] |> pip %></td>
+          <td>
+            <.live_editable
+              id={k <> "name"}
+              ple_data={v["name"]}
+              ple_action="rename"
+              ple_handler={LiveEdit}
+            />
+          </td>
+          <td>
+            <.ple
+              id={k <> "ord"}
+              ple_data={v["ord"]}
+              ple_type="select"
+              ple_options={options}
+              ple_action="reorder"
+              ple_handler={LiveEdit}
+            />
+          </td>
+          <td><%= v["type"] %></td>
+          <td>
+            <button class="btn btn-circle" phx-click="poke" phx-value-id={k}>
+              <i class="fa-solid fa-bolt-lightning"></i>
+            </button>
+          </td>
         </tr>
-        <% end %>
-        <%= for {k,v} <- @devices do %>
-        <tr>
-            <th><%= k %></th>
-            <td><%= v["ip"] |> pip  %></td>
-            <td><.live_editable id={k <> "name"} ple_data={v["name"]} ple_action="rename" ple_handler={LiveEdit} />
-            </td>
-            <td><.ple id={k <> "ord"} ple_data={v["ord"]} ple_type="select" ple_options={options} ple_action="reorder"  ple_handler={LiveEdit} /></td>
-            <td><%= v["type"] %></td>
-            <td>
-                <button class="btn btn-circle" phx-click="poke" phx-value-id={k}>
-                    <i class="fa-solid fa-bolt-lightning"></i>
-                </button>
-            </td>
-        </tr>
-        <% end %>
-        </tbody>
-    </table>
+      <% end %>
+    </tbody>
+  </table>
 </div>

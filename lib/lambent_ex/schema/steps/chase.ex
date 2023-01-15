@@ -5,11 +5,11 @@ defmodule LambentEx.Schema.Steps.Chaser do
   @primary_key false
 
   embedded_schema do
-    field :h, :integer
-    field :s, :integer, default: 255
-    field :v, :integer, default: 255
-    field :spacing, :integer, default: 30
-    field :fadeby, :integer, default: 15
+    field(:h, :integer)
+    field(:s, :integer, default: 255)
+    field(:v, :integer, default: 255)
+    field(:spacing, :integer, default: 30)
+    field(:fadeby, :integer, default: 15)
   end
 
   def changeset(source, params) do

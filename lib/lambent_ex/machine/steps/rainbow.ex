@@ -1,6 +1,6 @@
 defmodule LambentEx.Machine.Steps.Rainbow.Cfg do
   #   @enforce_keys [:h]
-  defstruct [modulo: 1, id: 0, s: 255, v: 255, status: 0]
+  defstruct modulo: 1, id: 0, s: 255, v: 255, status: 0
 end
 
 defmodule LambentEx.Machine.Steps.Rainbow do
@@ -40,6 +40,7 @@ defmodule LambentEx.Machine.Steps.Rainbow do
     state =
       state
       |> Map.put(:status, (state.status + 1) |> Integer.mod(255))
+
     {:noreply, state}
   end
 

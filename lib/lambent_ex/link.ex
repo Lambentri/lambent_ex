@@ -24,7 +24,7 @@ defmodule LambentEx.Link do
       target: opts[:target],
       name: opts[:name],
       enabled: true,
-      started: DateTime.utc_now,
+      started: DateTime.utc_now(),
       persist: opts[:persist] || false,
       full_opts: opts
     }
@@ -64,12 +64,16 @@ defmodule LambentEx.Link do
       target: state[:target],
       enabled: state[:enabled],
       persist: state[:persist],
-      opts: state[:full_opts] |> Keyword.update(:persist, true, fn _ -> state[:persist] end),
+      opts: state[:full_opts] |> Keyword.update(:persist, true, fn _ -> state[:persist] end)
     }
   end
 
   defp neighbor_on(state) do
-    Phoenix.PubSub.broadcast(@pubsub_name, @pubsub_pfx_on <> state[:target], {:neighbor_on, state[:name]})
+    Phoenix.PubSub.broadcast(
+      @pubsub_name,
+      @pubsub_pfx_on <> state[:target],
+      {:neighbor_on, state[:name]}
+    )
   end
 
   @impl true

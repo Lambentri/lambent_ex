@@ -29,7 +29,7 @@ defmodule LambentEx.Machine.Steps.Firefly do
     {:ok,
      cfg
      |> Map.put(:active, false)
-     |> Map.put(:h_curr, cfg[:h] |> Enum.random)
+     |> Map.put(:h_curr, cfg[:h] |> Enum.random())
      |> Map.put(:v_curr, 0)
      |> Map.put(:active_total, 5)
      |> Map.put(:active_done, 0)}
@@ -63,16 +63,25 @@ defmodule LambentEx.Machine.Steps.Firefly do
       case(state[:active]) do
         true ->
           case state[:active_done] >= state[:active_total] do
-            true -> state |> Map.put(:active, false)
-            false -> case state[:v_curr] do
-              0 -> state |> Map.put(:v_curr, Enum.random([state[:v], div(state[:v], 2), div(state[:v], 3)]))
-              otherwise -> state |> Map.put(:v_curr, 0) |> Map.put(:active_done, state[:active_done] + 1)
-            end
+            true ->
+              state |> Map.put(:active, false)
+
+            false ->
+              case state[:v_curr] do
+                0 ->
+                  state
+                  |> Map.put(
+                    :v_curr,
+                    Enum.random([state[:v], div(state[:v], 2), div(state[:v], 3)])
+                  )
+
+                otherwise ->
+                  state |> Map.put(:v_curr, 0) |> Map.put(:active_done, state[:active_done] + 1)
+              end
           end
 
         false ->
-          state
-          |> Map.put(:active, multier(state[:mult]) |> Enum.random()) |> gen_curr
+          state |> Map.put(:active, multier(state[:mult]) |> Enum.random()) |> gen_curr
       end
 
     {:noreply, state}
