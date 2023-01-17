@@ -24,6 +24,7 @@ defmodule LambentExWeb.Router do
     live "/cfg/machines/new", MachinesLive.Index, :new
     live "/cfg/links", LinksLive.Index, :index
     live "/cfg/links/new", LinksLive.Index, :new
+    live "/cfg/links/bulk", LinksLive.Index, :bulk
     #    live "/cfg/devices/:id", DevicesLive.Show, :show
     #    live "/cfg/devices/:id/show/edit", DevicesLive.Show, :edit
   end

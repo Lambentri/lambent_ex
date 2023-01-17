@@ -47,6 +47,15 @@ defmodule LambentExWeb.LinksLive.Index do
     |> assign(:link, %LambentEx.Schema.Links{})
   end
 
+  defp apply_action(socket, :bulk, _params) do
+    socket
+    |> assign(:id, :bulk)
+    |> assign(:page_link, "Links")
+    |> assign(:page_title, "Bulk Links")
+    |> assign(:link, %LambentEx.Schema.LinksB{})
+  end
+
+
   def handle_info({:machines_pub, machine}, socket) do
     {:noreply,
      socket |> assign(:machines, socket.assigns.machines |> Map.put(machine[:name], machine))}

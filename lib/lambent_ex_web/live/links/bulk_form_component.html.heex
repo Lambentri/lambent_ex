@@ -1,0 +1,33 @@
+<div>
+  <h1 class="text-3xl font-bold">New Link</h1>
+  <.simple_form
+    :let={f}
+    for={@changeset}
+    id="links-form"
+    phx-target={@myself}
+    phx-change="validate"
+    phx-submit="save"
+  >
+    <.input field={{f, :name}} type="text" label="Name">
+      <:icon_pre>
+        <btn class="btn btn-accent" phx-click="new-name" phx-target={@myself}>
+          <i class="fa-solid fa-arrows-rotate"></i>
+        </btn>
+      </:icon_pre>
+    </.input>
+    <.input
+      field={{f, :source_id}}
+      type="select"
+      label="Source"
+      options={@machines |> for_selectm}
+    />
+    <label>Targets</label> <br />
+    <%= Phoenix.HTML.Form.multiple_select(f, :target_ids, for_selectd(@devices), class: "h-80") %>
+
+
+
+    <:actions>
+      <.button phx-disable-with="Saving...">Create Link</.button>
+    </:actions>
+  </.simple_form>
+</div>

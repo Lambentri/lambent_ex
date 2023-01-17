@@ -84,6 +84,7 @@ defmodule LambentExWeb do
     quote do
       # HTML escaping functionality
       import Phoenix.HTML
+      import Phoenix.HTML.Form
       # Core UI components and translation
       import LambentExWeb.CoreComponents
       import LambentExWeb.Gettext

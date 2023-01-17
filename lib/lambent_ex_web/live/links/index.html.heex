@@ -1,15 +1,28 @@
 <div class="overflow-x-auto">
-  <%= if @live_action in [:new, :edit] do %>
+  <%= if @live_action in [:new, :edit, :bulk] do %>
     <.modal
-      :if={@live_action in [:new, :edit]}
+      :if={@live_action in [:new, :edit, :bulk]}
       return_to={~p"/cfg/links"}
       id="new"
       show
       on_cancel={JS.navigate(~p"/cfg/links")}
     >
       <.live_component
+        :if={@live_action in [:new, :edit]}
         module={LambentEx.LinksLive.FormComponent}
         id={:new}
+        title={@page_title}
+        action={@live_action}
+        link={@link}
+        return_to={~p"/cfg/links"}
+        machines={@machines}
+        devices={@devices}
+        navigate={~p"/cfg/links"}
+      />
+      <.live_component
+        :if={@live_action in [:bulk]}
+        module={LambentEx.LinksLive.BulkFormComponent}
+        id={:bulk}
         title={@page_title}
         action={@live_action}
         link={@link}
