@@ -172,7 +172,7 @@ defmodule LambentEx.Machine do
       case state[:single] do
         # expand single to fill cnt
         true ->
-          data |> List.flatten() |> Stream.cycle() |> Enum.take(state[:cnt] * 3)
+          data |> List.flatten() |> Stream.cycle() |> Enum.take(state[:cnt] * 3) |> Enum.chunk_every(3)
 
         # do nothing
         false ->
@@ -189,7 +189,7 @@ defmodule LambentEx.Machine do
               Phoenix.PubSub.broadcast(
                 @pubsub_name,
                 @pubsub_topic_fh,
-                {:firehose, {state[:name], data |> Enum.slice(0..32)}}
+                {:firehose, {state[:name], data |> Enum.slice(0..31)}}
               )
               state |> Map.put(:modpub, 0)
 
@@ -201,7 +201,7 @@ defmodule LambentEx.Machine do
           Phoenix.PubSub.broadcast(
             @pubsub_name,
             @pubsub_topic_fh,
-            {:firehose, {state[:name], data |> Enum.slice(0..32)}}
+            {:firehose, {state[:name], data |> Enum.slice(0..31)}}
           )
 
           state
