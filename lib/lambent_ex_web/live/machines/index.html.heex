@@ -1,13 +1,15 @@
 <div class="overflow-x-auto">
-  <%= if @live_action in [:new, :edit] do %>
+  <%= if @live_action in [:new, :edit, :library] do %>
     <.modal
-      :if={@live_action in [:new, :edit]}
+      :if={@live_action in [:new, :edit, :library]}
       return_to={~p"/cfg/machines"}
       id="new"
       show
       on_cancel={JS.navigate(~p"/cfg/machines")}
     >
-      <.live_component
+
+     <.live_component
+        :if={@live_action in [:new, :edit]}
         module={LambentEx.MachinesLive.FormComponent}
         id={:new}
         title={@page_title}
@@ -15,6 +17,17 @@
         machine={@machine}
         return_to={~p"/cfg/machines"}
         navigate={~p"/cfg/machines"}
+      />
+      <.live_component
+        :if={@live_action in [:library]}
+        module={LambentEx.MachinesLive.LibraryFormComponent}
+        id={:library}
+        title={@page_title}
+        action={@live_action}
+        machine={@machine}
+        machines={@machines}
+        return_to={~p"/cfg/machines"}
+        navigate={~p"/cfg/links"}
       />
     </.modal>
   <% end %>
@@ -81,7 +94,7 @@
           </td>
           <td>
             <div class="rounded-xl">
-            <div class="grid grid-cols-1 gap-0 ">
+            <div class="grid grid-cols-1 gap-0 rounded-box">
               <%= for p <- preview(@previews, v[:name]) do %>
                 <div style={"background-color: #{p}; height:1px"} class="m-0 p-0">&nbsp;</div>
               <% end %>

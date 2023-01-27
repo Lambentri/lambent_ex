@@ -29,6 +29,7 @@ A Reimplementation of Lambent Aether 4, in Elixir
 - Firefly
 - Growth
 - ##### TODO
+- Static Image / GIF
 - Twinkles
 - GSI Receiver
 - FFT Receiver

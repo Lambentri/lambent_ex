@@ -129,4 +129,8 @@ defmodule LambentEx.Utils.Color do
   def cme, do: cm |> Stream.cycle() |> Enum.take(900)
   def cye, do: cy |> Stream.cycle() |> Enum.take(900)
   def cke, do: ck |> Stream.cycle() |> Enum.take(900)
+
+  # misc
+  def hex(val) when is_float(val), do: trunc(val) |> hex
+  def hex(val), do: Integer.to_string(val, 16) |> String.pad_leading(2, ["0"])
 end

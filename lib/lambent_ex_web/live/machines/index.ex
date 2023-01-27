@@ -2,6 +2,7 @@ defmodule LambentExWeb.MachinesLive.Index do
   use LambentExWeb, :live_view
 
   alias LambentExWeb.MachinesLive.Index
+  import LambentEx.Utils.Color, only: [hex: 1]
 
   @pubsub_name LambentEx.PubSub
   @pubsub_topic_fh "machine:"
@@ -37,7 +38,8 @@ defmodule LambentExWeb.MachinesLive.Index do
      |> assign(:previews, %{})
      |> assign(:nonew, true)
      |> assign(:newctrl, [
-       %{link: ~p"/cfg/machines/new", icon: "plus"}
+       %{link: ~p"/cfg/machines/new", icon: "plus"},
+       %{link: ~p"/cfg/machines/library", icon: "book"}
      ])}
   end
 
@@ -59,6 +61,14 @@ defmodule LambentExWeb.MachinesLive.Index do
     |> assign(:page_link, "Machines")
     |> assign(:page_title, "New Machine")
     |> assign(:machine, %LambentEx.Schema.Machines{})
+  end
+
+  defp apply_action(socket, :library, _params) do
+    socket
+    |> assign(:id, :library)
+    |> assign(:page_link, "Machines")
+    |> assign(:page_title, "Machine Library")
+    |> assign(:machine, [])
   end
 
   def handle_info({:machines_pub, machine}, socket) do
@@ -102,6 +112,11 @@ defmodule LambentExWeb.MachinesLive.Index do
     {:noreply, socket}
   end
 
+  def handle_info(:update_library, socket) do
+    send_update(LambentEx.MachinesLive.LibraryFormComponent, id: :library)
+    {:noreply, socket}
+  end
+
   defp spd(val) do
     @speeds[val]
   end
@@ -109,8 +124,6 @@ defmodule LambentExWeb.MachinesLive.Index do
   def bgt(val) do
     (val / 255 * 100) |> trunc
   end
-
-  defp hex(val), do: Integer.to_string(val, 16) |> String.pad_leading(2, ["0"])
 
   defp preview(pile, name) do
     pile |> Map.get(name, []) |> Enum.map(fn [r, g, b] -> "##{hex(r)}#{hex(g)}#{hex(b)}" end)
