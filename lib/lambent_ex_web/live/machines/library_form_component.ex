@@ -3,7 +3,7 @@ defmodule LambentEx.MachinesLive.LibraryFormComponent do
   alias LambentEx.Names
   import LambentEx.Utils.Color, only: [hex: 1]
 
-  @count 32
+  @count 64
 
   defp combine(extant, new, max \\ @count) do
     extant

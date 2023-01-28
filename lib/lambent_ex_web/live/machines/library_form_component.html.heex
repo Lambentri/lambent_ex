@@ -1,6 +1,6 @@
 <div>
     <h1 class="text-4xl font-bold py-3">Machine Library</h1>
-    <p>Start some preconfigured machines to showcase the capabilities of Lambent Aether</p>
+    <p>Start some preconfigured machines to showcase the capabilities of Lambent Aether. The previews below represent a single pixel over time.</p>
     <%= for {cls, entries} <- @library do %>
     <h2 class="text-3xl font-bold py-3"><%= cls %></h2>
     <div class="grid grid-cols-3 gap-3">
@@ -26,11 +26,17 @@
         <% else %>
         <div class="stats shadow bg-secondary text-secondary-content">
             <div class="stat">
-                <div class="stat-figure text-primary">
+                <div class="stat-figure text-primary" phx-click="library-add" phx-value-cls={cls} phx-value-entry={name}>
+                    <%= if data[:desc] do %>
+                    <i class={"fa fa-regular fa-#{data[:desc]} fa-2x"} />
+                    <% else %>
                     <i class="fa fa-plus fa-2x" />
+                    <% end %>
                 </div>
                 <div class="stat-title"><%= data[:machine] |> machy %></div>
-                <div class="stat-value"><%= name %></div>
+                <div class="stat-value">
+                    <%= name %>
+                </div>
                 <div class="stat-desc">
                     <code><%= data[:args] |> Jason.encode! %></code>
                     <div class="flex">
@@ -45,25 +51,4 @@
     <% end %>
     </div>
     <% end %>
-    <br/>
-    <div class="stats shadow bg-secondary text-secondary-content">
-        <div class="stat">
-            <div class="stat-title">Total Page Views</div>
-            <div class="stat-value">89,400</div>
-            <div class="stat-desc">21% more than last month</div>
-        </div>
-    </div>
-    <div class="stats shadow">
-        <div class="stat">
-            <div class="stat-title">Total Page Views</div>
-            <div class="stat-value">89,400</div>
-            <div class="stat-desc">21% more than last month</div>
-        </div>
-    </div>
-
-    <br>
-    todo have the pane spawn a parented process with each of these instantiated and tick through 30 on load to preview
-    the values
-
-
 </div>

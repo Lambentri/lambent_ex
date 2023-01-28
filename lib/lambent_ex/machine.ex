@@ -38,7 +38,7 @@ defmodule LambentEx.Machine do
     255 => :FULL
   }
 
-  def start_link(_foo, opts) do
+  def start_link(_foo, opts) do # check to see if machine-opts[:step]-name is better in machine-name
     Parent.GenServer.start_link(__MODULE__, opts, name: via_tuple("machine-#{opts[:name]}"))
   end
 

@@ -112,6 +112,13 @@ defmodule LambentExWeb.MachinesLive.Index do
     {:noreply, socket}
   end
 
+  def handle_event("library-add", %{"cls" => cls, "entry" => entry}, socket) do
+    spec = LambentEx.Machines.Library.machines |> get_in([String.to_atom(cls),String.to_atom(entry)])
+    opts = spec[:mach_opts] || []
+    LambentEx.MachineSupervisor.start_child(spec[:machine], spec[:args], entry, opts) |> IO.inspect
+    {:noreply, socket}
+  end
+
   def handle_info(:update_library, socket) do
     send_update(LambentEx.MachinesLive.LibraryFormComponent, id: :library)
     {:noreply, socket}
