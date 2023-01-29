@@ -1,4 +1,9 @@
-# LambentEx
+# LambentEx 
+
+![AGPL](https://img.shields.io/github/license/Lambentri/lambent_ex)
+![Lang](https://img.shields.io/github/languages/top/Lambentri/lambent_ex)
+[![Docker](https://img.shields.io/docker/image-size/lambentri/lambentex/latest?logo=docker)](https://hub.docker.com/r/lambentri/lambentex)
+[![Gitter](https://badges.gitter.im/Lambentri/community.svg)](https://gitter.im/Lambentri/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 A Reimplementation of Lambent Aether 4, in Elixir
 
