@@ -46,7 +46,7 @@ config :lambent_ex, LambentExWeb.Endpoint,
 config :lambent_ex, LambentExWeb.Endpoint,
   live_reload: [
     patterns: [
-      ~r"priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$",
+      ~r"priv/static/.*(js|css|png|jpeg|jpg|gif|svg|woff|woff2)$",
       ~r"priv/gettext/.*(po)$",
       ~r"lib/lambent_ex_web/(live|views)/.*(ex)$",
       ~r"lib/lambent_ex_web/templates/.*(eex)$"

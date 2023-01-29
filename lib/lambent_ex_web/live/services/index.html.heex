@@ -1,0 +1,60 @@
+<div class="overflow-x-auto">
+    <h3 class="text-2xl font-build py-3">
+        <i class="fa-solid fa-network-wired fa-fw" /> MQTT
+    </h3>
+    <table class="table table-zebra w-full">
+        <!-- head -->
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Host</th>
+                <th>Status</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <%= for {k, v} <- @svcs_mqtt do %>
+            <tr>
+                <td><%= k %></td>
+                <td><%= "#{v[:host]}:#{v[:port]}" %></td>
+                <td>
+                    <%= if v[:connected] == :up do %>
+                    up: &emsp; <%= if v[:latency] do %><i class="fa-solid fa-table-tennis-paddle-ball"></i>&nbsp;<%= v[:latency] %>  ms<% end%>
+                    <% else %>
+                    down
+                    <% end %>
+                </td>
+                <td></td>
+            </tr>
+            <% end %>
+        </tbody>
+    </table>
+
+    <h3 class="text-2xl font-build py-3">
+        <i class="fa-solid fa-globe fa-fw" /> HTTP
+    </h3>
+    <table class="table table-zebra w-full">
+        <!-- head -->
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Route</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <%= for {k, v} <- @svcs_http do %>
+            <tr>
+                <td><%= k %></td>
+                <td>/0/<%= v[:id] %></td>
+                <td>
+                </td>
+            </tr>
+            <% end %>
+        </tbody>
+    </table>
+
+    <h3 class="text-2xl font-build py-3">
+        <i class="fa-solid fa-clock fa-fw" /> CRONOS
+    </h3>
+</div>

@@ -152,6 +152,7 @@ defmodule LambentEx.Machine do
       speed: state[:speed],
       cnt: state[:cnt],
       bgt: state[:bright_curr],
+      bgtt: state[:bright_tgt],
       persist: state[:persist]
     }
   end

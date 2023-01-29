@@ -2,16 +2,24 @@
 
 A Reimplementation of Lambent Aether 4, in Elixir
 
+<p align="center">
+
+![image](screens/lex_mobile_dev_mach_link.png "The Main UI")
+![image](screens/lex_mobile_lib.png "The Library UI")
+
+</p>
+
 ## Information
 
 ### New Features
 
 - 8266ws2812i2s device implementation is 100x more robust in device discovery on-net ~avoids booming current ones too often~
-- ~Devices can be virtually grouped~
+- Devices can be virtually grouped to "Places"
 - Individual Machine Brightness Controls
-- Machine Persistence / ~TODO Link Persistence~
+- Machine Persistence / Link Persistence
 - ~Links can target groups~ 
-- ~Machine Previews~
+- Machine Previews 
+- Machine Library replaces `default.yml`
 
 ### Device Support
 

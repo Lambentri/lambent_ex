@@ -1,7 +1,6 @@
 defmodule LambentExWeb.DevicesLive.Index do
   use LambentExWeb, :live_view
-
-  alias LambentExWeb.DevicesLive.Index
+  require Logger
 
   @pubsub_name LambentEx.PubSub
 
@@ -19,9 +18,7 @@ defmodule LambentExWeb.DevicesLive.Index do
     {:noreply, apply_action(socket, socket.assigns.live_action, params)}
   end
 
-  def handle_info({:devices_pub, devices}, socket) do
-    {:noreply, socket |> assign(:devices, devices)}
-  end
+
 
   defp re_nil(r) do
     case r do
@@ -30,8 +27,14 @@ defmodule LambentExWeb.DevicesLive.Index do
     end
   end
 
+  @impl true
+  def handle_info({:devices_pub, devices}, socket) do
+    {:noreply, socket |> assign(:devices, devices)}
+  end
+
+  @impl true
   def handle_info({:rename, data}, socket) do
-    id = data["id"] |> String.trim_trailing("name")
+    id = data["id"] |> String.trim_trailing("name") |> String.trim_trailing("namem")
 
     case socket.assigns[:devices] |> Map.get(id) |> Map.get("type") do
       "8266-7777" ->
@@ -45,8 +48,9 @@ defmodule LambentExWeb.DevicesLive.Index do
     {:noreply, socket}
   end
 
+  @impl true
   def handle_info({:reorder, data}, socket) do
-    id = data["id"] |> String.trim_trailing("ord")
+    id = data["id"] |> String.trim_trailing("ord") |> String.trim_trailing("ordm")
     tgt = data["ok"]["ord"]
 
     case socket.assigns[:devices] |> Map.get(id) |> Map.get("type") do
@@ -61,6 +65,23 @@ defmodule LambentExWeb.DevicesLive.Index do
     {:noreply, socket}
   end
 
+  @impl true
+  def handle_info({:replace, data}, socket) do
+    id = data["id"] |> String.trim_trailing("place") |> String.trim_trailing("placem")
+    IO.inspect(id)
+    case socket.assigns[:devices] |> Map.get(id) |> Map.get("type") do
+      "8266-7777" ->
+        LambentEx.Scan.ESP8266x7777.replace(:mac, id, data["data"] |> re_nil)
+
+      type ->
+        Logger.info("Need handler for this type: #{type}")
+        :ok
+    end
+
+    {:noreply, socket}
+  end
+
+  @impl true
   def handle_event("poke", %{"id" => id}, socket) do
     case socket.assigns[:devices] |> Map.get(id) |> Map.get("type") do
       "8266-7777" ->

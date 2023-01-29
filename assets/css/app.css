@@ -2,5 +2,5 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 @import "@fortawesome/fontawesome-free/css/all.css";
-
+@import "fonts/TF2Build.css";
 /* This file is for your main application CSS */

@@ -3,7 +3,7 @@
     <p>Start some preconfigured machines to showcase the capabilities of Lambent Aether. The previews below represent a single pixel over time.</p>
     <%= for {cls, entries} <- @library do %>
     <h2 class="text-3xl font-bold py-3"><%= cls %></h2>
-    <div class="grid grid-cols-3 gap-3">
+    <div class="grid grid-cols-1 gap-3 lg:grid-cols-3">
     <%= for {name, data} <- entries do %>
         <%= if !check_active?(@machines, name, cls) do %>
         <div class="stats shadow">
@@ -24,9 +24,9 @@
             </div>
         </div>
         <% else %>
-        <div class="stats shadow bg-secondary text-secondary-content">
+        <div class="stats shadow bg-secondary text-secondary-content" phx-click="library-add" phx-value-cls={cls} phx-value-entry={name}>
             <div class="stat">
-                <div class="stat-figure text-primary" phx-click="library-add" phx-value-cls={cls} phx-value-entry={name}>
+                <div class="stat-figure text-primary">
                     <%= if data[:desc] do %>
                     <i class={"fa fa-regular fa-#{data[:desc]} fa-2x"} />
                     <% else %>

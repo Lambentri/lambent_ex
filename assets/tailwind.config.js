@@ -33,6 +33,9 @@ module.exports = {
       },
       colors: {
         brand: "#FD4F00",
+      },
+      fontFamily: {
+          'build': ['"TF2 Build"'],
       }
     },
   },

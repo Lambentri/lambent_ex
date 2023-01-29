@@ -1,17 +1,12 @@
-defmodule LambentEx.MachineSupervisor do
+defmodule LambentEx.MQTTSupervisor do
   use DynamicSupervisor
 
   def start_link(init_arg) do
     DynamicSupervisor.start_link(__MODULE__, init_arg, name: __MODULE__)
   end
 
-  def start_child(step, opts, name, options, count \\ 360) do
-    spec = {LambentEx.Machine, [step: step, step_opts: opts, count: count, name: name] ++ options}
-    DynamicSupervisor.start_child(__MODULE__, spec)
-  end
-
-  def start_child(opts) do
-    spec = {LambentEx.Machine, opts}
+  def start_child(name, host, port \\ 1883) do
+    spec = {LambentEx.MQTT, [name: name, host: host, port: port]}
     DynamicSupervisor.start_child(__MODULE__, spec)
   end
 
@@ -28,10 +23,10 @@ defmodule LambentEx.MachineSupervisor do
       )
 
     Task.start(fn ->
-      LambentEx.Meta.get_saved_machines()
+      LambentEx.Meta.get_saved_cfg_mqtt()
       |> Enum.map(fn m ->
         IO.inspect(m[:opts])
-        spec = {LambentEx.Machine, m[:opts]}
+        spec = {LambentEx.MQTT, m[:opts]}
         #
         DynamicSupervisor.start_child(__MODULE__, spec)
       end)
@@ -40,6 +35,3 @@ defmodule LambentEx.MachineSupervisor do
     r
   end
 end
-
-# LambentEx.Machine.Steps.Chase, step_opts: %{}, name: :default, count: 300,
-#

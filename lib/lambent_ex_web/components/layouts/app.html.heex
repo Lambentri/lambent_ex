@@ -39,7 +39,7 @@
 <main class="px-4 py-20 sm:px-6 lg:px-8">
   <div class="mx-auto max-w-7xl">
     <div>
-      <h1 class="text-5xl font-bold">LambentEx</h1>
+      <h1 class="text-5xl font-build text-center lg:text-left">LambentEx</h1>
     </div>
     <.flash kind={:info} title="Success!" flash={@flash} />
     <.flash kind={:error} title="Error!" flash={@flash} />
@@ -56,8 +56,8 @@
     </.flash>
     <div class="overflow-x-auto">
       <div class="card shadow-2xl m-4 bg-base-100">
-        <div class="navbar bg-base-100 rounded-2xl">
-          <div class="flex-1">
+        <div class="navbar bg-base-100 rounded-2xl flex flex-col lg:flex-row">
+          <div class="flex-1 font-build lg:flex lg:flex-row grid grid-cols-2">
             <%= if @page_link == "Devices" do %>
               <.link patch={~p"/cfg/devices"} class="btn btn-primary normal-case text-xl">
                 Devices
@@ -86,6 +86,16 @@
               <.link patch={~p"/cfg/links"} class="btn btn-ghost normal-case text-xl">
                 Links
               </.link>
+            <% end %>
+
+            <%= if @page_link == "Services" do %>
+            <.link patch={~p"/cfg/services"} class="btn btn-primary normal-case text-xl">
+                SVCs
+            </.link>
+            <% else %>
+            <.link patch={~p"/cfg/services"} class="btn btn-ghost normal-case text-xl">
+                SVCs
+            </.link>
             <% end %>
           </div>
           <div class="flex-none">

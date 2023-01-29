@@ -5,7 +5,7 @@ defmodule LambentEx.Machines.Library do
         red: %{machine: LambentEx.Machine.Steps.Solid, args: %{h: 0}, mach_opts: [single: true]},
         blue: %{
           machine: LambentEx.Machine.Steps.Solid,
-          args: %{h: 128},
+          args: %{h: 168},
           mach_opts: [single: true]
         },
         green: %{
@@ -153,7 +153,7 @@ defmodule LambentEx.Machines.Library do
       },
       growth: %{
         leaves: %{
-          desc: "leaf",
+          desc: "hourglass",
           machine: LambentEx.Machine.Steps.Growth,
           args: %{
             h_g: [90, 98, 94, 95, 90],

@@ -22,4 +22,14 @@ defmodule LambentEx.LiveEdit do
 
     {:noreply, assign(socket, :ple_mode, "anchor")}
   end
+
+  def handle_event("replace", data, socket) do
+    # send message to view
+    socket
+    |> Map.get(:assigns)
+    |> Map.get(:ple_viewpid)
+    |> send({:replace, data |> Map.put("id", socket.assigns.id)})
+
+    {:noreply, assign(socket, :ple_mode, "anchor")}
+  end
 end

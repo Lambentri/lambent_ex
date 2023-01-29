@@ -11,6 +11,7 @@ defmodule LambentEx.Meta do
 
     Phoenix.PubSub.subscribe(@pubsub_name, "machines_idx")
     Phoenix.PubSub.subscribe(@pubsub_name, "links_idx")
+    Phoenix.PubSub.subscribe(@pubsub_name, "mqtt_idx")
     Process.send_after(self(), :machine_flush, 5000)
     Process.send_after(self(), :link_flush, 5000)
     ml = MapSet.new()
@@ -44,6 +45,16 @@ defmodule LambentEx.Meta do
     end
   end
 
+  def get_place(mac) do
+    case :dets.lookup(@table, "place-#{mac}") do
+      [] ->
+        nil
+
+      [{_key, value}] ->
+        value
+    end
+  end
+
   def put_name(key, value) do
     :dets.insert(@table, {"name-#{key}", value})
   end
@@ -52,7 +63,11 @@ defmodule LambentEx.Meta do
     :dets.insert(@table, {"ord-#{key}", value})
   end
 
-  # machines
+  def put_place(key, value) do
+    :dets.insert(@table, {"place-#{key}", value})
+  end
+
+  # init functions
   def get_saved_machines do
     case :dets.lookup(@table, "machs") do
       [] ->
@@ -73,12 +88,40 @@ defmodule LambentEx.Meta do
     end
   end
 
-  def links_clear() do
+  def get_saved_cfg_mqtt do
+    case :dets.lookup(@table, "cfg_mqtt") do
+      [] ->
+        []
+
+      [{_key, value}] ->
+        value
+    end
+  end
+
+  def get_saved_cfg_http do
+    case :dets.lookup(@table, "cfg_http") do
+      [] ->
+        []
+
+      [{_key, value}] ->
+        value
+    end
+  end
+
+  def clear_links() do
     :dets.delete(@table, "links")
   end
 
-  def machines_clear() do
+  def clear_machines() do
     :dets.delete(@table, "machs")
+  end
+
+  def clear_cfg_mqtt() do
+    :dets.delete(@table, "cfg_mqtt")
+  end
+
+  def clear_cfg_http() do
+    :dets.delete(@table, "cfg_http")
   end
 
   def handle_info(:machine_flush, state) do

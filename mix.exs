@@ -62,7 +62,8 @@ defmodule LambentEx.MixProject do
        github: "andyl/phoenix_live_editable", subdir: "apps/phoenix_live_editable"},
       {:ecto, "~> 3.0"},
       {:phoenix_ecto, "~> 4.0"},
-      {:polymorphic_embed, "~> 2.0.0"}
+      {:polymorphic_embed, "~> 2.0.0"},
+      {:tortoise, "~> 0.9"},
     ]
   end
 

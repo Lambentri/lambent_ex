@@ -48,6 +48,10 @@ defmodule LambentEx.Scan.ESP8266x7777 do
     via_tuple("scan_8266") |> GenServer.cast({:reorder, mac, name})
   end
 
+  def replace(:mac, ip, place) do
+    via_tuple("scan_8266") |> GenServer.cast({:replace_mac, ip, place})
+  end
+
   def submit(dvc, stream) do
     via_tuple("scan_8266") |> GenServer.cast({:submit, dvc, stream})
   end
@@ -66,7 +70,7 @@ defmodule LambentEx.Scan.ESP8266x7777 do
   def handle_cast({:rename_mac, mac, name}, state) do
     d = state[:devices] |> Map.get(mac)
     dev = state[:devices] |> Map.put(mac, d |> Map.put("name", name))
-    # write to ets
+
     M.put_name(mac, name)
     {:noreply, %{state | devices: dev}}
   end
@@ -85,6 +89,15 @@ defmodule LambentEx.Scan.ESP8266x7777 do
 
     M.put_name(mac, name)
     {:noreply, %{state | devices: dvcs}}
+  end
+
+  @impl true
+  def handle_cast({:replace_mac, mac, place}, state) do
+    d = state[:devices] |> Map.get(mac)
+    dev = state[:devices] |> Map.put(mac, d |> Map.put("place", place))
+
+    M.put_place(mac, place)
+    {:noreply, %{state | devices: dev}}
   end
 
   @impl true
@@ -329,7 +342,7 @@ defmodule LambentEx.Scan.ESP8266x7777 do
         Map.merge(x, y, fn _k, v1, v2 -> v2 ++ v1 end)
       end)
       |> Enum.map(fn {k, v} ->
-        {k, v |> Map.put("name", M.get_name(k)) |> Map.put("ord", M.get_ord(k))}
+        {k, v |> Map.put("name", M.get_name(k)) |> Map.put("ord", M.get_ord(k)) |> Map.put("place", M.get_place(k))}
       end)
       |> Enum.filter(fn {k, _v} -> k != nil end)
       |> Map.new()
