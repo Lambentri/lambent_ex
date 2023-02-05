@@ -17,7 +17,9 @@ import Config
 # Alternatively, you can use `mix phx.gen.release` to generate a `bin/server`
 # script that automatically sets the env var above.
 if System.get_env("PHX_SERVER") do
-  config :lambent_ex, LambentExWeb.Endpoint, server: true
+  config :lambent_ex, LambentExWeb.Endpoint,
+    server: true,
+    cache_static_manifest: "priv/static/cache_manifest.json"
 end
 
 if config_env() == :prod do
@@ -52,6 +54,19 @@ if config_env() == :prod do
       port: port
     ],
     secret_key_base: secret_key_base
+
+  case host do
+    "example.com" ->
+      config :lambent_ex, LambentExWeb.Endpoint, check_origin: :conn
+
+    host ->
+      config :lambent_ex, LambentExWeb.Endpoint,
+        http: [port: 4000],
+        check_origin: false,
+        server: true,
+        root: ".",
+        cache_static_manifest: "priv/static/cache_manifest.json"
+  end
 
   # ## SSL Support
   #

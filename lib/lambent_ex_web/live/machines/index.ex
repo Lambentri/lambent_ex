@@ -133,6 +133,8 @@ defmodule LambentExWeb.MachinesLive.Index do
   end
 
   defp preview(pile, name) do
+#    IO.puts("PREEEVIEW")
+#    IO.inspect({name})
     pile |> Map.get(name, []) |> Enum.map(fn [r, g, b] -> "##{hex(r)}#{hex(g)}#{hex(b)}" end)
   end
 end

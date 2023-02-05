@@ -36,9 +36,10 @@ defmodule LambentExWeb.Router do
   end
 
   # Other scopes may use custom stacks.
-  # scope "/api", LambentExWeb do
-  #   pipe_through :api
-  # end
+   scope "/api", LambentExWeb do
+     pipe_through :api
+     resources "/data/:path", DataController, only: [:create, :index]
+   end
 
   # Enable LiveDashboard in development
   if Application.compile_env(:lambent_ex, :dev_routes) do

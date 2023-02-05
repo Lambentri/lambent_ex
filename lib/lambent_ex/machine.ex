@@ -38,7 +38,8 @@ defmodule LambentEx.Machine do
     255 => :FULL
   }
 
-  def start_link(_foo, opts) do # check to see if machine-opts[:step]-name is better in machine-name
+  # check to see if machine-opts[:step]-name is better in machine-name
+  def start_link(_foo, opts) do
     Parent.GenServer.start_link(__MODULE__, opts, name: via_tuple("machine-#{opts[:name]}"))
   end
 
@@ -47,13 +48,21 @@ defmodule LambentEx.Machine do
     Process.send_after(self(), :publish, 50)
 
     {:ok, opts} =
-      Keyword.validate(opts, [:step, :step_opts, :name, single: false, persist: false, count: 300])
+      Keyword.validate(opts, [
+        :step,
+        :step_opts,
+        :name,
+        single: false,
+        persist: false,
+        count: 300,
+        speed: 1000
+      ])
 
     cnt = opts[:count]
 
     specs =
       case opts[:single] do
-        # only start one, and then step & expand to meet cnt
+        # start one, and then step & expand to meet cnt
         true ->
           [
             Parent.child_spec(
@@ -71,6 +80,19 @@ defmodule LambentEx.Machine do
               id: id
             )
           end)
+
+        # start one, with the count passed in and note that it returns full arrays
+        :full ->
+          [
+            Parent.child_spec(
+              {opts[:step],
+               opts[:step_opts]
+               |> Map.put(:id, 0)
+               |> Map.put(:name, opts[:name])
+               |> Map.put(:count, cnt)},
+              id: 0
+            )
+          ]
       end
 
     pids =
@@ -85,7 +107,7 @@ defmodule LambentEx.Machine do
        steps: pids,
        name: opts[:name],
        # todo configurable
-       speed: 1000,
+       speed: opts[:speed],
        bright_tgt: 255,
        bright_curr: 255,
        bright_delay: 0,
@@ -94,7 +116,11 @@ defmodule LambentEx.Machine do
        single: opts[:single],
        started: DateTime.utc_now(),
        persist: opts[:persist],
+       # modulating publishes
        modpub: 0,
+       # stored_keys for single: :full
+       fullkeys: [],
+       # load opts
        full_opts: opts
      }}
   end
@@ -129,12 +155,36 @@ defmodule LambentEx.Machine do
 
   # impls
 
+  defp bmath({key, i}, state) do
+    [{key, bmath(i, state)}] |> Map.new()
+  end
+
+  defp bmath(i, state) when is_map(i) do
+    i |> Enum.map(fn {k, x} -> {k, bmath(x, state)} end) |> Map.new()
+  end
+
+  defp bmath(i, state) when is_list(i) do
+    i |> Enum.map(fn v -> bmath(v, state) end)
+  end
+
   defp bmath(i, state) do
     (i * state.bright_curr / 255.0) |> round
   end
 
   def stripstep(step) do
-    [_head, step] = step |> to_string |> String.split(".Steps.")
+    s = step |> to_string
+
+    step =
+      cond do
+        String.contains?(s, "Steps") ->
+          [_head, step] = step |> to_string |> String.split(".Steps.")
+          step
+        String.contains?(s, "Ext") ->
+          [_head, step] = step |> to_string |> String.split(".Ext.")
+          step
+      end
+
+
     step
   end
 
@@ -143,10 +193,31 @@ defmodule LambentEx.Machine do
     [step, "x", state[:name]] |> Enum.join("")
   end
 
+  defp id(state, key) do
+    step = state[:step] |> stripstep
+    [step, "x", state[:name], "x", key] |> Enum.join("")
+  end
+
   defp publish(state) do
     %{
       id: id(state),
       name: state[:name],
+      step: state[:step] |> stripstep,
+      opts: state[:full_opts] |> Keyword.update(:persist, true, fn _ -> state[:persist] end),
+      speed: state[:speed],
+      cnt: state[:cnt],
+      bgt: state[:bright_curr],
+      bgtt: state[:bright_tgt],
+      persist: state[:persist]
+    }
+  end
+
+  defp publish(state, key) do
+    key = Atom.to_string(key)
+
+    %{
+      id: id(state, key),
+      name: state[:name] <> key,
       step: state[:step] |> stripstep,
       opts: state[:full_opts] |> Keyword.update(:persist, true, fn _ -> state[:persist] end),
       speed: state[:speed],
@@ -171,19 +242,62 @@ defmodule LambentEx.Machine do
 
     data =
       case state[:single] do
-        # expand single to fill cnt
-        true ->
-          data |> List.flatten() |> Stream.cycle() |> Enum.take(state[:cnt] * 3) |> Enum.chunk_every(3)
+        :full ->
+          data
+          |> List.flatten()
+          |> Enum.reduce(fn k, v -> Map.merge(k, v, fn _k, v1, v2 -> v2 ++ v1 end) end)
 
-        # do nothing
-        false ->
+        _otherwise ->
           data
       end
 
-    Phoenix.PubSub.broadcast(@pubsub_name, @pubsub_topic <> state[:name], {:publish, data})
+    case state[:single] do
+      # expand single to fill cnt
+      true ->
+        data =
+          data
+          |> List.flatten()
+          |> Stream.cycle()
+          |> Enum.take(state[:cnt] * 3)
+          |> Enum.chunk_every(3)
+
+        Phoenix.PubSub.broadcast(@pubsub_name, @pubsub_topic <> state[:name], {:publish, data})
+
+      # do nothing
+      false ->
+        data
+
+        Phoenix.PubSub.broadcast(@pubsub_name, @pubsub_topic <> state[:name], {:publish, data})
+
+      :full ->
+        # Bit hacky
+        data
+        |> Enum.map(fn {k, datum} ->
+          Phoenix.PubSub.broadcast(
+            @pubsub_name,
+            # yolo etc
+            @pubsub_topic <> state[:name] <> Atom.to_string(k),
+            {:publish, datum}
+          )
+        end)
+    end
+
+    #    Phoenix.PubSub.broadcast(@pubsub_name, @pubsub_topic <> state[:name], {:publish, data})
 
     state =
       cond do
+        state[:single] == :full ->
+          data
+          |> Enum.map(fn {k, datum} ->
+            Phoenix.PubSub.broadcast(
+              @pubsub_name,
+              @pubsub_topic_fh,
+              {:firehose, {state[:name] <> Atom.to_string(k), datum |> Enum.slice(0..31)}}
+            )
+          end)
+
+          state
+
         state[:speed] < 500 ->
           case 250 / state[:speed] <= state[:modpub] do
             true ->
@@ -192,6 +306,7 @@ defmodule LambentEx.Machine do
                 @pubsub_topic_fh,
                 {:firehose, {state[:name], data |> Enum.slice(0..31)}}
               )
+
               state |> Map.put(:modpub, 0)
 
             false ->
@@ -208,13 +323,48 @@ defmodule LambentEx.Machine do
           state
       end
 
-    {:noreply, bright_step(state)}
+    case state[:single] do
+      :full ->
+        case state[:fullkeys] do
+          val when length(val) == 0 ->
+            {:noreply,
+             bright_step(
+               state
+               |> Map.put(
+                 :fullkeys,
+                 data
+                 |> Map.keys()
+               )
+             )}
+
+          _otherwise ->
+            {:noreply, bright_step(state)}
+        end
+
+      _otherwise ->
+        {:noreply, bright_step(state)}
+    end
   end
 
   @impl true
   def handle_info(:publish, state) do
     Process.send_after(self(), :publish, 400)
-    Phoenix.PubSub.broadcast(@pubsub_name, @pubsub_topic_idx, {:machines_pub, publish(state)})
+
+    case state[:single] do
+      :full ->
+        state[:fullkeys]
+        |> Enum.map(fn k ->
+          Phoenix.PubSub.broadcast(
+            @pubsub_name,
+            @pubsub_topic_idx,
+            {:machines_pub, publish(state, k)}
+          )
+        end)
+
+      _otherwise ->
+        Phoenix.PubSub.broadcast(@pubsub_name, @pubsub_topic_idx, {:machines_pub, publish(state)})
+    end
+
     {:noreply, state}
   end
 
