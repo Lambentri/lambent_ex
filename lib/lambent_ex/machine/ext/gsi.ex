@@ -223,19 +223,19 @@ defmodule LambentEx.Machine.Ext.GSI do
   # gold
   defp read(:dota_player_xpm, state), do: state[:gs] |> get_in(["player", "xpm"]) || 0
   defp read(:dota_player_gpm, state), do: state[:gs] |> get_in(["player", "gpm"]) || 0
-  defp read(:dota_player_gold, state), do: state[:gs] |> get_in(["player", "gold"]) || 0
-  defp read(:dota_player_gold_unreliable, state), do: state[:gs] |> get_in(["player", "gold_unreliable"]) || 0
-  defp read(:dota_player_gold_reliable, state), do: state[:gs] |> get_in(["player", "gold_reliable"]) || 0
+  defp read(:dota_player_gold, state), do: state[:gs] |> get_in(["player", "gold"]) || 1
+  defp read(:dota_player_gold_unreliable, state), do: state[:gs] |> get_in(["player", "gold_unreliable"]) || 1
+  defp read(:dota_player_gold_reliable, state), do: state[:gs] |> get_in(["player", "gold_reliable"]) || 1
   defp read(:dota_player_gold_from_creep_kills, state), do: state[:gs] |> get_in(["player", "gold_from_creep_kills"]) || 0
   defp read(:dota_player_gold_from_hero_kills, state), do: state[:gs] |> get_in(["player", "gold_from_hero_kills"]) || 0
   defp read(:dota_player_gold_from_income, state), do: state[:gs] |> get_in(["player", "gold_from_income"]) || 0
   defp read(:dota_player_gold_from_shared, state), do: state[:gs] |> get_in(["player", "gold_from_shared"]) || 0
   # numbers
   defp read(:dota_mana, state), do: state[:gs] |> get_in(["hero", "mana"]) || 0
-  defp read(:dota_mana_max, state), do: state[:gs] |> get_in(["hero", "max_mana"]) || 0
+  defp read(:dota_mana_max, state), do: state[:gs] |> get_in(["hero", "max_mana"]) || 1
   defp read(:dota_mana_pct, state), do: state[:gs] |> get_in(["hero", "mana_percent"]) || 0
   defp read(:dota_health, state), do: state[:gs] |> get_in(["hero", "health"]) || 0
-  defp read(:dota_health_max, state), do: state[:gs] |> get_in(["hero", "max_health"]) || 0
+  defp read(:dota_health_max, state), do: state[:gs] |> get_in(["hero", "max_health"]) || 1
   defp read(:dota_health_pct, state), do: state[:gs] |> get_in(["hero", "health_percent"]) || 0
   # statuses
   defp read(:dota_hero_smoked, state), do: state[:gs] |> get_in(["hero", "smoked"]) ||false
@@ -269,14 +269,14 @@ defmodule LambentEx.Machine.Ext.GSI do
   defp read(:dota_hero_talent_7, state), do: state[:gs] |> get_in(["hero", "talent_7"]) || false
   defp read(:dota_hero_talent_8, state), do: state[:gs] |> get_in(["hero", "talent_8"]) || false
   # abilities
-  defp read(:dota_hero_ability_1, state), do: state[:gs] |> get_in(["hero", "ability_1"]) || false
-  defp read(:dota_hero_ability_2, state), do: state[:gs] |> get_in(["hero", "ability_2"]) || false
-  defp read(:dota_hero_ability_3, state), do: state[:gs] |> get_in(["hero", "ability_3"]) || false
-  defp read(:dota_hero_ability_4, state), do: state[:gs] |> get_in(["hero", "ability_4"]) || false
-  defp read(:dota_hero_ability_5, state), do: state[:gs] |> get_in(["hero", "ability_5"]) || false
-  defp read(:dota_hero_ability_6, state), do: state[:gs] |> get_in(["hero", "ability_6"]) || false
-  defp read(:dota_hero_ability_7, state), do: state[:gs] |> get_in(["hero", "ability_7"]) || false
-  defp read(:dota_hero_ability_8, state), do: state[:gs] |> get_in(["hero", "ability_8"]) || false
+  defp read(:dota_hero_ability_1, state), do: state[:gs] |> get_in(["hero", "ability_1"]) || %{}
+  defp read(:dota_hero_ability_2, state), do: state[:gs] |> get_in(["hero", "ability_2"]) || %{}
+  defp read(:dota_hero_ability_3, state), do: state[:gs] |> get_in(["hero", "ability_3"]) || %{}
+  defp read(:dota_hero_ability_4, state), do: state[:gs] |> get_in(["hero", "ability_4"]) || %{}
+  defp read(:dota_hero_ability_5, state), do: state[:gs] |> get_in(["hero", "ability_5"]) || %{}
+  defp read(:dota_hero_ability_6, state), do: state[:gs] |> get_in(["hero", "ability_6"]) || %{}
+  defp read(:dota_hero_ability_7, state), do: state[:gs] |> get_in(["hero", "ability_7"]) || %{}
+  defp read(:dota_hero_ability_8, state), do: state[:gs] |> get_in(["hero", "ability_8"]) || %{}
   ## these are passed in the result of above eg; read(:dota_hero_ability_active, read(:dota_hero_ability_1, state))
   defp read(:dota_hero_ability_active, state), do: state |> Map.get("ability_active") || false
   defp read(:dota_hero_ability_can_cast, state), do: state |> Map.get("can_cast") || false

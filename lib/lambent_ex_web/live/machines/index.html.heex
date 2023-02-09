@@ -58,7 +58,12 @@
               <td><%= v[:step] %></td>
               <td><%= v[:name] %></td>
               <td><%= v[:speed] |> spd %></td>
-              <td><%= v[:bgt] |> bgt %> %</td>
+              <td>
+                  <%= if v[:bgt] != v[:bgtt] do %>
+                  <%= v[:bgt] |> bgt %>&percnt; <i class="fa-solid fa-fw fa-caret-right"></i> <%= v[:bgtt] |> bgt %>&percnt;
+                  <% else %>
+                  <%= v[:bgt] |> bgt %>&percnt;
+                  <% end%></td>
               <td>
                 <button class="btn btn-circle" phx-click="slower" phx-value-id={v[:name]}>
                   <i class="fa-solid fa-2x fa-forward-step"></i>
