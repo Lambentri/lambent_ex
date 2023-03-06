@@ -1,129 +1,124 @@
 <div class="overflow-x-auto">
-    <div class="hidden lg:block">
-        <table class="table table-zebra w-full">
-            <!-- head -->
-            <thead>
-                <tr>
-                    <th>MAC</th>
-                    <th>IP</th>
-                    <th>Name</th>
-                    <th>Place</th>
-                    <th>Order</th>
-                    <th>Type</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- row 1 -->
-                <%= if Enum.empty?(@devices) do %>
-                <tr>
-                    <th colspan="6">No devices detected, yet.</th>
-                </tr>
-                <% end %>
-                <%= for {k,v} <- @devices do %>
-                <tr>
-                    <th><%= k %></th>
-                    <td><%= v["ip"] |> pip %></td>
-                    <td>
-                        <.live_editable
-                        id={k <> "name"}
-                        ple_data={v["name"]}
-                        ple_action="rename"
-                        ple_handler={LiveEdit}
-                        />
-                    </td>
-                    <td>
-                        <.live_editable
-                        id={k <> "place"}
-                        ple_data={v["place"]}
-                        ple_action="replace"
-                        ple_handler={LiveEdit}
-                        />
-                    </td>
-                    <td>
-                        <.ple
-                        id={k <> "ord"}
-                        ple_data={v["ord"]}
-                        ple_type="select"
-                        ple_options={options()}
-                        ple_action="reorder"
-                        ple_handler={LiveEdit}
-                        />
-                    </td>
-                    <td><%= v["type"] %></td>
-                    <td>
-                        <button class="btn btn-circle" phx-click="poke" phx-value-id={k}>
-                            <i class="fa-solid fa-bolt-lightning"></i>
-                        </button>
-                    </td>
-                </tr>
-                <% end %>
-            </tbody>
-        </table>
-    </div>
-    <div class="block lg:hidden">
+  <div class="hidden lg:block">
+    <table class="table table-zebra w-full">
+      <!-- head -->
+      <thead>
+        <tr>
+          <th>MAC</th>
+          <th>IP</th>
+          <th>Name</th>
+          <th>Place</th>
+          <th>Order</th>
+          <th>Type</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- row 1 -->
         <%= if Enum.empty?(@devices) do %>
-        <div class="card card-compact w-full bg-primary text-primary-content my-2">
-            <div class="card-body">
-                <h2 class="card-title">
-                     No devices detected, yet.
-                </h2>
-            </div>
-        </div>
+          <tr>
+            <th colspan="6">No devices detected, yet.</th>
+          </tr>
         <% end %>
         <%= for {k,v} <- @devices do %>
-        <div class="card card-compact w-full bg-primary text-primary-content my-2">
-            <div class="card-body">
-                <div class="grid grid-cols-3 grid-flow-row-dense">
-                    <div class="col-span-2">
-                <h2 class="card-title">
-                    <.live_editable
-                    id={k <> "namem"}
-                    ple_data={v["name"]}
-                    ple_action="rename"
-                    ple_handler={LiveEdit}
-                    />
-
-                    @
-
-                    <.live_editable
-                    id={k <> "placem"}
-                    ple_data={v["place"]}
-                    ple_action="replace"
-                    ple_handler={LiveEdit}
-                    />
-                </h2>
-                <p>
-                    <%= v["ip"] |> pip %> <i class="fa-solid fa-at"></i> <%= k %>
-
-                    <div class="badge badge-lg badge-secondary">
-                        <i class="fa-solid fa-fw fa-traffic-light fa-spin"></i>
-                        <.ple
-                        id={k <> "ordm"}
-                        ple_data={v["ord"]}
-                        ple_type="select"
-                        ple_options={options()}
-                        ple_action="reorder"
-                        ple_handler={LiveEdit}
-                        />
-                    </div>
-
-
-                    <div class="badge badge-lg">
-                        <i class="fa-solid fa-fw fa-gear fa-spin"></i>
-                        <%= v["type"] %>
-                    </div>
-
-                </p>
-                    </div>
-                <div class="card-actions justify-end">
-                    <button class="btn btn-circle" phx-click="poke" phx-value-id={k}>
-                        <i class="fa-solid fa-bolt-lightning"></i>
-                    </button>
-                </div>
-                </div>
-            </div>
-        </div>
+          <tr>
+            <th><%= k %></th>
+            <td><%= v["ip"] |> pip %></td>
+            <td>
+              <.live_editable
+                id={k <> "name"}
+                ple_data={v["name"]}
+                ple_action="rename"
+                ple_handler={LiveEdit}
+              />
+            </td>
+            <td>
+              <.live_editable
+                id={k <> "place"}
+                ple_data={v["place"]}
+                ple_action="replace"
+                ple_handler={LiveEdit}
+              />
+            </td>
+            <td>
+              <.ple
+                id={k <> "ord"}
+                ple_data={v["ord"]}
+                ple_type="select"
+                ple_options={options()}
+                ple_action="reorder"
+                ple_handler={LiveEdit}
+              />
+            </td>
+            <td><%= v["type"] %></td>
+            <td>
+              <button class="btn btn-circle" phx-click="poke" phx-value-id={k}>
+                <i class="fa-solid fa-bolt-lightning"></i>
+              </button>
+            </td>
+          </tr>
         <% end %>
-    </div>
+      </tbody>
+    </table>
+  </div>
+  <div class="block lg:hidden">
+    <%= if Enum.empty?(@devices) do %>
+      <div class="card card-compact w-full bg-primary text-primary-content my-2">
+        <div class="card-body">
+          <h2 class="card-title">
+            No devices detected, yet.
+          </h2>
+        </div>
+      </div>
+    <% end %>
+    <%= for {k,v} <- @devices do %>
+      <div class="card card-compact w-full bg-primary text-primary-content my-2">
+        <div class="card-body">
+          <div class="grid grid-cols-3 grid-flow-row-dense">
+            <div class="col-span-2">
+              <h2 class="card-title">
+                <.live_editable
+                  id={k <> "namem"}
+                  ple_data={v["name"]}
+                  ple_action="rename"
+                  ple_handler={LiveEdit}
+                /> @
+                <.live_editable
+                  id={k <> "placem"}
+                  ple_data={v["place"]}
+                  ple_action="replace"
+                  ple_handler={LiveEdit}
+                />
+              </h2>
+              <p>
+                <%= v["ip"] |> pip %> <i class="fa-solid fa-at"></i> <%= k %>
+
+                <div class="badge badge-lg badge-secondary">
+                  <i class="fa-solid fa-fw fa-traffic-light fa-spin"></i>
+                  <.ple
+                    id={k <> "ordm"}
+                    ple_data={v["ord"]}
+                    ple_type="select"
+                    ple_options={options()}
+                    ple_action="reorder"
+                    ple_handler={LiveEdit}
+                  />
+                </div>
+
+                <div class="badge badge-lg">
+                  <i class="fa-solid fa-fw fa-gear fa-spin"></i>
+                  <%= v["type"] %>
+                </div>
+              </p>
+            </div>
+            <div class="card-actions justify-end">
+              <button class="btn btn-circle" phx-click="poke" phx-value-id={k}>
+                <i class="fa-solid fa-bolt-lightning"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
 </div>

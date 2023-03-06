@@ -113,9 +113,15 @@ defmodule LambentExWeb.MachinesLive.Index do
   end
 
   def handle_event("library-add", %{"cls" => cls, "entry" => entry}, socket) do
-    spec = LambentEx.Machines.Library.machines |> get_in([String.to_atom(cls),String.to_atom(entry)])
+    spec =
+      LambentEx.Machines.Library.machines()
+      |> get_in([String.to_atom(cls), String.to_atom(entry)])
+
     opts = spec[:mach_opts] || []
-    LambentEx.MachineSupervisor.start_child(spec[:machine], spec[:args], entry, opts) |> IO.inspect
+
+    LambentEx.MachineSupervisor.start_child(spec[:machine], spec[:args], entry, opts)
+    |> IO.inspect()
+
     {:noreply, socket}
   end
 
@@ -133,8 +139,8 @@ defmodule LambentExWeb.MachinesLive.Index do
   end
 
   defp preview(pile, name) do
-#    IO.puts("PREEEVIEW")
-#    IO.inspect({name})
+    #    IO.puts("PREEEVIEW")
+    #    IO.inspect({name})
     pile |> Map.get(name, []) |> Enum.map(fn [r, g, b] -> "##{hex(r)}#{hex(g)}#{hex(b)}" end)
   end
 end

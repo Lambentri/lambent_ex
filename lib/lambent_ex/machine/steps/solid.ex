@@ -44,7 +44,6 @@ defmodule LambentEx.Machine.Steps.Solid do
   end
 end
 
-
 defmodule LambentEx.Machine.Steps.SolidRGB.Cfg do
   #   @enforce_keys [:h]
   defstruct [:r, :g, :b, id: 0]

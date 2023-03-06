@@ -137,6 +137,14 @@ defmodule LambentEx.Machine do
     via_tuple("machine-#{id}") |> GenServer.cast(:slower)
   end
 
+  def set_speed(id, val) do
+    via_tuple("machine-#{id}") |> GenServer.cast({:set_speed, val})
+  end
+
+  def set_brightness(id, val) do
+    via_tuple("machine-#{id}") |> GenServer.cast({:set_brightness, val})
+  end
+
   def brighter(id) do
     via_tuple("machine-#{id}") |> GenServer.cast(:brighter)
   end
@@ -179,11 +187,11 @@ defmodule LambentEx.Machine do
         String.contains?(s, "Steps") ->
           [_head, step] = step |> to_string |> String.split(".Steps.")
           step
+
         String.contains?(s, "Ext") ->
           [_head, step] = step |> to_string |> String.split(".Ext.")
           step
       end
-
 
     step
   end

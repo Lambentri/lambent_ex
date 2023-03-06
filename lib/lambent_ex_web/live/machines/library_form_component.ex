@@ -10,7 +10,7 @@ defmodule LambentEx.MachinesLive.LibraryFormComponent do
     |> Map.merge(new, fn _k, v1, v2 ->
       v1
       |> Map.merge(v2, fn _k, vv1, vv2 ->
-        vv1 ++ vv2 |> Enum.reverse |> Enum.slice(0..@count) |> Enum.reverse
+        (vv1 ++ vv2) |> Enum.reverse() |> Enum.slice(0..@count) |> Enum.reverse()
       end)
     end)
   end

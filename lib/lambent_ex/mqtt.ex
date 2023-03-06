@@ -5,7 +5,6 @@ defmodule LambentEx.MQTT do
   @pubsub_name LambentEx.PubSub
   @pubsub_topic_idx "svc_idx"
 
-
   def start_link(_args, opts) do
     GenServer.start_link(__MODULE__, opts, name: via_tuple("mqtt-#{opts[:name]}"))
   end
@@ -15,17 +14,26 @@ defmodule LambentEx.MQTT do
 
     {:ok, opts} = Keyword.validate(opts, [:name, :host, :port, tls: false, persist: false])
 
-    {:ok, pid} = Tortoise.Connection.start_link(
-      client_id: opts[:name],
-      server: {Tortoise.Transport.Tcp, host: opts[:host], port: opts[:port]},
-      handler: {Tortoise.Handler.Logger, []}
-    )
+    {:ok, pid} =
+      Tortoise.Connection.start_link(
+        client_id: opts[:name],
+        server: {Tortoise.Transport.Tcp, host: opts[:host], port: opts[:port]},
+        handler: {Tortoise.Handler.Logger, []}
+      )
 
     Tortoise.Events.register(opts[:name], :status)
     Tortoise.Events.register(opts[:name], :ping_response)
 
-
-    {:ok, %{mqtt: pid, name: opts[:name], host: opts[:host], port: opts[:port], persist: opts[:persist], connected: :down, latency: nil}}
+    {:ok,
+     %{
+       mqtt: pid,
+       name: opts[:name],
+       host: opts[:host],
+       port: opts[:port],
+       persist: opts[:persist],
+       connected: :down,
+       latency: nil
+     }}
   end
 
   defp via_tuple(name), do: {:via, Registry, {@registry, name}}

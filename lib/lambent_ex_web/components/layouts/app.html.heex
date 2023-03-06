@@ -39,11 +39,10 @@
 <main class="px-4 py-20 sm:px-6 lg:px-8">
   <div class="mx-auto max-w-7xl">
     <div>
-        <a class="float-right text-primary hover:text-accent" href="#help-modal">
-            <i class="fa-solid fa-circle-question fa-3x"></i>
-        </a>
+      <a class="float-right text-primary hover:text-accent" href="#help-modal">
+        <i class="fa-solid fa-circle-question fa-3x"></i>
+      </a>
       <h1 class="text-5xl font-build text-center lg:text-left">LambentEx</h1>
-
     </div>
     <.flash kind={:info} title="Success!" flash={@flash} />
     <.flash kind={:error} title="Error!" flash={@flash} />
@@ -93,13 +92,13 @@
             <% end %>
 
             <%= if @page_link == "Services" do %>
-            <.link patch={~p"/cfg/services"} class="btn btn-primary normal-case text-xl">
+              <.link patch={~p"/cfg/services"} class="btn btn-primary normal-case text-xl">
                 SVCs
-            </.link>
+              </.link>
             <% else %>
-            <.link patch={~p"/cfg/services"} class="btn btn-ghost normal-case text-xl">
+              <.link patch={~p"/cfg/services"} class="btn btn-ghost normal-case text-xl">
                 SVCs
-            </.link>
+              </.link>
             <% end %>
           </div>
           <div class="flex-none">
@@ -123,105 +122,130 @@
       </div>
     </div>
   </div>
-<div class="modal" id="help-modal">
+  <div class="modal" id="help-modal">
     <div class="modal-box w-11/12 max-w-5xl">
-        <h3 class="font-bold text-xl text-accent">HELP!</h3>
-        <p class="py-4">You're new here and are probably wondering what the hell is going on. While it looks like A Lot. It isn't, and you'll be ready to play momentarily.</p>
-        <h4 class="font-bold text-md text-accent">Devices</h4>
-        <p class="py-4"><code>Devices</code> are lights that have been found on your local area network via one of the scanning processes, or lights that have been found on a configured external service.
-            Devices can be assigned to a Place and given a Name via the UI for organizational purposes.
-            <br /><br />
-            As the service provides a wide range of support for many types of target device, it allows for resorting of output values to support pixels beyond RGB including color expansion based on the RGB values.
-            <br /><br >
-            <span class="font-bold">Icons</span>
-            <div class="grid grid-cols-5">
-                <button class="btn btn-circle btn-sm">
-                    <i class="fa-solid fa-2x fa-bolt-lightning"></i>
-                </button>
-                <div class="col-span-4">Locate a physical device by sending it a flashing test pattern.</div>
-            </div>
-            <br />
-        </p>
-        <h4 class="font-bold text-md text-accent">Machines</h4>
-        <p class="py-4">
-            <code>Machines</code> are small programs that follow specific rules every time they internally tick, which causes them to emit a stream of RGB values.
-            <br /><br >
-            <span class="font-bold">Icons</span>
-            <div class="grid grid-cols-5">
-                <i class="fa-solid fa-2x fa-plus hover:fa-spin"></i>
-                <div class="col-span-4">Create a link attaching a single machine to a single device.</div>
-                <i class="fa-solid fa-2x fa-bucket hover:fa-spin"></i>
-                <div class="col-span-4">Create multiple links attaching a single machine to many devices.</div>
-                <span class="col-span-5"><br /></span>
-                <button class="btn btn-circle btn-sm">
-                    <i class="fa-solid fa-2x fa-forward-step"></i>
-                </button>
-                <div class="col-span-4">Slow down the machine's internal timer</div>
-                <button class="btn btn-circle btn-sm">
-                    <i class="fa-solid fa-2x fa-forward-fast"></i>
-                </button>
-                <div class="col-span-4">Speed up the machine's internal timer</div>
-                <button class="btn btn-circle btn-sm">
-                    <i class="fa-regular fa-2x fa-lightbulb"></i>
-                </button>
-                <div class="col-span-4">Set the brightness target lower</div>
-                <button class="btn btn-circle btn-sm">
-                    <i class="fa-solid fa-2x fa-lightbulb"></i>
-                </button>
-                <div class="col-span-4">Set the brightness target higher</div>
-                <button class="btn btn-circle btn-accent btn-sm btn-outline ">
-                    <i class="fa-solid fa-2x fa-thumbtack"></i>
-                </button>
-                <div class="col-span-4">Mark the machine for persistence in case of an update/reboot, it'll be saved</div>
-                <button class="btn btn-circle btn-error btn-sm btn-outline">
-                    <i class="fa-solid fa-2x fa-xmark"></i>
-                </button>
-                <div class="col-span-4">Delete the machine.</div>
-            </div>
-            <br />
-        </p>
-        <h4 class="font-bold text-md text-accent">Links</h4>
-        <p class="py-4">
-            <code>Links</code> connect the output from a <code>Machine</code> to a <code>Device</code>
-            <br /> <br />
-            <span class="font-bold">Icons</span>
-            <div class="grid grid-cols-5">
-                <i class="fa-solid fa-2x fa-plus hover:fa-spin"></i>
-                <div class="col-span-4">Create a machine from the UI, being able to adjust all parameters.</div>
-                <i class="fa-solid fa-2x fa-book hover:fa-spin"></i>
-                <div class="col-span-4">Open the machine library to view and instantiate example machines.</div>
-                <span class="col-span-5"><br /></span>
-                <button class="btn btn-circle btn-sm btn-secondary hover:btn-accent btn-outline">
-                    <i class="fa-solid fa-2x fa-cog hover:fa-spin"></i>
-                </button>
-                <div class="col-span-4">Enable a link. Enabling a link will disable all other links that point to this device</div>
-                <button class="btn btn-circle btn-accent btn-sm btn-outline ">
-                    <i class="fa-solid fa-2x fa-thumbtack"></i>
-                </button>
-                <div class="col-span-4">Mark the link for persistence in case of an update/reboot, it'll be saved</div>
-                <button class="btn btn-circle btn-error btn-sm btn-outline">
-                    <i class="fa-solid fa-2x fa-xmark"></i>
-                </button>
-                <div class="col-span-4">Delete the link.</div>
-            </div>
-            <br />
-        </p>
-        <h4 class="font-bold text-md text-accent">SVCS</h4>
-        <p class="py-4">
-            <code>Services</code> allow external <code>Machines</code> and <code>Devices</code> that use MQTT or HTTP. Service configurations are automatically persisted.
-            <br /><br />
-            <span class="font-bold">Icons</span>
-            <div class="grid grid-cols-5">
-                <button class="btn btn-circle btn-error btn-sm btn-outline">
-                    <i class="fa-solid fa-2x fa-xmark"></i>
-                </button>
-                <div class="col-span-4">Delete the service.</div>
-            </div>
-            <br />
-        </p>
-        <div class="modal-action">
-            <a href="#" class="btn">Yay!</a>
+      <h3 class="font-bold text-xl text-accent">HELP!</h3>
+      <p class="py-4">
+        You're new here and are probably wondering what the hell is going on. While it looks like A Lot. It isn't, and you'll be ready to play momentarily.
+      </p>
+      <h4 class="font-bold text-md text-accent">Devices</h4>
+      <p class="py-4">
+        <code>Devices</code>
+        are lights that have been found on your local area network via one of the scanning processes, or lights that have been found on a configured external service.
+        Devices can be assigned to a Place and given a Name via the UI for organizational purposes.
+        <br /><br />
+        As the service provides a wide range of support for many types of target device, it allows for resorting of output values to support pixels beyond RGB including color expansion based on the RGB values.
+        <br /><br />
+        <span class="font-bold">Icons</span>
+        <div class="grid grid-cols-5">
+          <button class="btn btn-circle btn-sm">
+            <i class="fa-solid fa-2x fa-bolt-lightning"></i>
+          </button>
+          <div class="col-span-4">
+            Locate a physical device by sending it a flashing test pattern.
+          </div>
         </div>
+        <br />
+      </p>
+      <h4 class="font-bold text-md text-accent">Machines</h4>
+      <p class="py-4">
+        <code>Machines</code>
+        are small programs that follow specific rules every time they internally tick, which causes them to emit a stream of RGB values.
+        <br /><br />
+        <span class="font-bold">Icons</span>
+        <div class="grid grid-cols-5">
+          <i class="fa-solid fa-2x fa-plus hover:fa-spin"></i>
+          <div class="col-span-4">
+            Create a link attaching a single machine to a single device.
+          </div>
+          <i class="fa-solid fa-2x fa-bucket hover:fa-spin"></i>
+          <div class="col-span-4">
+            Create multiple links attaching a single machine to many devices.
+          </div>
+          <span class="col-span-5"><br /></span>
+          <button class="btn btn-circle btn-sm">
+            <i class="fa-solid fa-2x fa-forward-step"></i>
+          </button>
+          <div class="col-span-4">Slow down the machine's internal timer</div>
+          <button class="btn btn-circle btn-sm">
+            <i class="fa-solid fa-2x fa-forward-fast"></i>
+          </button>
+          <div class="col-span-4">Speed up the machine's internal timer</div>
+          <button class="btn btn-circle btn-sm">
+            <i class="fa-regular fa-2x fa-lightbulb"></i>
+          </button>
+          <div class="col-span-4">Set the brightness target lower</div>
+          <button class="btn btn-circle btn-sm">
+            <i class="fa-solid fa-2x fa-lightbulb"></i>
+          </button>
+          <div class="col-span-4">Set the brightness target higher</div>
+          <button class="btn btn-circle btn-accent btn-sm btn-outline ">
+            <i class="fa-solid fa-2x fa-thumbtack"></i>
+          </button>
+          <div class="col-span-4">
+            Mark the machine for persistence in case of an update/reboot, it'll be saved
+          </div>
+          <button class="btn btn-circle btn-error btn-sm btn-outline">
+            <i class="fa-solid fa-2x fa-xmark"></i>
+          </button>
+          <div class="col-span-4">Delete the machine.</div>
+        </div>
+        <br />
+      </p>
+      <h4 class="font-bold text-md text-accent">Links</h4>
+      <p class="py-4">
+        <code>Links</code>
+        connect the output from a <code>Machine</code>
+        to a <code>Device</code>
+        <br /> <br />
+        <span class="font-bold">Icons</span>
+        <div class="grid grid-cols-5">
+          <i class="fa-solid fa-2x fa-plus hover:fa-spin"></i>
+          <div class="col-span-4">
+            Create a machine from the UI, being able to adjust all parameters.
+          </div>
+          <i class="fa-solid fa-2x fa-book hover:fa-spin"></i>
+          <div class="col-span-4">
+            Open the machine library to view and instantiate example machines.
+          </div>
+          <span class="col-span-5"><br /></span>
+          <button class="btn btn-circle btn-sm btn-secondary hover:btn-accent btn-outline">
+            <i class="fa-solid fa-2x fa-cog hover:fa-spin"></i>
+          </button>
+          <div class="col-span-4">
+            Enable a link. Enabling a link will disable all other links that point to this device
+          </div>
+          <button class="btn btn-circle btn-accent btn-sm btn-outline ">
+            <i class="fa-solid fa-2x fa-thumbtack"></i>
+          </button>
+          <div class="col-span-4">
+            Mark the link for persistence in case of an update/reboot, it'll be saved
+          </div>
+          <button class="btn btn-circle btn-error btn-sm btn-outline">
+            <i class="fa-solid fa-2x fa-xmark"></i>
+          </button>
+          <div class="col-span-4">Delete the link.</div>
+        </div>
+        <br />
+      </p>
+      <h4 class="font-bold text-md text-accent">SVCS</h4>
+      <p class="py-4">
+        <code>Services</code>
+        allow external <code>Machines</code>
+        and <code>Devices</code>
+        that use MQTT or HTTP. Service configurations are automatically persisted. <br /><br />
+        <span class="font-bold">Icons</span>
+        <div class="grid grid-cols-5">
+          <button class="btn btn-circle btn-error btn-sm btn-outline">
+            <i class="fa-solid fa-2x fa-xmark"></i>
+          </button>
+          <div class="col-span-4">Delete the service.</div>
+        </div>
+        <br />
+      </p>
+      <div class="modal-action">
+        <a href="#" class="btn">Yay!</a>
+      </div>
     </div>
-</div>
+  </div>
 </main>

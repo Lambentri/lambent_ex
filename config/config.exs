@@ -56,3 +56,4 @@ config :phoenix, :json_library, Jason
 import_config "#{config_env()}.exs"
 
 config :hackney, :max_connections, 512
+config :elixir, :time_zone_database, Tzdata.TimeZoneDatabase

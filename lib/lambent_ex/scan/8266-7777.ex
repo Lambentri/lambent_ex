@@ -342,7 +342,11 @@ defmodule LambentEx.Scan.ESP8266x7777 do
         Map.merge(x, y, fn _k, v1, v2 -> v2 ++ v1 end)
       end)
       |> Enum.map(fn {k, v} ->
-        {k, v |> Map.put("name", M.get_name(k)) |> Map.put("ord", M.get_ord(k)) |> Map.put("place", M.get_place(k))}
+        {k,
+         v
+         |> Map.put("name", M.get_name(k))
+         |> Map.put("ord", M.get_ord(k))
+         |> Map.put("place", M.get_place(k))}
       end)
       |> Enum.filter(fn {k, _v} -> k != nil end)
       |> Map.new()

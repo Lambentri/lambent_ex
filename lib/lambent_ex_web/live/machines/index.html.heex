@@ -7,8 +7,7 @@
       show
       on_cancel={JS.navigate(~p"/cfg/machines")}
     >
-
-     <.live_component
+      <.live_component
         :if={@live_action in [:new, :edit]}
         module={LambentEx.MachinesLive.FormComponent}
         id={:new}
@@ -31,40 +30,126 @@
       />
     </.modal>
   <% end %>
-    <div class="hidden lg:block">
-      <table class="table table-zebra w-full">
-        <!-- head -->
-        <thead>
+  <div class="hidden lg:block">
+    <table class="table table-zebra w-full">
+      <!-- head -->
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Class</th>
+          <th>Name</th>
+          <th>Speed</th>
+          <th>Brightness</th>
+          <th></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- row 1 -->
+        <%= if Enum.empty?(@machines) do %>
           <tr>
-            <th>ID</th>
-            <th>Class</th>
-            <th>Name</th>
-            <th>Speed</th>
-            <th>Brightness</th>
-            <th></th>
-            <th></th>
+            <th colspan="6">No machines yet, Create some above</th>
           </tr>
-        </thead>
-        <tbody>
-          <!-- row 1 -->
-          <%= if Enum.empty?(@machines) do %>
-            <tr>
-              <th colspan="6">No machines yet, Create some above</th>
-            </tr>
-          <% end %>
-          <%= for {k,v} <- @machines do %>
-            <tr>
-              <th><%= k %></th>
-              <td><%= v[:step] %></td>
-              <td><%= v[:name] %></td>
-              <td><%= v[:speed] |> spd %></td>
-              <td>
-                  <%= if v[:bgt] != v[:bgtt] do %>
-                  <%= v[:bgt] |> bgt %>&percnt; <i class="fa-solid fa-fw fa-caret-right"></i> <%= v[:bgtt] |> bgt %>&percnt;
-                  <% else %>
+        <% end %>
+        <%= for {k,v} <- @machines do %>
+          <tr>
+            <th><%= k %></th>
+            <td><%= v[:step] %></td>
+            <td><%= v[:name] %></td>
+            <td><%= v[:speed] |> spd %></td>
+            <td>
+              <%= if v[:bgt] != v[:bgtt] do %>
+                <%= v[:bgt] |> bgt %>&percnt;
+                <i class="fa-solid fa-fw fa-caret-right"></i> <%= v[:bgtt] |> bgt %>&percnt;
+              <% else %>
+                <%= v[:bgt] |> bgt %>&percnt;
+              <% end %>
+            </td>
+            <td>
+              <button class="btn btn-circle" phx-click="slower" phx-value-id={v[:name]}>
+                <i class="fa-solid fa-2x fa-forward-step"></i>
+              </button>
+              <button class="btn btn-circle" phx-click="faster" phx-value-id={v[:name]}>
+                <i class="fa-solid fa-2x fa-forward-fast"></i>
+              </button>
+              <button class="btn btn-circle" phx-click="dimmer" phx-value-id={v[:name]}>
+                <i class="fa-regular fa-2x fa-lightbulb"></i>
+              </button>
+              <button class="btn btn-circle" phx-click="brighter" phx-value-id={v[:name]}>
+                <i class="fa-solid fa-2x fa-lightbulb"></i>
+              </button>
+              <%= if v[:persist] == true do %>
+                <a class="btn btn-accent btn-circle" phx-click="persist" phx-value-tgt={v[:name]}>
+                  <i class="fa-solid fa-2x fa-thumbtack"></i>
+                </a>
+              <% else %>
+                <a
+                  class="btn btn-accent btn-outline btn-circle"
+                  phx-click="persist"
+                  phx-value-tgt={v[:name]}
+                >
+                  <i class="fa-solid fa-2x fa-thumbtack"></i>
+                </a>
+              <% end %>
+              <a
+                class="btn btn-error btn-outline btn-circle"
+                phx-click="quit"
+                phx-value-tgt={v[:name]}
+              >
+                <i class="fa-solid fa-2x fa-xmark"></i>
+              </a>
+            </td>
+            <td>
+              <div class="rounded-xl">
+                <div class="grid grid-cols-1 gap-0 rounded-box">
+                  <%= for p <- preview(@previews, v[:name]) do %>
+                    <div style={"background-color: #{p}; height:1px"} class="m-0 p-0">&nbsp;</div>
+                  <% end %>
+                </div>
+              </div>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+  <div class="block lg:hidden">
+    <%= if Enum.empty?(@machines) do %>
+      <div class="card card-compact w-full bg-primary text-primary-content my-2">
+        <div class="card-body">
+          <h2 class="card-title">
+            No machines yet, Create some via the controls above
+          </h2>
+        </div>
+      </div>
+    <% end %>
+    <%= for {k,v} <- @machines do %>
+      <div class="card card-compact w-full bg-primary text-primary-content my-2">
+        <div class="card-body">
+          <div class="grid grid-cols-2">
+            <div class="flex flex-col">
+              <h2 class="card-title"><%= v[:name] %></h2>
+              <p></p>
+              <div class="badge badge-lg">
+                <i class="fa-solid fa-fw fa-gear fa-spin"></i>
+                <%= v[:step] %>
+              </div>
+              <div class="badge badge-lg badge-secondary">
+                <i class="fa-solid fa-fw fa-forward-step"></i>
+                <%= v[:speed] |> spd %>
+              </div>
+              <div class="badge badge-lg badge-secondary">
+                <i class="fa-solid fa-fw fa-lightbulb"></i>
+                <%= if v[:bgt] != v[:bgtt] do %>
                   <%= v[:bgt] |> bgt %>&percnt;
-                  <% end%></td>
-              <td>
+                  <i class="fa-solid fa-fw fa-caret-right"></i> <%= v[:bgtt] |> bgt %>&percnt;
+                <% else %>
+                  <%= v[:bgt] |> bgt %>&percnt;
+                <% end %>
+              </div>
+            </div>
+            <div class="flex">
+              <div class="card-actions justify-end">
                 <button class="btn btn-circle" phx-click="slower" phx-value-id={v[:name]}>
                   <i class="fa-solid fa-2x fa-forward-step"></i>
                 </button>
@@ -78,7 +163,11 @@
                   <i class="fa-solid fa-2x fa-lightbulb"></i>
                 </button>
                 <%= if v[:persist] == true do %>
-                  <a class="btn btn-accent btn-circle" phx-click="persist" phx-value-tgt={v[:name]}>
+                  <a
+                    class="btn btn-accent btn-circle"
+                    phx-click="persist"
+                    phx-value-tgt={v[:name]}
+                  >
                     <i class="fa-solid fa-2x fa-thumbtack"></i>
                   </a>
                 <% else %>
@@ -97,100 +186,20 @@
                 >
                   <i class="fa-solid fa-2x fa-xmark"></i>
                 </a>
-              </td>
-              <td>
-                <div class="rounded-xl">
-                <div class="grid grid-cols-1 gap-0 rounded-box">
+              </div>
+              <div class="rounded-xl">
+                <div class="flex flex-col gap-0 rounded-box h-full mx-2">
                   <%= for p <- preview(@previews, v[:name]) do %>
-                    <div style={"background-color: #{p}; height:1px"} class="m-0 p-0">&nbsp;</div>
+                    <div style={"background-color: #{p}; height:1px"} class="m-0 p-0 flex-auto">
+                      &nbsp;
+                    </div>
                   <% end %>
                 </div>
-                </div>
-              </td>
-            </tr>
-          <% end %>
-        </tbody>
-      </table>
-    </div>
-    <div class="block lg:hidden">
-        <%= if Enum.empty?(@machines) do %>
-        <div class="card card-compact w-full bg-primary text-primary-content my-2">
-            <div class="card-body">
-                <h2 class="card-title">
-                    No machines yet, Create some via the controls above
-                </h2>
+              </div>
             </div>
+          </div>
         </div>
-        <% end %>
-        <%= for {k,v} <- @machines do %>
-        <div class="card card-compact w-full bg-primary text-primary-content my-2">
-            <div class="card-body">
-                <div class="grid grid-cols-2">
-                    <div class="flex flex-col">
-                        <h2 class="card-title"><%= v[:name] %> </h2>
-                        <p></p>
-                        <div class="badge badge-lg">
-                            <i class="fa-solid fa-fw fa-gear fa-spin"></i>
-                            <%= v[:step] %>
-                        </div>
-                        <div class="badge badge-lg badge-secondary">
-                            <i class="fa-solid fa-fw fa-forward-step"></i>
-                            <%= v[:speed] |> spd %></div>
-                        <div class="badge badge-lg badge-secondary">
-                            <i class="fa-solid fa-fw fa-lightbulb"></i>
-                            <%= if v[:bgt] != v[:bgtt] do %>
-                                <%= v[:bgt] |> bgt %>&percnt; <i class="fa-solid fa-fw fa-caret-right"></i> <%= v[:bgtt] |> bgt %>&percnt;
-                            <% else %>
-                                <%= v[:bgt] |> bgt %>&percnt;
-                            <% end%>
-                        </div>
-                    </div>
-                    <div class="flex">
-                        <div class="card-actions justify-end">
-                            <button class="btn btn-circle" phx-click="slower" phx-value-id={v[:name]}>
-                                <i class="fa-solid fa-2x fa-forward-step"></i>
-                            </button>
-                            <button class="btn btn-circle" phx-click="faster" phx-value-id={v[:name]}>
-                                <i class="fa-solid fa-2x fa-forward-fast"></i>
-                            </button>
-                            <button class="btn btn-circle" phx-click="dimmer" phx-value-id={v[:name]}>
-                                <i class="fa-regular fa-2x fa-lightbulb"></i>
-                            </button>
-                            <button class="btn btn-circle" phx-click="brighter" phx-value-id={v[:name]}>
-                                <i class="fa-solid fa-2x fa-lightbulb"></i>
-                            </button>
-                            <%= if v[:persist] == true do %>
-                            <a class="btn btn-accent btn-circle" phx-click="persist" phx-value-tgt={v[:name]}>
-                                <i class="fa-solid fa-2x fa-thumbtack"></i>
-                            </a>
-                            <% else %>
-                            <a
-                                    class="btn btn-accent btn-outline btn-circle"
-                                    phx-click="persist"
-                                    phx-value-tgt={v[:name]}
-                            >
-                                <i class="fa-solid fa-2x fa-thumbtack"></i>
-                            </a>
-                            <% end %>
-                            <a
-                                    class="btn btn-error btn-outline btn-circle"
-                                    phx-click="quit"
-                                    phx-value-tgt={v[:name]}
-                            >
-                                <i class="fa-solid fa-2x fa-xmark"></i>
-                            </a>
-                        </div>
-                        <div class="rounded-xl">
-                            <div class="flex flex-col gap-0 rounded-box h-full mx-2">
-                                <%= for p <- preview(@previews, v[:name]) do %>
-                                <div style={"background-color: #{p}; height:1px"} class="m-0 p-0 flex-auto">&nbsp;</div>
-                                <% end %>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <% end %>
-    </div>
+      </div>
+    <% end %>
+  </div>
 </div>

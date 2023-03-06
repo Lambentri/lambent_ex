@@ -11,6 +11,7 @@ import Config
 # before starting your production server.
 config :lambent_ex, LambentExWeb.Endpoint,
   cache_static_manifest: "priv/static/cache_manifest.json"
+
 #  check_origin: :conn
 #
 # Do not print debug messages in production

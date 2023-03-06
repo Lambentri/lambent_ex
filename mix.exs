@@ -64,6 +64,7 @@ defmodule LambentEx.MixProject do
       {:phoenix_ecto, "~> 4.0"},
       {:polymorphic_embed, "~> 2.0.0"},
       {:tortoise, "~> 0.9"},
+      {:tzdata, "~> 1.1"}
     ]
   end
 

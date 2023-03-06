@@ -89,7 +89,8 @@ defmodule LambentEx.Machines.Library do
         pink: %{desc: "flag", machine: LambentEx.Machine.Steps.Chase, args: %{h: 212}},
         purple: %{desc: "flag", machine: LambentEx.Machine.Steps.Chase, args: %{h: 170}}
       },
-      chasem: %{}, # todo the flags
+      # todo the flags
+      chasem: %{},
       scape: %{
         vista: %{desc: "map", machine: LambentEx.Machine.Steps.Scape, args: %{h_l: 240, h_h: 120}},
         love: %{desc: "map", machine: LambentEx.Machine.Steps.Scape, args: %{h_l: 230, h_h: 20}},
@@ -122,7 +123,8 @@ defmodule LambentEx.Machines.Library do
           args: %{h: [0, 42, 85, 127, 171, 212]}
         }
       },
-      twinkle: %{}, # todo port this from LA3
+      # todo port this from LA3
+      twinkle: %{},
       rainbow: %{
         regular: %{desc: "futbol", machine: LambentEx.Machine.Steps.Rainbow, args: %{modulo: 255}},
         regular64: %{

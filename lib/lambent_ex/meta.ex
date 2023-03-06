@@ -3,7 +3,7 @@ defmodule LambentEx.Meta do
 
   @table :lex_metadata
   @pubsub_name LambentEx.PubSub
-  @pubsub_svc_http "svc_pub"
+  @pubsub_svc "svc_pub"
 
   def init(arg) do
     #    File.cd("meta")
@@ -15,7 +15,7 @@ defmodule LambentEx.Meta do
     Phoenix.PubSub.subscribe(@pubsub_name, "mqtt_idx")
     Process.send_after(self(), :machine_flush, 5000)
     Process.send_after(self(), :link_flush, 5000)
-    Process.send_after(self(), :svc_http_pub, 10)
+    Process.send_after(self(), :svc_pub, 10)
     ml = MapSet.new()
     ll = MapSet.new()
 
@@ -70,27 +70,26 @@ defmodule LambentEx.Meta do
   end
 
   # svcs
-  def put_http(name), do: put_http(name, Ecto.UUID.generate)
-  def put_http(name, path) do
-    curr = get_http
+  defp put_gen(type, name, entry) do
+    curr = get_gen(type)
 
     case length(curr) do
-      0 -> :dets.insert(@table, {"http", [{name, path}]})
-      _otherwise -> :dets.insert(@table, {"http", curr ++ [{name, path}]})
+      0 -> :dets.insert(@table, {type, [{name, entry}]})
+      _otherwise -> :dets.insert(@table, {type, curr ++ [{name, entry}]})
     end
   end
 
-  def del_http(key) do
-    to_delete = get_http |> Enum.filter(fn {k, _v} -> k == key end)
+  defp del_gen(type, key) do
+    to_delete = get_gen(type) |> Enum.filter(fn {k, _v} -> k == key end)
 
     :dets.insert(
       @table,
-      {"http", to_delete |> Enum.reduce(get_http, fn x, acc -> acc |> List.delete(x) end)}
+      {type, to_delete |> Enum.reduce(get_gen(type), fn x, acc -> acc |> List.delete(x) end)}
     )
   end
 
-  def get_http do
-    case :dets.lookup(@table, "http") do
+  defp get_gen(type) do
+    case :dets.lookup(@table, type) do
       [] ->
         []
 
@@ -98,6 +97,20 @@ defmodule LambentEx.Meta do
         value
     end
   end
+
+  def put_http(name), do: put_http(name, Ecto.UUID.generate())
+  def put_http(name, path), do: put_gen("http", name, path)
+  def del_http(key), do: del_gen("http", key)
+  def get_http, do: get_gen("http")
+
+  def put_mqtt(name), do: put_mqtt(name, Ecto.UUID.generate())
+  def put_mqtt(name, cfg), do: put_gen("mqtt", name, cfg)
+  def del_mqtt(key), do: del_gen("mqtt", key)
+  def get_mqtt, do: get_gen("mqtt")
+
+  def put_cronos(name, cfg), do: put_gen("cronos", name, cfg)
+  def del_cronos(key), do: del_gen("cronos", key)
+  def get_cronos, do: get_gen("cronos")
 
   # init functions
   def get_saved_machines do
@@ -178,10 +191,12 @@ defmodule LambentEx.Meta do
     end
   end
 
-  def handle_info(:svc_http_pub, state) do
-    Process.send_after(self(), :svc_http_pub, 500)
+  def handle_info(:svc_pub, state) do
+    Process.send_after(self(), :svc_pub, 500)
 
-    Phoenix.PubSub.broadcast(@pubsub_name, @pubsub_svc_http, {:http, get_http})
+    Phoenix.PubSub.broadcast(@pubsub_name, @pubsub_svc, {:http, get_http})
+    # Phoenix.PubSub.broadcast(@pubsub_name, @pubsub_svc, {:mqtt, get_mqtt})
+    Phoenix.PubSub.broadcast(@pubsub_name, @pubsub_svc, {:cronos, get_cronos})
     {:noreply, state}
   end
 

@@ -17,9 +17,10 @@ defmodule LambentEx.ComponentSupervisor do
       {Registry, [keys: :unique, name: :lambent_machine]},
       {Registry, [keys: :unique, name: :lambent_links]},
       {Registry, [keys: :unique, name: :lambent_steps]},
-      {Registry, [keys: :unique, name: :lambent_mqtt]}
+      {Registry, [keys: :unique, name: :lambent_mqtt]},
       # {LambentEx.Links, []}
       # {LambentEx.Zones, []}
+      {LambentEx.Cronos, []}
     ]
 
     Supervisor.init(children, strategy: :one_for_one)

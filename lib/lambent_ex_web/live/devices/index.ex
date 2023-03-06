@@ -18,8 +18,6 @@ defmodule LambentExWeb.DevicesLive.Index do
     {:noreply, apply_action(socket, socket.assigns.live_action, params)}
   end
 
-
-
   defp re_nil(r) do
     case r do
       "" -> nil
@@ -69,6 +67,7 @@ defmodule LambentExWeb.DevicesLive.Index do
   def handle_info({:replace, data}, socket) do
     id = data["id"] |> String.trim_trailing("place") |> String.trim_trailing("placem")
     IO.inspect(id)
+
     case socket.assigns[:devices] |> Map.get(id) |> Map.get("type") do
       "8266-7777" ->
         LambentEx.Scan.ESP8266x7777.replace(:mac, id, data["data"] |> re_nil)

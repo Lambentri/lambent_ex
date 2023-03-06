@@ -27,8 +27,9 @@ defmodule LambentExWeb.Router do
     live "/cfg/links/new", LinksLive.Index, :new
     live "/cfg/links/bulk", LinksLive.Index, :bulk
     live "/cfg/services", ServicesLive.Index, :index
-    live "/cfg/services/new/mqtt", ServicesLive.Index, :new_mqtt
-    live "/cfg/services/new/http", ServicesLive.Index, :new_http
+    live "/cfg/services/mqtt", ServicesLive.Index, :new_mqtt
+    live "/cfg/services/http", ServicesLive.Index, :new_http
+    live "/cfg/services/cronos", ServicesLive.Index, :new_cronos
     live "/cfg/services/:id", ServicesLive.Show, :show
     live "/cfg/services/:id/edit", ServicesLive.Show, :edit
     #    live "/cfg/devices/:id", DevicesLive.Show, :show
@@ -36,10 +37,10 @@ defmodule LambentExWeb.Router do
   end
 
   # Other scopes may use custom stacks.
-   scope "/api", LambentExWeb do
-     pipe_through :api
-     resources "/data/:path", DataController, only: [:create, :index]
-   end
+  scope "/api", LambentExWeb do
+    pipe_through :api
+    resources "/data/:path", DataController, only: [:create, :index]
+  end
 
   # Enable LiveDashboard in development
   if Application.compile_env(:lambent_ex, :dev_routes) do

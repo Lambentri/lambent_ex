@@ -1,67 +1,135 @@
 <div class="overflow-x-auto">
-    <h3 class="text-2xl font-build py-3">
-        <i class="fa-solid fa-network-wired fa-fw" /> MQTT
-    </h3>
-    <table class="table table-zebra w-full">
-        <!-- head -->
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Host</th>
-                <th>Status</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            <%= for {k, v} <- @svcs_mqtt do %>
-            <tr>
-                <td><%= k %></td>
-                <td><%= "#{v[:host]}:#{v[:port]}" %></td>
-                <td>
-                    <%= if v[:connected] == :up do %>
-                    up: &emsp; <%= if v[:latency] do %><i class="fa-solid fa-table-tennis-paddle-ball"></i>&nbsp;<%= v[:latency] %>  ms<% end%>
-                    <% else %>
-                    down
-                    <% end %>
-                </td>
-                <td></td>
-            </tr>
+  <%= if @live_action in [:new_mqtt, :new_http, :new_cronos] do %>
+    <.modal
+    :if={@live_action in [:new_mqtt, :new_http, :new_cronos]}
+    return_to={~p"/cfg/links"}
+    id="new"
+    show
+    on_cancel={JS.navigate(~p"/cfg/services")}
+    >
+        <.live_component
+        :if={@live_action in [:new_mqtt]}
+        module={LambentEx.ServicesLive.MQTTFormComponent}
+        id={:new_mqtt}
+        title={@page_title}
+        action={@live_action}
+        return_to={~p"/cfg/services"}
+        navigate={~p"/cfg/services"}
+        />
+    <.live_component
+    :if={@live_action in [:new_http]}
+    module={LambentEx.ServicesLive.HTTPFormComponent}
+    id={:new_http}
+    title={@page_title}
+    action={@live_action}
+    return_to={~p"/cfg/services"}
+    navigate={~p"/cfg/services"}
+    />
+    <.live_component
+    :if={@live_action in [:new_cronos]}
+    module={LambentEx.ServicesLive.CronosFormComponent}
+    id={:new_cronos}
+    title={@page_title}
+    action={@live_action}
+    return_to={~p"/cfg/services"}
+    navigate={~p"/cfg/services"}
+    />
+    </.modal>
+  <% end %>
+  <h3 class="text-2xl font-build py-3">
+    <i class="fa-solid fa-network-wired fa-fw" /> MQTT
+  </h3>
+  <table class="table table-zebra w-full">
+    <!-- head -->
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Host</th>
+        <th>Status</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <%= for {k, v} <- @svcs_mqtt do %>
+        <tr>
+          <td><%= k %></td>
+          <td><%= "#{v[:host]}:#{v[:port]}" %></td>
+          <td>
+            <%= if v[:connected] == :up do %>
+              up: &emsp;
+              <%= if v[:latency] do %>
+                <i class="fa-solid fa-table-tennis-paddle-ball"></i>&nbsp;<%= v[:latency] %> ms
+              <% end %>
+            <% else %>
+              down
             <% end %>
-        </tbody>
-    </table>
+          </td>
+          <td>
+            <a class="btn btn-error btn-outline btn-circle" phx-click="del_mqtt" phx-value-tgt={k}>
+              <i class="fa-solid fa-2x fa-xmark"></i>
+            </a>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
 
-    <h3 class="text-2xl font-build py-3">
-        <i class="fa-solid fa-globe fa-fw" /> HTTP
-    </h3>
-    <table class="table table-zebra w-full">
-        <!-- head -->
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Route</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            <%= for {k, v} <- @svcs_http do %>
-            <tr>
-                <td><%= k %></td>
-                <td>/api/data/<%= v %></td>
-                <td>
-                    <a
-                            class="btn btn-error btn-outline btn-circle"
-                            phx-click="del_http"
-                            phx-value-tgt={k}
-                    >
-                        <i class="fa-solid fa-2x fa-xmark"></i>
-                    </a>
-                </td>
-            </tr>
-            <% end %>
-        </tbody>
-    </table>
+  <h3 class="text-2xl font-build py-3">
+    <i class="fa-solid fa-globe fa-fw" /> HTTP
+  </h3>
+  <table class="table table-zebra w-full">
+    <!-- head -->
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Route</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <%= for {k, v} <- @svcs_http do %>
+        <tr>
+          <td><%= k %></td>
+          <td>/api/data/<%= v %></td>
+          <td>
+            <a class="btn btn-error btn-outline btn-circle" phx-click="del_http" phx-value-tgt={k}>
+              <i class="fa-solid fa-2x fa-xmark"></i>
+            </a>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
 
-    <h3 class="text-2xl font-build py-3">
-        <i class="fa-solid fa-clock fa-fw" /> CRONOS
-    </h3>
+  <h3 class="text-2xl font-build py-3">
+    <i class="fa-solid fa-clock fa-fw" /> CRONOS
+  </h3>
+
+  <table class="table table-zebra w-full">
+    <!-- head -->
+    <thead>
+      <tr>
+        <th>Time</th>
+        <th>Route</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <%= for {k, v} <- @svcs_cronos do %>
+        <tr>
+          <td><%= k %></td>
+          <td><%= v |> Poison.encode!() %></td>
+          <td>
+            <a
+              class="btn btn-error btn-outline btn-circle"
+              phx-click="del_cronos"
+              phx-value-tgt={k}
+            >
+              <i class="fa-solid fa-2x fa-xmark"></i>
+            </a>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
 </div>

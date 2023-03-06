@@ -65,11 +65,13 @@ defmodule LambentEx.Schema.LinksB do
   end
 
   def get_name(mac, devices) do
-    flatd = devices
-    |> Enum.map(fn {iface, entries} ->
-      entries
-    end)
-    |> List.flatten() |> List.first
+    flatd =
+      devices
+      |> Enum.map(fn {iface, entries} ->
+        entries
+      end)
+      |> List.flatten()
+      |> List.first()
 
     case flatd |> Map.get(mac) do
       nil -> mac

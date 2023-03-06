@@ -4,8 +4,6 @@ defmodule LambentEx.LinksLive.BulkFormComponent do
   alias LambentEx.Schema.LinksB
   alias LambentEx.Names
 
-
-
   @impl true
   def update(%{link: link} = assigns, socket) do
     changeset = LinksB.change_link(link)
@@ -51,8 +49,7 @@ defmodule LambentEx.LinksLive.BulkFormComponent do
     array |> Enum.map(fn {k, v} -> {v[:id], v[:name]} end)
   end
 
-  defp ipp(ip), do: ip |> Tuple.to_list |> Enum.join(".")
-
+  defp ipp(ip), do: ip |> Tuple.to_list() |> Enum.join(".")
 
   def for_selectd(array) do
     array
@@ -60,35 +57,35 @@ defmodule LambentEx.LinksLive.BulkFormComponent do
       entries
       |> Enum.map(fn {k, v} ->
         if v["name"] == nil do
-                            {v["ip"] |> ipp, k}
+          {v["ip"] |> ipp, k}
         else
           {v["name"], k}
         end
-
       end)
     end)
-          |> List.flatten()
-          |> Enum.sort_by(fn {k, v} -> k end)
-#    |> IO.inspect
+    |> List.flatten()
+    |> Enum.sort_by(fn {k, v} -> k end)
+
+    #    |> IO.inspect
   end
 
-#  def for_selectd(array) do
-#    array
-#    |> Enum.map(fn {iface, entries} ->
-#      entries
-#      |> Enum.map(fn {k, v} ->
-#        if v["name"] == nil do
-#            %{label: v["ip"] |> ipp, id: k, selected: false}
-#          else
-#            %{label: v["name"], id: k, selected: false}
-#        end
-#
-#      end)
-#    end)
-##    |> List.flatten()
-##    |> Enum.sort_by(fn {k, v} -> k end)
-#    |> IO.inspect
-#  end
+  #  def for_selectd(array) do
+  #    array
+  #    |> Enum.map(fn {iface, entries} ->
+  #      entries
+  #      |> Enum.map(fn {k, v} ->
+  #        if v["name"] == nil do
+  #            %{label: v["ip"] |> ipp, id: k, selected: false}
+  #          else
+  #            %{label: v["name"], id: k, selected: false}
+  #        end
+  #
+  #      end)
+  #    end)
+  ##    |> List.flatten()
+  ##    |> Enum.sort_by(fn {k, v} -> k end)
+  #    |> IO.inspect
+  #  end
 
   #     <.live_component
   #    id="target_ids"
