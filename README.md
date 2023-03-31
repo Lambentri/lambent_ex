@@ -2,7 +2,10 @@
 
 ![AGPL](https://img.shields.io/github/license/Lambentri/lambent_ex)
 ![Lang](https://img.shields.io/github/languages/top/Lambentri/lambent_ex)
+
 [![Docker](https://img.shields.io/docker/image-size/lambentri/lambentex/latest?logo=docker)](https://hub.docker.com/r/lambentri/lambentex)
+[![Docker Repository on Quay](https://quay.io/repository/lambentri/lambent_ex/status "Docker Repository on Quay")](https://quay.io/repository/lambentri/lambent_ex)
+
 [![Gitter](https://badges.gitter.im/Lambentri/community.svg)](https://gitter.im/Lambentri/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 A Reimplementation of Lambent Aether 4, in Elixir
@@ -51,10 +54,19 @@ A Reimplementation of Lambent Aether 4, in Elixir
 
 ## Running
 
+Docker
 ```
+docker pull ghcr.io/lambentri/lambentex:latest
+# OR
 docker pull lambentri/lambentex
+# OR
+docker pull quay.io/lambentri/lambent_ex
+
 docker run --net=host -d --restart always --mount type=bind,source="$(pwd)"/meta,target=/opt/app/meta lambentri/lambentex 
 ```
+
+TODO: Podman
+TODO: Compose(s)
 
 Then load host:4000 in your web browser
 
