@@ -8,7 +8,7 @@ build-master:
   stage: build
   script:
     - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"},\"$CI_REGISTRY_DH\":{\"auth\":\"$CI_REGISTRY_AUTH_VAR\"}, \"$CI_REGISTRY_GH\":{\"username\":\"$CI_REGISTRY_USER_GH\",\"password\":\"$CI_REGISTRY_PASSWORD_GH\"}, \"$CI_REGISTRY_QUAY\":{\"username\":\"$CI_REGISTRY_USER_QUAY\",\"password\":\"$CI_REGISTRY_PASSWORD_QUAY\"}}}" > /kaniko/.docker/config.json
-    - /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile --destination $CI_REGISTRY_IMAGE  --destination $CI_REGISTRY_IMAGE_DH:latest --destination $CI_REGISTRY_IMAGE_GH:latest --destination $CI_REGISTRY_IMAGE_QUAY:latest--registry-mirror eu0.regi.kube.gmp.io
+    - /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile --destination $CI_REGISTRY_IMAGE  --destination $CI_REGISTRY_IMAGE_DH:latest --destination $CI_REGISTRY_IMAGE_GH:latest --destination $CI_REGISTRY_IMAGE_QUAY:latest --registry-mirror eu0.regi.kube.gmp.io
 
 #    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
 #    - /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile --destination $CI_REGISTRY_IMAGE --registry-mirror eu0.regi.kube.gmp.io
