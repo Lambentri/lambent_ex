@@ -1,3 +1,36 @@
 <div>
     <h1 class="text-3xl font-bold">Cronos Configuration</h1>
+    <div>
+        <%= form_for @changeset, "#", [phx_change: "submit", phx_submit: "save"] do %>
+        <div>
+            <%= label :actions, "Select an action:" %>
+            <%= select :actions, @machine_actions ++ @link_actions, selected: Map.get(@changeset.data, :action), phx_change: "select_action" %>
+        </div>
+        <div class="mt-4">
+            <% if is_machine_action?(@changeset.data) do %>
+            <%= label :targets, "Select a machine:" %>
+            <%= select :targets, @machine_targets, selected: Map.get(@changeset.data, :target), phx_change: "select_target" %>
+          <% else %>
+            <%= label :targets, "Select a link:" %>
+            <%= select :targets, @link_targets, selected: Map.get(@changeset.data, :target), phx_change: "select_target" %>
+          <% end %>
+        </div>
+        <div class="mt-4">
+            <%= label :times, "Select times:" %>
+            <div class="flex flex-wrap -mx-2">
+                <%= for time <- @times do %>
+                <div class="w-1/4 px-2">
+                    <label class="inline-flex items-center">
+                        <%= checkbox :times, time, checked: Map.has_key?(@changeset.data, time), phx_change: "check" %>
+                        <span class="ml-2 text-gray-700"><%= time %></span>
+                    </label>
+                </div>
+                <% end %>
+            </div>
+        </div>
+        <div class="mt-4">
+            <%= submit "Save", phx_disable_with: "Saving..." %>
+        </div>
+        <% end %>
+    </div>
 </div>

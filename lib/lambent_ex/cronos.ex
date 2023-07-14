@@ -11,6 +11,11 @@ defmodule LambentEx.Cronos do
 
     Process.send_after(self(), :work, :timer.seconds(60 - DateTime.utc_now().second + 1))
     {zone, result} = System.cmd("date", ["+%Z"])
+    zone = zone |> String.trim
+    zone = case zone do
+      "EDT" -> "America/New_York"
+      _otherwise -> zone
+    end
 
     Logger.info(
     "#{@s} Cronos uses the system timezone to determine when to tick and when to sleep, we've found this to be '#{zone}'"

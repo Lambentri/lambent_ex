@@ -1,19 +1,20 @@
 defmodule LambentEx.ServicesLive.CronosFormComponent do
   use LambentExWeb, :live_component
 
-  alias LambentEx.Schema.LinksB
+  alias LambentEx.Schema.Cronos
   alias LambentEx.Names
 
   @impl true
   def update(assigns, socket) do
-#    changeset = LinksB.change_link(link)
+    changeset = Cronos.changeset(assigns[:cronos], %{})
 
     {:ok,
       socket
       |> assign(assigns)
-#      |> assign(:changeset, changeset)
+      |> assign(:changeset, changeset)
     }
   end
+
 
   @impl true
   def handle_event("validate", %{"links_b" => links_params}, socket) do
@@ -39,5 +40,9 @@ defmodule LambentEx.ServicesLive.CronosFormComponent do
 
     #    save_testyyyy(socket, socket.assigns.action, testyyyy_params)
     #    :ok
+  end
+
+  defp is_machine_action?(action) do
+    true
   end
 end
