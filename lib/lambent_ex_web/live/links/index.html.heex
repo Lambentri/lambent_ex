@@ -55,7 +55,7 @@
           <tr>
             <th><%= k %></th>
             <td><%= v[:source] %></td>
-            <td><%= v[:target] %></td>
+            <td><%= @devices |> Map.get(v[:target], %{}) |> Map.get("name") || v[:target] %></td>
             <td>
               <%= if v[:enabled] == true do %>
                 <a

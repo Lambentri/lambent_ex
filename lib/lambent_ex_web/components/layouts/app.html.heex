@@ -42,7 +42,11 @@
       <a class="float-right text-primary hover:text-accent" href="#help-modal">
         <i class="fa-solid fa-circle-question fa-3x"></i>
       </a>
-      <h1 class="text-5xl font-build text-center lg:text-left">LambentEx</h1>
+      <h1 class="text-5xl font-build text-center lg:text-left">
+        <.link patch={~p"/"}>
+        LambentEx
+        </.link>
+      </h1>
     </div>
     <.flash kind={:info} title="Success!" flash={@flash} />
     <.flash kind={:error} title="Error!" flash={@flash} />

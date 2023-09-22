@@ -49,10 +49,8 @@ defmodule LambentEx.LinksLive.FormComponent do
     array |> Enum.map(fn {k, v} -> {v[:id], v[:name]} end)
   end
 
-  def for_selectd(array) do
-    array
-    |> Enum.map(fn {iface, entries} -> entries |> Enum.map(fn {k, v} -> {v["name"], k} end) end)
-    |> List.flatten()
-    |> Enum.sort_by(fn {k, v} -> k end)
+  def for_selectd(map) do
+    map |> Enum.map(fn {k, v} -> {v["name"] || k, k} end)
   end
+
 end

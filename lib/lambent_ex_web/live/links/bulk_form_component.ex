@@ -51,41 +51,10 @@ defmodule LambentEx.LinksLive.BulkFormComponent do
 
   defp ipp(ip), do: ip |> Tuple.to_list() |> Enum.join(".")
 
-  def for_selectd(array) do
-    array
-    |> Enum.map(fn {iface, entries} ->
-      entries
-      |> Enum.map(fn {k, v} ->
-        if v["name"] == nil do
-          {v["ip"] |> ipp, k}
-        else
-          {v["name"], k}
-        end
-      end)
-    end)
-    |> List.flatten()
-    |> Enum.sort_by(fn {k, v} -> k end)
 
-    #    |> IO.inspect
+  def for_selectd(map) do
+    map |> Enum.map(fn {k, v} -> {v["name"] || k, k} end)
   end
-
-  #  def for_selectd(array) do
-  #    array
-  #    |> Enum.map(fn {iface, entries} ->
-  #      entries
-  #      |> Enum.map(fn {k, v} ->
-  #        if v["name"] == nil do
-  #            %{label: v["ip"] |> ipp, id: k, selected: false}
-  #          else
-  #            %{label: v["name"], id: k, selected: false}
-  #        end
-  #
-  #      end)
-  #    end)
-  ##    |> List.flatten()
-  ##    |> Enum.sort_by(fn {k, v} -> k end)
-  #    |> IO.inspect
-  #  end
 
   #     <.live_component
   #    id="target_ids"

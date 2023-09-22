@@ -41,9 +41,9 @@ defmodule LambentExWeb.IndexLive.Index do
     {:noreply, socket |> assign(:links, socket.assigns.links |> Map.put(link[:name], link))}
   end
 
-  def handle_info({:devices_pub, device}, socket) do
+  def handle_info({:devices_pub, devices}, socket) do
     {:noreply,
-     socket |> assign(:devices, socket.assigns.devices |> Map.put(device[:mac], device))}
+     socket |> assign(:devices, socket.assigns.devices |> Map.merge(devices))}
   end
 
   def handle_event("selectm", %{"name" => name}, socket) do
@@ -55,7 +55,6 @@ defmodule LambentExWeb.IndexLive.Index do
   end
 
   def handle_event("selectd", %{"name" => name}, socket) do
-    IO.inspect(Enum.member?(socket.assigns.selected_d, name))
     if Enum.member?(socket.assigns.selected_d, name) do
       {:noreply, socket |> assign(:selected_d, socket.assigns.selected_d |> List.delete(name))}
     else
@@ -70,14 +69,14 @@ defmodule LambentExWeb.IndexLive.Index do
   end
 
   def find_unlinked_machines(links, machines) do
-    used_machines = links |> Map.values |> Enum.filter(fn x -> x.enabled end) |> Enum.map(fn x -> x.source end) |> Enum.uniq |> MapSet.new |> IO.inspect
-    machine_ids = machines |> Map.values |> Enum.map(fn x -> x.id end) |> MapSet.new |> IO.inspect
+    used_machines = links |> Map.values |> Enum.filter(fn x -> x.enabled end) |> Enum.map(fn x -> x.source end) |> Enum.uniq |> MapSet.new
+    machine_ids = machines |> Map.values |> Enum.map(fn x -> x.id end) |> MapSet.new
     MapSet.difference(machine_ids, used_machines)
   end
 
   def find_unlinked_devices(links, devices) do
     used_sources = links |> Map.values |> Enum.map(fn x -> x.target end) |> MapSet.new
-#     device_ids = devices |> Map.values |> Enum.map(fn x -> x.id end) |> MapSet.new
-    ["fake4", "fake5", "fake6"]
+    device_ids = devices |> Map.keys  |> MapSet.new
+    MapSet.difference(device_ids, used_sources)
   end
 end

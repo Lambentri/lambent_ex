@@ -131,7 +131,6 @@ defmodule LambentExWeb.DevicesLive.Index do
       Map.has_key?(map, "ip") -> Map.get(map, "ip") |> Tuple.to_list() |> Enum.join(".")
       Map.has_key?(map, "POWER") -> "MQTT"
     end
-
   end
 
   defp options() do

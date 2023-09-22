@@ -64,9 +64,9 @@ defmodule LambentExWeb.LinksLive.Index do
     {:noreply, socket |> assign(:links, socket.assigns.links |> Map.put(link[:name], link))}
   end
 
-  def handle_info({:devices_pub, device}, socket) do
+  def handle_info({:devices_pub, devices}, socket) do
     {:noreply,
-     socket |> assign(:devices, socket.assigns.devices |> Map.put(device[:mac], device))}
+     socket |> assign(:devices, socket.assigns.devices |> Map.merge(devices))}
   end
 
   def handle_event("toggle", params, socket) do
