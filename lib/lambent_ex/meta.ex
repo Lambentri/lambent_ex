@@ -194,9 +194,9 @@ defmodule LambentEx.Meta do
   def handle_info(:svc_pub, state) do
     Process.send_after(self(), :svc_pub, 500)
 
-    Phoenix.PubSub.broadcast(@pubsub_name, @pubsub_svc, {:http, get_http})
+    Phoenix.PubSub.broadcast(@pubsub_name, @pubsub_svc, {:http, get_http()})
     # Phoenix.PubSub.broadcast(@pubsub_name, @pubsub_svc, {:mqtt, get_mqtt})
-    Phoenix.PubSub.broadcast(@pubsub_name, @pubsub_svc, {:cronos, get_cronos})
+    Phoenix.PubSub.broadcast(@pubsub_name, @pubsub_svc, {:cronos, get_cronos()})
     {:noreply, state}
   end
 

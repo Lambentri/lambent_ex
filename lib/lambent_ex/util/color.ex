@@ -122,13 +122,13 @@ defmodule LambentEx.Utils.Color do
   def cy, do: [192, 192, 0]
   def ck, do: [0, 0, 0]
 
-  def cre, do: cr |> Stream.cycle() |> Enum.take(900)
-  def cge, do: cg |> Stream.cycle() |> Enum.take(900)
-  def cbe, do: cb |> Stream.cycle() |> Enum.take(900)
-  def cce, do: cc |> Stream.cycle() |> Enum.take(900)
-  def cme, do: cm |> Stream.cycle() |> Enum.take(900)
-  def cye, do: cy |> Stream.cycle() |> Enum.take(900)
-  def cke, do: ck |> Stream.cycle() |> Enum.take(900)
+  def cre, do: cr() |> Stream.cycle() |> Enum.take(900)
+  def cge, do: cg() |> Stream.cycle() |> Enum.take(900)
+  def cbe, do: cb() |> Stream.cycle() |> Enum.take(900)
+  def cce, do: cc() |> Stream.cycle() |> Enum.take(900)
+  def cme, do: cm() |> Stream.cycle() |> Enum.take(900)
+  def cye, do: cy() |> Stream.cycle() |> Enum.take(900)
+  def cke, do: ck() |> Stream.cycle() |> Enum.take(900)
 
   # misc
   def hex(val) when is_float(val), do: trunc(val) |> hex

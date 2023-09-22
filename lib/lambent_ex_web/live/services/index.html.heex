@@ -60,6 +60,8 @@
               <%= if v[:latency] do %>
                 <i class="fa-solid fa-table-tennis-paddle-ball"></i>&nbsp;<%= v[:latency] %> ms
               <% end %>
+              lights:
+              <%= v[:d_lights] |> Map.keys |>  length %>
             <% else %>
               down
             <% end %>

@@ -27,16 +27,22 @@ defmodule LambentExWeb.DevicesLive.Index do
 
   @impl true
   def handle_info({:devices_pub, devices}, socket) do
-    {:noreply, socket |> assign(:devices, devices)}
+    n = Map.merge(socket.assigns.devices, devices)
+    {:noreply, socket |> assign(:devices, n)}
   end
 
   @impl true
   def handle_info({:rename, data}, socket) do
     id = data["id"] |> String.trim_trailing("name") |> String.trim_trailing("namem")
+    name = data["data"] |> re_nil
 
     case socket.assigns[:devices] |> Map.get(id) |> Map.get("type") do
       "8266-7777" ->
-        LambentEx.Scan.ESP8266x7777.rename(:mac, id, data["data"] |> re_nil)
+        LambentEx.Scan.ESP8266x7777.rename(:mac, id, name)
+
+      "mqtt-tasmota" ->
+        xname = socket.assigns[:devices] |> Map.get(id) |> Map.get("dname")
+        LambentEx.MQTT.rename(xname, id, name)
 
       type ->
         Logger.info("Need handler for this type: #{type}")
@@ -66,11 +72,31 @@ defmodule LambentExWeb.DevicesLive.Index do
   @impl true
   def handle_info({:replace, data}, socket) do
     id = data["id"] |> String.trim_trailing("place") |> String.trim_trailing("placem")
-    IO.inspect(id)
+    pl = data["data"] |> re_nil
 
     case socket.assigns[:devices] |> Map.get(id) |> Map.get("type") do
       "8266-7777" ->
-        LambentEx.Scan.ESP8266x7777.replace(:mac, id, data["data"] |> re_nil)
+        LambentEx.Scan.ESP8266x7777.replace(:mac, id, pl)
+
+      "mqtt-tasmota" ->
+        xname = socket.assigns[:devices] |> Map.get(id) |> Map.get("dname")
+        LambentEx.MQTT.replace(xname, id, pl)
+
+      type ->
+        Logger.info("Need handler for this type: #{type}")
+        :ok
+    end
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("poke", %{"id" => id, "dname" => name}, socket) do
+    case socket.assigns[:devices] |> Map.get(id) |> Map.get("type") do
+      "8266-7777" ->
+        LambentEx.Scan.ESP8266x7777.poke(id)
+      "mqtt-tasmota" ->
+        LambentEx.MQTT.do_poke(name, id)
 
       type ->
         Logger.info("Need handler for this type: #{type}")
@@ -85,7 +111,6 @@ defmodule LambentExWeb.DevicesLive.Index do
     case socket.assigns[:devices] |> Map.get(id) |> Map.get("type") do
       "8266-7777" ->
         LambentEx.Scan.ESP8266x7777.poke(id)
-
       type ->
         Logger.info("Need handler for this type: #{type}")
         :ok
@@ -101,8 +126,12 @@ defmodule LambentExWeb.DevicesLive.Index do
     |> assign(:source, nil)
   end
 
-  defp pip(ip) do
-    ip |> Tuple.to_list() |> Enum.join(".")
+  defp pip(map) do
+    cond do
+      Map.has_key?(map, "ip") -> Map.get(map, "ip") |> Tuple.to_list() |> Enum.join(".")
+      Map.has_key?(map, "POWER") -> "MQTT"
+    end
+
   end
 
   defp options() do

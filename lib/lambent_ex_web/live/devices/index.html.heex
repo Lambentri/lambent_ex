@@ -23,7 +23,7 @@
         <%= for {k,v} <- @devices do %>
           <tr>
             <th><%= k %></th>
-            <td><%= v["ip"] |> pip %></td>
+            <td><%= v |> pip %></td>
             <td>
               <.live_editable
                 id={k <> "name"}
@@ -52,7 +52,7 @@
             </td>
             <td><%= v["type"] %></td>
             <td>
-              <button class="btn btn-circle" phx-click="poke" phx-value-id={k}>
+              <button class="btn btn-circle" phx-click="poke" phx-value-id={k} phx-value-dname={v["dname"]}>
                 <i class="fa-solid fa-bolt-lightning"></i>
               </button>
             </td>
@@ -91,7 +91,7 @@
                 />
               </h2>
               <p>
-                <%= v["ip"] |> pip %> <i class="fa-solid fa-at"></i> <%= k %>
+                <%= v |> pip %> <i class="fa-solid fa-at"></i> <%= k %>
 
                 <div class="badge badge-lg badge-secondary">
                   <i class="fa-solid fa-fw fa-traffic-light fa-spin"></i>

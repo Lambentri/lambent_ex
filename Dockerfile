@@ -1,4 +1,4 @@
-FROM elixir:alpine
+FROM elixir:1.14.5-otp-25-alpine
 MAINTAINER Gabe <gmp@gmp.io>
 ARG app_name=lambent_ex
 ARG phoenix_subdir=.
