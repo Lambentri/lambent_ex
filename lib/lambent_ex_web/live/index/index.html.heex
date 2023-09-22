@@ -1,0 +1,62 @@
+<div class="flex flex-col">
+  <div>
+    <div class="font-bold text-xl">Actively Linked Machines and Devices </div>
+    <%= for {source, links} <- @links |> group_links do %>
+      <div class="flex justify-between">
+        <div>
+          <div class="stats shadow bg-secondary text-secondary-content">
+            <div class="stat">
+              <div class="stat-figure text-primary">
+
+              </div>
+              <div class="stat-title"></div>
+              <div class="stat-value"><%= source %></div>
+              <div class="stat-desc"></div>
+            </div>
+          </div>
+        </div>
+        <div> &rarr;</div>
+        <div>
+          <%= for l <- links do %>
+            <span class="btn btn-xl btn-secondary"><%= l.target %></span>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+  <hr>
+  <div class="flex justify-between">
+    <div>
+    <div class="font-bold text-xl">Unlinked Machines </div>
+    <%= for m <- find_unlinked_machines(@links, @machines) do %>
+          <div class={if @selected_m == m do "stats shadow bg-primary text-primary-content" else "stats shadow bg-secondary text-secondary-content" end} phx-click="selectm" phx-value-name={m}>
+            <div class="stat">
+              <div class="stat-figure text-primary">
+
+              </div>
+              <div class="stat-title"></div>
+              <div class="stat-value"><%= m %></div>
+              <div class="stat-desc"></div>
+            </div>
+          </div>
+    <% end %>
+    </div>
+    <div>
+      <%= if !is_nil(@selected_m) and !Enum.empty?(@selected_d) do %>
+      <span class="btn btn-accent btn-lg">LINK IT</span>
+      <% end %>
+    </div>
+    <div>
+      <div class="font-bold text-xl">Unlinked Devices </div>
+      <%= for d <- find_unlinked_devices(@links, @devices) do %>
+        <%= if Enum.member?(@selected_d, d) do %>
+          <span class="btn btn-xl btn-primary" phx-click="selectd" phx-value-name={d}><%= d %></span>
+        <% else %>
+          <span class="btn btn-xl btn-secondary" phx-click="selectd" phx-value-name={d}><%= d %></span>
+        <% end %>
+
+      <% end %>
+    </div>
+  </div>
+
+</div>

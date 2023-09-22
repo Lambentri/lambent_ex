@@ -17,7 +17,7 @@ defmodule LambentExWeb.Router do
   scope "/", LambentExWeb do
     pipe_through :browser
 
-    get "/", PageController, :home
+    live "/", IndexLive.Index, :index
 
     live "/cfg/devices", DevicesLive.Index, :index
     live "/cfg/machines", MachinesLive.Index, :index
